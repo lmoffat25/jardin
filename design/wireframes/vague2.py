@@ -272,12 +272,8 @@ reprendre = d.bouton(pause, CX + (COL - 320) // 2, 468, 320, 56, "Continuer la s
 d.texte(pause, CX, 560, COL, "Placer ces plantes sur le plan du terrain : se dessine en vague 6 "
         "(B13).", 14, couleur=TRAIT, align="center")
 
-# B4 se dessine en vague 4 : ce cadre ne sert qu'à faire aboutir le parcours.
-b4 = ecran("B4 · 00 · Tableau de bord — à dessiner en vague 4")
-attente = d.cadre("Emplacement · tableau de bord", b4, 80, 104, BW - 160, BH - 184, fond=SURFACE,
-                  rayon=10, trait=TRAIT, pointille=True)
-d.texte(attente, 0, 320, BW - 160, "Tableau de bord\nà dessiner en vague 4", 20, couleur=SECOND,
-        align="center")
+# Le cadre de B4 naît ici pour que le parcours P0 y aboutisse ; vague4.py le remplit.
+b4 = ecran("B4 · 01 · À faire")
 
 # --- Prototype : P0 ------------------------------------------------------------
 for c in b2a_cartes:
