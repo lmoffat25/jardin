@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 """Wireframes de la vague 1 (terrain : T1 à T4) et leur prototype.
 
-    python3 -I design/wireframes/vague1.py            écrit design/jardin.figcraft
+Ce module porte aussi le socle commun aux vagues (la classe `Doc`, les pages,
+les gris, les briques de dessin). Il ne s'exécute pas seul :
+
+    python3 -I design/wireframes/construire.py        écrit design/jardin.figcraft
 
 Le fichier FigCraft est généré, pas dessiné à la main : relancer ce script le
 reconstruit à l'identique. `figcraft-cli run` rend des identifiants entiers
@@ -415,6 +418,3 @@ def main() -> int:
     print(f"CONFIRME {SORTIE} ({len(d.cmds)} commandes, {len(ECRANS)} écrans)")
     return 0
 
-
-if __name__ == "__main__":
-    sys.exit(main())
