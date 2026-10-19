@@ -512,7 +512,7 @@ créer quatre règles pour une tonte.
 |---|---|---|
 | `plante_id` | uuid · FK | Facultatif |
 | `intervention_id` | uuid · FK | Facultatif |
-| `chemin_fichier` | texte | Sur disque — pas de service de stockage externe |
+| `chemin_original` | texte | Sur disque — pas de service de stockage externe (nom de colonne du chapitre 4) |
 | `taille_ko` | entier | Compte dans le quota du jardin |
 | `largeur_px`, `hauteur_px` | entier | |
 | `prise_le`, `televersee_le` | date, horodatage | |

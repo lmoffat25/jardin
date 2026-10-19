@@ -129,11 +129,11 @@ it('ouvre la fenêtre de taille du pommier le 1er décembre', function () {
         optimalDebut: '01/02', optimalFin: '15/03',
     );
 
-    $echeance = Moteur::prochaine(
-        regle: $regle,
-        historique: [],
-        aujourdhui: '2026-12-01',
-        decalageClimatique: 0,
+    [$echeance] = Moteur::calculer(
+        regles: [$regle],
+        historique: Historique::vide(),
+        decalage: new Decalage(0),
+        aujourdhui: new \DateTimeImmutable('2026-12-01'),
     );
 
     expect($echeance->etat)->toBe(Etat::Ouverte);
@@ -255,10 +255,10 @@ Assert*, *Given / When / Then*), la structure est la même.
 it('marque comme manquée une taille non faite au 1er avril', function () {
     // 1. LE CONTEXTE — ce qui est vrai avant
     $regle = Regle::fenetre(debut: '01/12', fin: '31/03');
-    $historique = [];
+    $historique = Historique::vide();
 
     // 2. L'ACTION — une seule, celle qu'on teste
-    $echeance = Moteur::prochaine($regle, $historique, aujourdhui: '2027-04-01');
+    [$echeance] = Moteur::calculer([$regle], $historique, new Decalage(0), new \DateTimeImmutable('2027-04-01'));
 
     // 3. LE CONSTAT — ce qu'on observe, du point de vue de l'utilisateur
     expect($echeance->etat)->toBe(Etat::Manquee);

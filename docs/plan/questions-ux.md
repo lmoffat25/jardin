@@ -3,11 +3,13 @@
 Les questions d'expérience utilisateur que ni le CDC, ni une maquette validée,
 ni la charte ne tranchent (README §3). Chacune : la question, l'écran ou le
 parcours concerné, les options avec la recommandation en premier, ce qui attend
-la réponse. **Léon répond sous « Réponse »** ; la passe suivante reprend le
-sprint.
+la réponse. **Léon répond sous « Réponse »**, dans le clone principal, sans geste git :
+`scripts/plan/porter-reponses.sh` porte la réponse sur `main` par une demande
+de fusion et retire le marqueur du sprint (décision D-30) ; la passe suivante
+reprend le sprint.
 
 Un sprint qui attend porte `**En attente :** Q-UX-n` dans son en-tête de
-`tasks.md`. Les questions ci-dessous sont posées dès l'écriture du plan, pour
+`tasks.md`, et ne contient que le travail qui dépend de la question (D-31). Les questions ci-dessous sont posées dès l'écriture du plan, pour
 que la réponse arrive avant le sprint.
 
 ## Sommaire
@@ -19,6 +21,8 @@ que la réponse arrive avant le sprint.
 - [Q-UX-5 — Les photos dans l'export](#q-ux-5--les-photos-dans-lexport)
 - [Q-UX-6 — Archiver une zone qui contient des plantes](#q-ux-6--archiver-une-zone-qui-contient-des-plantes)
 - [Q-UX-7 — Une règle que l'utilisateur a écrite lui-même](#q-ux-7--une-règle-que-lutilisateur-a-écrite-lui-même)
+- [Q-UX-8 — Au-delà de combien d'échéances on groupe](#q-ux-8--au-delà-de-combien-déchéances-on-groupe)
+- [Q-UX-9 — Ce qui est « urgent »](#q-ux-9--ce-qui-est--urgent-)
 
 ---
 
@@ -43,12 +47,15 @@ les sprints restants attendent une réponse, comment veux-tu être prévenu ? (O
 (espèce inconnue, nom déjà pris dans la zone), que se passe-t-il ?
 **Concerne :** B3 (inventaire en lot), parcours P0, critère 1.
 **Options :**
-1. **Recommandé — rien n'est créé**, et les lignes fautives sont signalées par
-   leur numéro : tu corriges et tu renvoies le tout ; jamais de lot à moitié
-   créé à démêler.
-2. Les bonnes lignes sont créées, les fautives te reviennent seules à corriger.
+1. **Recommandé — ce que montre la maquette B3 · 04** : les bonnes lignes sont
+   importées, les fautives sont signalées par leur numéro et restent à
+   corriger ; une espèce absente de la bibliothèque donne une plante sans règle,
+   signalée (« Néflier… importé sans règle ») ; une zone inconnue propose
+   « Créer la zone » ; le bouton dit le nombre réel (« Importer 11 plantes »).
+2. Rien n'est créé tant qu'une ligne est fautive : tu corriges et tu renvoies
+   le tout ; jamais de lot à moitié créé, mais tout est bloqué par une ligne.
 
-**Ce qui attend :** sprint 7b (V85, V86).
+**Ce qui attend :** sprint 7d (V85, V86, V87).
 **Réponse :**
 
 ## Q-UX-3 — Les noms de « 12 pommiers »
@@ -63,7 +70,10 @@ plantes ; le nom doit être unique dans la zone (RG-13). Comment s'appellent-ell
 3. Le nom suivi du repère (« Pommier rang 2 ») quand un repère est donné, sinon
    l'option 1.
 
-**Ce qui attend :** sprint 7b (V85).
+La maquette B3 · 04 montre l'option 1 (« 12 plantes : Pommier 1 à Pommier 12 ·
+FRU-002 à FRU-013 »).
+
+**Ce qui attend :** sprint 7d (V85).
 **Réponse :**
 
 ## Q-UX-4 — Une intervention datée dans le futur
@@ -78,7 +88,7 @@ plantes ; le nom doit être unique dans la zone (RG-13). Comment s'appellent-ell
 2. Acceptée telle quelle (H9 : jamais refusée pour une raison métier).
 3. Acceptée, mais ramenée à aujourd'hui et signalée.
 
-**Ce qui attend :** une tâche du sprint 8a (le reste du sprint avance).
+**Ce qui attend :** sprint 8c (V133) ; le reste de la saisie (8a) avance.
 **Réponse :**
 
 ## Q-UX-5 — Les photos dans l'export
@@ -94,7 +104,7 @@ quelle forme ?
 3. Aucune photo, seulement leurs noms de fichier : export le plus léger, mais
    incomplet.
 
-**Ce qui attend :** une tâche du sprint 12 (V122).
+**Ce qui attend :** sprint 12b (V134) ; le reste de l'export (12a) avance.
 **Réponse :**
 
 ## Q-UX-6 — Archiver une zone qui contient des plantes
@@ -108,7 +118,7 @@ des plantes actives ?
 2. Les plantes sont archivées avec la zone, après confirmation.
 3. On te demande vers quelle zone les déplacer, puis la zone est archivée.
 
-**Ce qui attend :** sprint 7c (V92).
+**Ce qui attend :** sprint 7e (V92).
 **Réponse :**
 
 ## Q-UX-7 — Une règle que l'utilisateur a écrite lui-même
@@ -123,5 +133,36 @@ d'explication au tableau de bord (B4, T1).
 2. La même présentation qu'une règle « indicative » de la bibliothèque.
 3. Aucune mention : seule la date compte.
 
-**Ce qui attend :** sprint 9 (V106).
+**Ce qui attend :** sprint 9b (V106).
+**Réponse :**
+
+## Q-UX-8 — Au-delà de combien d'échéances on groupe
+
+**Question :** au tableau de bord, quand une même intervention est due sur
+beaucoup de plantes d'une zone (« Tailler 14 rosiers »), au-delà de combien de
+plantes les montre-t-on en une seule ligne dépliable ?
+**Concerne :** B4 (tableau de bord), T1 (à faire), critère 11.
+**Options :**
+1. **Recommandé — au-delà de 10** : jusqu'à 10, chaque plante a sa ligne ;
+   au-delà, une ligne « Tailler 14 rosiers — Roseraie » qui se déplie.
+2. Au-delà de 5 : un tableau plus court, plus de dépliages.
+3. Toujours groupé par zone et par type, quel que soit le nombre.
+
+**Ce qui attend :** rien ne bloque. Le sprint 6 construit avec 10 (décision
+D-24, provisoire) ; une autre réponse deviendra un sprint de correction.
+**Réponse :**
+
+## Q-UX-9 — Ce qui est « urgent »
+
+**Question :** une échéance est dite « urgente » quand la fin de sa fenêtre
+approche. À combien de jours de la fin ?
+**Concerne :** B4, T1 (mise en avant), phrase d'explication.
+**Options :**
+1. **Recommandé — 15 jours** : le temps d'organiser un samedi de travail.
+2. 7 jours : moins d'alertes, plus tardives.
+3. Une part de la durée de la fenêtre (O6) : une fenêtre de 4 mois et une de
+   3 semaines n'ont pas la même urgence.
+
+**Ce qui attend :** rien ne bloque. Le sprint 3b construit avec 15 (décision
+D-18, provisoire) ; une autre réponse deviendra un sprint de correction.
 **Réponse :**

@@ -1,7 +1,7 @@
 # Document technique — Chapitre 6 : environnement de code, intégration et livraison continues
 
 Version 0.1 — 19/10/2026
-Suite de `technique-05-deploiement.md` (v0.2). Applique le CDC v0.12, §1.5 et §8.8.
+Suite de `technique-05-deploiement.md` (v0.2). Applique le CDC v0.13, §1.5 et §8.8.
 Décisions **C1 à C26**. Points ouverts à partir de **O16**.
 
 **Stack :** Laravel 12 + Inertia + React/TypeScript, PostgreSQL (chapitres 1 à 4).
@@ -73,8 +73,9 @@ jardin/
     workflows/livrer.yml    livraison (§9)
     pull_request_template.md
     dependabot.yml
-  app/  modules/  ...       code applicatif, rangé selon le chapitre 3
-  resources/js/apps/        bundles bureau et terrain (chapitre 3, A13)
+  src/<Module>/             code applicatif, espace de noms `Src\` (chapitre 3 ; D-01 du plan)
+  app/  bootstrap/          amorce Laravel (fournisseurs de services)
+  resources/js/             un seul bundle en V1 (chapitre 3, encart V1 ; A13 suspendue)
   database/migrations/      migrations centralisées (S14)
   bibliotheque/             données curées et leurs sources (protocole)
   tests/
@@ -215,7 +216,7 @@ dépendance interdite apparaît.
 ```php
 // tests/Architecture/MoteurTest.php — esquisse
 arch('le moteur ne dépend d\'aucune couche Laravel')
-    ->expect('Modules\Moteur')
+    ->expect('Src\Echeances\Moteur')
     ->not->toUse(['Illuminate', 'App\Models']);
 ```
 
@@ -382,7 +383,7 @@ Un workflow, `verifier.yml`, sur chaque demande de fusion et chaque fusion dans
 | `changements` | Détecte les chemins modifiés | Toujours — quelques secondes |
 | `statique` | `make statique`, `make criteres` | Toujours |
 | `tests` | `make test`, `make balayage`, avec un service PostgreSQL de même version (C3) | Toujours |
-| `e2e` | `make e2e` (Chromium) | Si le terrain, la carte, les routes de l'API terrain ou le service worker changent, ou sur l'étiquette `e2e` |
+| `e2e` | `make e2e` (Chromium) | Si les pages terrain, la carte ou leurs routes changent, ou sur l'étiquette `e2e` (le service worker est suspendu en V1) |
 | `mutation` | `make mutation` | Si le moteur ou ses tests changent |
 
 **Le piège des vérifications requises conditionnelles.** Un job requis que
@@ -525,11 +526,17 @@ casse Z » se conteste.
 Ce qui doit exister avant la première ligne du moteur. Le reste du découpage est
 au chapitre 7 (`docs/plan/`).
 
-1. Créer le dépôt **public** (Q16), son ruleset (C2), la détection de secrets
-   et le blocage à l'envoi (C25), **avant le premier commit**.
+1. Auditer l'historique local de `~/jardin` (secrets, coordonnées, adresses,
+   noms de lieux ; C25), puis créer le dépôt **public** (Q16), activer la
+   détection de secrets et le blocage à l'envoi (C25), envoyer `main`, et
+   seulement ensuite poser le ruleset (C2), qui refuserait l'envoi initial.
+   Le dépôt local a déjà des commits : c'est l'audit, et non l'ordre, qui
+   protège l'historique (décision D-33 du plan).
 2. Squelette Laravel 12, Inertia, React, TypeScript strict ; configuration DDEV
    (§3) et contrôle des versions réellement disponibles.
-3. Trancher E1 / O13 : HTTPS depuis le téléphone.
+3. E1 / O13 (HTTPS depuis le téléphone) : reporté au premier sprint terrain de
+   la partie B (décision D-11 du plan) ; le certificat local de DDEV suffit au
+   bureau.
 4. `Makefile` avec toutes les cibles du §4, même vides.
 5. Outillage du §5, configuré au niveau le plus strict (C8).
 6. Crochets git (§7).

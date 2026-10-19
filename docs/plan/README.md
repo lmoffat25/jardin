@@ -112,7 +112,14 @@ sprint.
 **Vérification en marche :** si le sprint change ce qu'un utilisateur voit,
   le parcours Playwright concerné. Sinon sans objet.
 **Question UX possible :** aucune | <laquelle, et ce qui en dépend>
+**En attente :** Q-UX-n   (seulement si le sprint attend une réponse ; le
+  sprint ne contient alors que le travail qui en dépend, décision D-31)
 **Assertions :** les numéros du contrat de validation.
+**Fichiers :** la liste complète des fichiers de code créés, modifiés ou
+  supprimés, en chemins complets ; leur nombre est celui du budget P5
+  (décision D-29).
+**Classes de test :** la liste complète des fichiers de test créés, modifiés ou
+  supprimés (`tests/**/*Test.php`, `scripts/**/tests/test-*.sh`).
 **Fin :** ce qui est vrai et prouvé quand le sprint est fini.
 ```
 
@@ -170,5 +177,5 @@ rien publier.
 
 | # | Question | Quand |
 |---|---|---|
-| O27 | Comment Léon est prévenu d'une question en attente ou d'un arrêt : notification sur le téléphone, mail (`envoyer-mail`), ou les deux ? | Au chantier 0 |
-| O28 | Adapter `check-sprint-size.sh` de Treize Pourcent au format de ce plan, ou compter à la main pour la partie A ? | À l'écriture de la partie A |
+| O27 | Comment Léon est prévenu d'une question en attente ou d'un arrêt : notification sur le téléphone, mail (`envoyer-mail`), ou les deux ? | Posé en Q-UX-1 (non bloquant : sans réponse, le script ne prévient pas) |
+| O28 | ~~Adapter `check-sprint-size.sh` de Treize Pourcent au format de ce plan, ou compter à la main pour la partie A ?~~ | **Tranché** par D-29 : listes de fichiers dans chaque en-tête, recomptées par `check-sprint-size.sh` au sprint 0g |

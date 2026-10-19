@@ -107,12 +107,15 @@ RGPD (D6), nettoyage des photos orphelines.
 
 ## 3. Les tables du MVP
 
-**Douze tables métier** — `utilisateurs`, `jardins`, `adhesions`, `zones`,
-`plantes`, `geometries`, `regles`, `fenetres`, `intervalles_saisonniers`,
-`echeances`, `interventions`, `photos` — dont **onze portent un `jardin_id`**
-(toutes sauf `utilisateurs`). Et **cinq tables de référence** :
-`profils_climatiques`, `familles_botaniques`, `especes`, `types_intervention`,
-`regles_reference`.
+**Quatorze tables métier** — `utilisateurs`, `jardins`, `adhesions`, `zones`,
+`plantes`, `compteurs_codes_courts`, `geometries`, `regles`, `fenetres`,
+`intervalles_saisonniers`, `echeances`, `interventions`, `photos`,
+`fonds_de_plan` — dont **douze portent un `jardin_id NOT NULL`** (toutes sauf
+`utilisateurs` et `jardins`, qui est le jardin lui-même). Et **six tables de
+référence** : `profils_climatiques`, `familles_botaniques`, `especes`,
+`types_intervention` (dont `jardin_id` est nullable : `NULL` = type fourni),
+`regles_reference` et `sources_regle`. Le test V27 du plan relit cette liste
+dans le catalogue de PostgreSQL (décisions D-02, D-03, D-39 du plan).
 
 ### 3.1 Socle
 
@@ -172,6 +175,7 @@ CREATE TABLE zones (
     zone_parente_id  uuid REFERENCES zones(id),        -- lot 3, non alimenté
     nom              varchar(120) NOT NULL,
     ordre_tournee    smallint,
+    archivee_le      timestamptz,                       -- décision D-04 du plan
     cree_le          timestamptz NOT NULL DEFAULT now(),
     UNIQUE (jardin_id, nom)
 );
@@ -203,6 +207,14 @@ CREATE TABLE plantes (
 
     UNIQUE (jardin_id, code_court),
     UNIQUE (zone_id, nom)
+);
+
+-- Compteur du code court, par jardin et par préfixe (S8, décision D-03 du plan).
+CREATE TABLE compteurs_codes_courts (
+    jardin_id  uuid NOT NULL REFERENCES jardins(id) ON DELETE CASCADE,
+    prefixe    varchar(4) NOT NULL,
+    dernier    integer NOT NULL,
+    PRIMARY KEY (jardin_id, prefixe)
 );
 
 CREATE TABLE geometries (
@@ -248,6 +260,7 @@ CREATE TABLE familles_botaniques (
 CREATE TABLE especes (
     id                 integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     famille_id         integer REFERENCES familles_botaniques(id),
+    cle                varchar(80) NOT NULL UNIQUE,      -- clé du fichier de bibliothèque
     nom_commun         varchar(120) NOT NULL,
     nom_latin          varchar(120),
     categorie          varchar(20) NOT NULL,
@@ -268,26 +281,44 @@ CREATE TABLE types_intervention (
     demande_produit   boolean NOT NULL DEFAULT false    -- lot 2
 );
 
+-- Un libellé unique parmi les types fournis, et dans chaque jardin (D-38 du plan).
+CREATE UNIQUE INDEX types_intervention_fournis_libelle
+    ON types_intervention (libelle) WHERE jardin_id IS NULL;
+ALTER TABLE types_intervention ADD UNIQUE (jardin_id, libelle);
+
 CREATE TABLE regles_reference (
     id                    integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     espece_id             integer NOT NULL REFERENCES especes(id),
     type_intervention_id  integer NOT NULL REFERENCES types_intervention(id),
     type_regle            varchar(4) NOT NULL CHECK (type_regle IN ('R1','R2')),
     parametres            jsonb NOT NULL,
+    cle                   varchar(120) NOT NULL,        -- clé de la règle dans le fichier
     confiance             varchar(12) NOT NULL
                           CHECK (confiance IN ('verifiee','indicative')),
-    source_url            varchar(500),
-    source_libelle        varchar(200),
     version               smallint NOT NULL DEFAULT 1,
     remplacee_le          timestamptz,
-
-    CONSTRAINT verifiee_exige_une_source
-        CHECK (confiance <> 'verifiee' OR source_url IS NOT NULL)
+    UNIQUE (cle, version)
 );
+
+CREATE UNIQUE INDEX regles_reference_en_vigueur
+    ON regles_reference (cle) WHERE remplacee_le IS NULL;
+
+CREATE TABLE sources_regle (
+    id                  integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    regle_reference_id  integer NOT NULL REFERENCES regles_reference(id) ON DELETE CASCADE,
+    url                 varchar(500) NOT NULL,
+    libelle             varchar(200),
+    consultee_le        date NOT NULL,
+    UNIQUE (regle_reference_id, url)
+);
+-- Plus un déclencheur de contrainte DEFERRABLE INITIALLY DEFERRED :
+-- une règle 'verifiee' a au moins deux sources au moment du commit.
 ```
 
 > **S9** — `confiance` est **NOT NULL sans valeur par défaut**, et une règle
-> `verifiee` **ne s'enregistre pas sans `source_url`**. RG-31 : une règle sans
+> `verifiee` **ne s'enregistre pas sans deux sources** dans `sources_regle`
+> (B2 ; décision D-39 du plan, qui remplace la colonne `source_url` unique et
+> son CHECK de la version précédente de ce chapitre). RG-31 : une règle sans
 > niveau de confiance déclaré est une supposition déguisée en certitude ; une
 > règle qui se dit vérifiée sans dire par quoi est pire, parce qu'elle est
 > crédible.
@@ -296,8 +327,8 @@ CREATE TABLE regles_reference (
 > pas jusqu'au 24/08/2026 — seul le test B-T8 y veillait, c'est-à-dire une
 > vérification qui tourne *après* l'écriture au lieu de la refuser.
 >
-> `source_url` reste nullable pour les règles `indicative` : c'est justement ce
-> qui les distingue.
+> Une règle `indicative` cite au moins une source (B2, vérifié par le test de
+> structure de la bibliothèque) ; seule une `verifiee` en exige deux en base.
 
 ### 3.4 Moteur
 
@@ -313,6 +344,8 @@ CREATE TABLE regles (
     periodicite_annees    smallint,        -- R2
     confiance             varchar(12) NOT NULL
                           CHECK (confiance IN ('verifiee','indicative')),
+    origine               varchar(12) NOT NULL          -- décision D-51 du plan
+                          CHECK (origine IN ('bibliotheque','ajustee','libre')),
     est_active            boolean NOT NULL DEFAULT true,
     version               smallint NOT NULL DEFAULT 1,
     remplacee_le          timestamptz,
@@ -492,7 +525,8 @@ CREATE UNIQUE INDEX fonds_de_plan_un_actif
 
 Une image calée compte dans le quota photo du jardin, et part avec lui à la
 suppression (D6). Le fond `orthophoto` ne stocke rien : les tuiles sont
-demandées au service IGN et mises en cache par le téléphone (chapitre 1).
+demandées au service IGN à l'affichage, sans cache sur le téléphone en V1 (le
+hors-ligne est suspendu, chapitre 1).
 
 ---
 
@@ -578,7 +612,7 @@ Trois jeux, de natures différentes :
 |---|---|---|
 | **Référence** | Les 5 profils climatiques, les ~25 types d'intervention fournis | À chaque installation. Idempotent : il peut être rejoué |
 | **Bibliothèque** | Espèces, familles, règles de référence sourcées, **avec leurs butoirs** (RG-44) | Versionné, rejouable, complété au fil des saisons (RG-24). **Ne se publie pas sans passer B-T1 à B-T14**, sur les cinq profils climatiques (B7, B8) |
-| **Démonstration** | Un jardin fictif avec 30 plantes et deux ans d'historique | Développement et tests seulement. **Jamais en production** |
+| **Démonstration** | Un jardin fictif avec 500 plantes (points, lignes, polygones) et deux ans d'historique (décision D-14 du plan) | Développement et tests seulement. **Jamais en production** |
 
 Le troisième mérite l'effort : il permet de voir le tableau de bord peuplé, de
 tester le moteur sur des cas réels, et de reproduire un bug signalé sans avoir

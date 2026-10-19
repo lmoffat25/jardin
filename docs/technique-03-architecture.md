@@ -178,7 +178,7 @@ src/
       Moteur, Regle, Fenetre, IntervalleSaisonnier, Historique,
       Echeance, Etat, Decalage, Calendrier
     Domaine/            Regle, Fenetre, IntervalleSaisonnier, Echeance (Eloquent)
-    Calcul/             CalculerEcheances.php (le pont)
+    Calcul/             CalculEcheances.php (le pont)
     Reglages/           ModifierRegle.php, RegleController.php
     TableauDeBord/      TableauDeBordController.php
     Solde/              SolderEcheance.php, SuspendreEcheance.php
@@ -624,7 +624,7 @@ final class Moteur
         array $regles,            // Regle[]
         Historique $historique,   // les interventions passées, en mémoire
         Decalage $decalage,       // le profil climatique, réduit à un entier
-        DateImmutable $aujourdhui // jamais now() — TS-4
+        \DateTimeImmutable $aujourdhui // jamais now() — TS-4
     ): array;
 }
 ```
