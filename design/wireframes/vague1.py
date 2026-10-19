@@ -336,14 +336,8 @@ BEAUCOUP = [(z, f"{p} n°{i}", inter, "en retard de 2 jours" if i % 5 == 0 else 
 fait_charge: dict = {}
 liste_du_jour(charge, 130, BEAUCOUP, fait_charge)
 
-# T7 se dessine en vague 6 : ce cadre ne sert qu'à faire aboutir le bouton Carte.
-t7 = ecran("T7 · 00 · Carte terrain — à dessiner en vague 6")
-t7_retour = d.bouton(t7, 8, 52, 48, 48, "‹")
-d.texte(t7, 64, 60, 250, "Carte", 24, gras=True)
-attente = d.cadre("Emplacement · carte", t7, M, 124, W - 2 * M, 680, fond=SURFACE, rayon=10,
-                  trait=TRAIT, pointille=True)
-d.texte(attente, 24, 300, W - 2 * M - 48,
-        "Carte terrain et ordre de tournée\nà dessiner en vague 6", 17, couleur=SECOND, align="center")
+# Le cadre de T7 naît ici pour que le bouton Carte y aboutisse ; vague6.py le remplit.
+t7 = ecran("T7 · 01 · Carte terrain")
 
 # --- Prototype -----------------------------------------------------------------
 # P2 : « Fait » → confirmation → enregistré (ou non envoyé).
@@ -372,7 +366,6 @@ d.selon_reseau(renvoyer, t1ok, t4)
 d.lien(annuler_ok, t1, "dissolve")
 for b in BOUTONS_CARTE:
     d.lien(b, t7)
-d.retour(t7_retour)
 d.cmd("proto.flow.add", start=t1, name="Vague 1 — terrain (P1 et P2)")
 d.cmd("proto.settings", device="Custom size", width=W, height=H)
 
@@ -389,7 +382,7 @@ note = d.noeud("text", x=-560, y=120, text=(
     "« Pas envoyé », et « Renvoyer » la fait partir.\n\n"
     "Carte : un bouton « Carte » dans l'en-tête, pas un glissé (invisible, en conflit avec le "
     "déplacement de la carte et le retour de Safari, exclu seul par WCAG 2.5.1 et 2.5.7). "
-    "T7 se dessine en vague 6 ; la liste en panneau à glisser sur la carte s'y étudiera.\n\n"
+    "T7 : vague 6.\n\n"
     "États sans prototype : rien à faire, premier jour, sans position, chargé.\n\n"
     "Données fictives."), name="Notes · vague 1", props={
         "width": 480, "textAutoResize": "height", "fontFamily": "Inter", "fontSize": 16,
