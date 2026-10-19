@@ -122,7 +122,7 @@ def ecran(nom: str, hauteur: int = H) -> int:
     return f
 
 
-def pastille_essai(f, x=246, y=52):
+def pastille_essai(f, x=246, y=6):
     """Outil d'essai, pas un élément de l'écran : bascule le réseau simulé."""
     p = d.cadre("Essai · réseau (outil, hors écran)", f, x - 12, y, 144, 32, fond=FOND, rayon=16,
                 trait=SECOND, pointille=True)
@@ -147,9 +147,14 @@ LIGNES = [  # zone, plante, intervention, état, en retard ?
 TYPES_RECENTS = ["Taille", "Tonte", "Traitement cuivre", "Arrosage", "Récolte", "Autre…"]
 
 
+BOUTONS_CARTE: list[int] = []
+
+
 def entete_aujourdhui(f, sous_titre):
     d.texte(f, M, 56, 230, "Aujourd'hui", 28, gras=True)
-    d.texte(f, M, 94, W - 2 * M, sous_titre, 16, couleur=SECOND)
+    d.texte(f, M, 94, 250, sous_titre, 16, couleur=SECOND)
+    # Accès à la carte terrain (T7) : un bouton, pas un glissé (décision du 19/10/2026).
+    BOUTONS_CARTE.append(d.bouton(f, W - M - 104, 60, 104, 48, "Carte"))
 
 
 def boite(nom, parent, sens, padding=0, gap=0, fond=None, trait_bas=False, **pos):
@@ -324,6 +329,15 @@ BEAUCOUP = [(z, f"{p} n°{i}", inter, "en retard de 2 jours" if i % 5 == 0 else 
 fait_charge: dict = {}
 liste_du_jour(charge, 130, BEAUCOUP, fait_charge)
 
+# T7 se dessine en vague 6 : ce cadre ne sert qu'à faire aboutir le bouton Carte.
+t7 = ecran("T7 · 00 · Carte terrain — à dessiner en vague 6")
+t7_retour = d.bouton(t7, 8, 52, 48, 48, "‹")
+d.texte(t7, 64, 60, 250, "Carte", 24, gras=True)
+attente = d.cadre("Emplacement · carte", t7, M, 124, W - 2 * M, 680, fond=SURFACE, rayon=10,
+                  trait=TRAIT, pointille=True)
+d.texte(attente, 24, 300, W - 2 * M - 48,
+        "Carte terrain et ordre de tournée\nà dessiner en vague 6", 17, couleur=SECOND, align="center")
+
 # --- Prototype -----------------------------------------------------------------
 # P2 : « Fait » → confirmation → enregistré (ou non envoyé).
 for b in list(fait_t1.values()) + list(fait_t1ok.values()) + list(fait_t4.values()):
@@ -349,6 +363,9 @@ d.selon_reseau(t3b_valider, t1ok, t4)
 d.selon_reseau(t3c_valider, t1ok, t4)
 d.selon_reseau(renvoyer, t1ok, t4)
 d.lien(annuler_ok, t1, "dissolve")
+for b in BOUTONS_CARTE:
+    d.lien(b, t7)
+d.retour(t7_retour)
 d.cmd("proto.flow.add", start=t1, name="Vague 1 — terrain (P1 et P2)")
 d.cmd("proto.settings", device="Custom size", width=W, height=H)
 
@@ -363,6 +380,9 @@ note = d.noeud("text", x=-560, y=120, text=(
     "RG-50 : la pastille en pointillés « Essai : réseau » est un outil d'essai, pas un élément "
     "de l'écran. Touchez-la pour couper le réseau simulé, puis validez : la saisie arrive en "
     "« Pas envoyé », et « Renvoyer » la fait partir.\n\n"
+    "Carte : un bouton « Carte » dans l'en-tête, pas un glissé (invisible, en conflit avec le "
+    "déplacement de la carte et le retour de Safari, exclu seul par WCAG 2.5.1 et 2.5.7). "
+    "T7 se dessine en vague 6 ; la liste en panneau à glisser sur la carte s'y étudiera.\n\n"
     "États sans prototype : rien à faire, premier jour, sans position, chargé.\n\n"
     "Données fictives."), name="Notes · vague 1", props={
         "width": 480, "textAutoResize": "height", "fontFamily": "Inter", "fontSize": 16,
