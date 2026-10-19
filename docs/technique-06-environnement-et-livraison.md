@@ -2,7 +2,7 @@
 
 Version 0.1 — 19/10/2026
 Suite de `technique-05-deploiement.md` (v0.2). Applique le CDC v0.12, §1.5 et §8.8.
-Décisions **C1 à C25**. Points ouverts à partir de **O16**.
+Décisions **C1 à C26**. Points ouverts à partir de **O16**.
 
 **Stack :** Laravel 12 + Inertia + React/TypeScript, PostgreSQL (chapitres 1 à 4).
 
@@ -480,9 +480,10 @@ par sujet.
    fusion.** Une décision nouvelle entre dans le tableau de décisions du
    document concerné, et dans le journal du §12 du CDC si elle touche le
    périmètre.
-8. **Une agronomie qui manque se signale, elle ne s'invente pas.** Un agent qui
-   a besoin d'une périodicité absente de la bibliothèque s'arrête et le dit
-   (protocole de bibliothèque, CDC annexe A).
+8. **Une agronomie qui manque se source, elle ne s'invente pas.** Un agent qui
+   a besoin d'une périodicité absente de la bibliothèque la cherche selon le
+   protocole de bibliothèque (B1–B4). Sans source vérifiable, l'espèce reste
+   hors de la liste de départ et c'est écrit ; l'agent continue (chapitre 7, §3).
 9. **Chaque commit porte les trailers `Agent:` et `Session:`**, pour retrouver
    d'où vient un changement.
 
@@ -506,17 +507,23 @@ casse Z » se conteste.
 > voir tourner. C'est ce que la demande de fusion doit lui donner sans qu'il
 > ouvre le diff.
 
-> **C24** — **La fusion est faite par Léon jusqu'à la V1.** Une fusion automatique
-> sur vérifications vertes et étiquette posée se rouvrira quand la suite aura
-> fait ses preuves : critères couverts, seuil de mutation stable, aucune
-> régression passée en recette pendant un temps à fixer (O17).
+> ~~**C24** — La fusion est faite par Léon jusqu'à la V1.~~ **Révisée le
+> 19/10/2026** : la fusion est **automatique quand la CI est verte**. Décision de
+> Léon : l'agent travaille sans interruption, sauf pour l'expérience
+> utilisateur (chapitre 7, §3). La production reste déclenchée par Léon seul
+> (C22) : aucun utilisateur n'est atteint sans son geste. O17 est levé.
+
+> **C26** — L'agent n'interrompt Léon que pour une question d'expérience
+> utilisateur ou un acte qui l'engage (dépôt public, secret, compte, dépense,
+> production). Chaque décision technique s'écrit dans
+> `docs/plan/decisions-agents.md`, avec ce qui a été écarté (chapitre 7, P2).
 
 ---
 
 ## 11. Le chantier 0 — amorcer le dépôt
 
 Ce qui doit exister avant la première ligne du moteur. Le reste du découpage est
-au chapitre 7.
+au chapitre 7 (`docs/plan/`).
 
 1. Créer le dépôt **public** (Q16), son ruleset (C2), la détection de secrets
    et le blocage à l'envoi (C25), **avant le premier commit**.
@@ -564,7 +571,8 @@ rien avant le premier déploiement.
 | C21 | La production reçoit l'archive testée en recette | Ne livrer que ce qu'on a vérifié |
 | C22 | La production ne part que sur le geste de Léon | CDC §8.8 |
 | C23 | La PR donne à Léon des comportements à relire | Il ne relit plus chaque ligne |
-| C24 | Fusion par Léon jusqu'à la V1 | La fusion automatique se mérite |
+| C24 | ~~Fusion par Léon jusqu'à la V1~~ — révisée : fusion automatique sur CI verte | L'agent travaille sans interruption ; la production reste à Léon |
+| C26 | L'agent n'interrompt Léon que pour l'UX ou un acte qui l'engage | Décision de Léon, chapitre 7 §3 |
 | C25 | Dépôt public au départ : ni secret ni donnée réelle, jamais ; détection de secrets active dès la création | Ce qui a été public le reste |
 
 ---
@@ -574,7 +582,7 @@ rien avant le premier déploiement.
 | # | Question | Quand |
 |---|---|---|
 | O16 | Seuil initial de mutations tuées | Au premier moteur complet — à mesurer, pas à supposer |
-| O17 | Conditions de passage à la fusion automatique (C24) | Après la livraison du MVP |
+| O17 | ~~Conditions de passage à la fusion automatique (C24)~~ | **Levé le 19/10/2026** : fusion automatique dès le départ (C24 révisée) |
 | O18 | Niveau PHPStan réellement tenable avec Larastan sur Laravel 12 | Au chantier 0 |
 | O19 | Fournisseur du tunnel ou du certificat pour le téléphone (E1, O13) | Au chantier 0, avant le premier écran terrain |
 | O20 | Disponibilité réelle de la détection de secrets gratuite sur le dépôt public | À la création du dépôt |
