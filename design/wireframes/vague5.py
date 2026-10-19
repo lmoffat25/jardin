@@ -164,31 +164,33 @@ def export(nom, pret=False):
                                   ("Types d'intervention", "29")]):
         d.texte(f, CX0, 182 + k * 32, 400, lib, 15)
         d.texte(f, CX0 + 420, 182 + k * 32, 120, n, 15, couleur=SECOND, align="right")
-    case(f, CX0, 392, True)
-    d.texte(f, CX0 + 32, 392, W2, "Avec les photos (412 photos, environ 1,2 Go)", 15)
-    d.texte(f, CX0, 444, W2, "Format", 15, gras=True)
+    case(f, CX0, 384, True)
+    d.texte(f, CX0 + 32, 384, W2, "Les 412 photos, en taille d'affichage (1 200 px) · 380 Mo", 15)
+    case(f, CX0, 416, False)
+    d.texte(f, CX0 + 32, 416, W2, "Avec les originaux, pour l'archive complète · 1,2 Go", 15)
+    d.texte(f, CX0, 456, W2, "Format", 15, gras=True)
     for k, (lib, sel) in enumerate([("JSON et CSV, dans une archive .zip", True),
                                     ("CSV seulement (un fichier par table)", False)]):
-        r = d.cadre(f"Format · {lib}", f, CX0, 472 + k * 52, W2, 44, fond=FOND, rayon=8,
+        r = d.cadre(f"Format · {lib}", f, CX0, 484 + k * 52, W2, 44, fond=FOND, rayon=8,
                     trait=FORT if sel else TRAIT)
         d.cadre("Radio", r, 14, 12, 20, 20, fond=FORT if sel else FOND, rayon=10, trait=FORT)
         d.texte(r, 46, 12, W2 - 60, lib, 15, gras=sel)
     if not pret:
-        go = d.bouton(f, CX0, 600, 300, 56, "Préparer l'export", principal=True)
-        d.texte(f, CX0, 670, W2, "La préparation prend quelques minutes avec les photos. Vous "
+        go = d.bouton(f, CX0, 612, 300, 56, "Préparer l'export", principal=True)
+        d.texte(f, CX0, 682, W2, "La préparation prend quelques minutes avec les photos. Vous "
                 "pouvez quitter la page : le lien sera ici.", 13, couleur=SECOND)
     else:
         go = None
-        z = d.cadre("Export prêt", f, CX0, 600, W2, 132, fond=SURFACE, rayon=10, trait=FORT)
-        d.texte(z, 20, 16, W2 - 40, "✓ Export prêt · le-clos-2026-10-21.zip · 1,2 Go", 16,
+        z = d.cadre("Export prêt", f, CX0, 612, W2, 132, fond=SURFACE, rayon=10, trait=FORT)
+        d.texte(z, 20, 16, W2 - 40, "✓ Export prêt · le-clos-2026-10-21.zip · 380 Mo", 16,
                 gras=True)
         d.texte(z, 20, 42, W2 - 40, "Contient un fichier LISEZMOI qui décrit chaque colonne. "
                 "Lien valable 7 jours.", 13, couleur=SECOND)
         d.bouton(z, 20, 72, 200, 48, "Télécharger", principal=True)
     XH = CX0 + W2 + 64
     d.texte(f, XH, 150, CW - W2 - 64, "Derniers exports", 15, gras=True)
-    for k, (q, s) in enumerate([("21/10/2026", "avec photos · 1,2 Go")] * pret
-                               + [("01/09/2026", "avec photos · 1,1 Go"),
+    for k, (q, s) in enumerate([("21/10/2026", "photos 1 200 px · 380 Mo")] * pret
+                               + [("01/09/2026", "avec les originaux · 1,1 Go"),
                                   ("02/05/2026", "sans photos · 3 Mo")]):
         d.texte(f, XH, 182 + k * 48, 200, q, 15, gras=True)
         d.texte(f, XH, 204 + k * 48, 300, s, 13, couleur=SECOND)
@@ -222,7 +224,8 @@ d.noeud("text", x=-680, y=3000, text=(
     "court en grand fait foi ; le QR (lot 4, en V1) ouvre la fiche.\n\n"
     "B11 · Catalogue : fourni + ajouté (RG-03). Un type utilisé se masque, ne se supprime pas. "
     "Un doublon probable est signalé, pas interdit.\n\n"
-    "B12 · Export : JSON + CSV, photos comprises, avec un LISEZMOI (§8.1, RG-11)."),
+    "B12 · Export : JSON + CSV avec un LISEZMOI (§8.1, RG-11). Photos en 1 200 px par défaut, "
+    "originaux sur demande (Q-UX-5, recommandation)."),
     name="Notes · vague 5", props={
         "width": 560, "textAutoResize": "height", "fontFamily": "Inter", "fontSize": 16,
         "fills": [TEXTE]})
