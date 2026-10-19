@@ -38,6 +38,16 @@ n'existe pas encore, et le fichier est conçu pour l'attendre (§2).
 > gestes de P1 (3 au plus) et le temps (moins de 15 s) se mesurent sur le
 > prototype.
 
+**Le prototype des wireframes.** Les wireframes de chaque vague sont reliés en
+un prototype cliquable, avant toute ligne de code : un **parcours de
+prototype** par parcours du CDC (P1, P2…), qui démarre sur son premier écran.
+Les liens portent les vrais gestes : appui sur « fait », retour, fenêtre de
+confirmation en superposition. Les états qui dépendent d'une condition (saisie
+enregistrée ou **non envoyée**, RG-50) se jouent avec une variable du
+prototype, pour qu'on puisse essayer les deux branches. Le but est de sentir le
+parcours, pas de simuler l'application : pas de fausses données qui changent,
+pas de logique au-delà de ce qui sert à essayer un geste.
+
 Les wireframes sont des **cadres simples**, sans composants : ils servent à
 décider puis sont archivés. Les reconstruire en interface coûte moins que de
 porter dès le départ des composants qui changeront à chaque retour.
@@ -304,5 +314,6 @@ posent au plus tôt après la V1.
 |---|---|---|
 | O22 | Le contrôle M6 se fait-il avec `figcraft-cli` (lecture des liaisons de variables du fichier) ? | Au premier composant |
 | O23 | `figcraft-cli` sait-il exporter les variables en un format lisible par un script, pour les transcrire dans le code ? | Avant le premier composant React |
-| O24 | Construire les écrans par la ligne de commande ou par le serveur MCP de FigCraft : lequel tient le mieux ? | Au premier wireframe |
+| O24 | Construire les écrans par la ligne de commande ou par le serveur MCP de FigCraft : lequel tient le mieux ? **En partie levé le 19/10/2026** : `figcraft-cli run` construit des cadres, des textes et des liens de prototype (essai à deux écrans, lien enregistré dans le fichier). Les identifiants rendus sont des entiers attribués dans l'ordre de création ; un script ne peut pas citer le résultat d'une étape précédente, il faut donc générer les scripts | Au premier wireframe |
+| O26 | Le prototype se joue-t-il sur le téléphone par la version web de FigCraft (serveur FigCraft) ? À défaut : une page générée depuis le fichier (images exportées et zones cliquables lues dans ses liens) | Au premier essai sur le téléphone |
 | O25 | Jeu d'icônes : licence de Lucide pour un usage commercial, à vérifier | Avant l'étape 2 |
