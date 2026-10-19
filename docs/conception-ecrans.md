@@ -180,7 +180,7 @@ du dépôt (C4, RG-28).
 | T4 | Saisie enregistrée, ou **non envoyée** (RG-50) | Terrain | P1, P2 | 0 |
 | T5 | Fiche plante, avec photo | Terrain | P6 | 0 |
 | T6 | Lecture d'un QR | Terrain | Étiquettes scannables | 4 |
-| T7 | Carte terrain et ordre de tournée. On y entre par un **bouton « Carte »** dans l'en-tête de T1, pas par un glissé (19/10/2026) ; une liste en panneau à glisser sur la carte s'étudiera en vague 6 | Terrain | Carte | 4 |
+| T7 | Carte terrain et ordre de tournée. On y entre par un **bouton « Carte »** dans l'en-tête de T1, pas par un glissé (19/10/2026) ; la tournée est un panneau fixe sous la carte, sans glissé (vague 6, Q-UX-10) | Terrain | Carte | 4 |
 | B1 | Connexion | Bureau | Socle | 0 |
 | B2 | Mise en route : jardin, profil climatique | Bureau | P0 | 0 |
 | B3 | Inventaire rapide : zones, puis plantes (saisie en ligne, duplication, collage) | Bureau | P0 | 0 |

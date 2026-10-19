@@ -23,6 +23,10 @@ que la réponse arrive avant le sprint.
 - [Q-UX-7 — Une règle que l'utilisateur a écrite lui-même](#q-ux-7--une-règle-que-lutilisateur-a-écrite-lui-même)
 - [Q-UX-8 — Au-delà de combien d'échéances on groupe](#q-ux-8--au-delà-de-combien-déchéances-on-groupe)
 - [Q-UX-9 — Ce qui est « urgent »](#q-ux-9--ce-qui-est--urgent-)
+- [Q-UX-10 — La tournée sur la carte terrain](#q-ux-10--la-tournée-sur-la-carte-terrain)
+- [Q-UX-11 — Une intervention saisie après coup](#q-ux-11--une-intervention-saisie-après-coup)
+- [Q-UX-12 — Mot de passe oublié](#q-ux-12--mot-de-passe-oublié)
+- [Q-UX-13 — Supprimer un type d'intervention déjà utilisé](#q-ux-13--supprimer-un-type-dintervention-déjà-utilisé)
 
 ---
 
@@ -165,4 +169,63 @@ approche. À combien de jours de la fin ?
 
 **Ce qui attend :** rien ne bloque. Le sprint 3b construit avec 15 (décision
 D-18, provisoire) ; une autre réponse deviendra un sprint de correction.
+**Réponse :**
+
+## Q-UX-10 — La tournée sur la carte terrain
+
+**Question :** sur la carte du téléphone, la liste de la tournée est-elle un
+panneau fixe sous la carte, ou un tiroir qu'on remonte d'un glissé ?
+**Concerne :** T7 (wireframes, vague 6).
+**Options :**
+1. **Recommandé, dessiné — panneau fixe** sous la carte, avec un bouton
+   « Modifier l'ordre » : aucun geste caché, cible de 48 px, même logique que
+   le bouton « Carte » de T1 (décision de Léon du 19/10/2026).
+2. Un tiroir à glisser vers le haut : plus de carte visible, mais un geste à
+   découvrir et difficile avec des gants.
+
+**Ce qui attend :** rien ne bloque ; la maquette porte l'option 1.
+**Réponse :**
+
+## Q-UX-11 — Une intervention saisie après coup
+
+**Question :** une taille faite en février et saisie en avril, alors que
+l'échéance a été consignée « manquée » entre-temps : que devient l'échéance ?
+**Concerne :** B8 (saisie au bureau), historique de B6.
+**Options :**
+1. **Recommandé, dessiné — elle devient « soldée »** à la date réelle de
+   l'intervention : l'historique dit ce qui a été fait, et la suivante se
+   calcule depuis cette date.
+2. Elle reste « manquée », l'intervention s'ajoute à côté : l'historique garde
+   la trace du retard de saisie, mais affirme une chose fausse.
+
+**Ce qui attend :** rien ne bloque ; la maquette porte l'option 1 (B8 · 03).
+**Réponse :**
+
+## Q-UX-12 — Mot de passe oublié
+
+**Question :** l'écran de connexion propose-t-il « mot de passe oublié » en V1 ?
+**Concerne :** B1 (vague 5).
+**Options :**
+1. **Recommandé, dessiné — non en V1** : les comptes sont créés à la main pour
+   le jardin pilote ; un mot de passe perdu se réinitialise par l'administrateur.
+2. Oui, par un lien envoyé par mail : il faut alors un envoi de mail fiable
+   dès la V1, à installer et à surveiller.
+
+**Ce qui attend :** rien ne bloque. L'option 2 devient nécessaire avant toute
+ouverture à des clients.
+**Réponse :**
+
+## Q-UX-13 — Supprimer un type d'intervention déjà utilisé
+
+**Question :** un type d'intervention qui figure dans l'historique peut-il être
+supprimé du catalogue ?
+**Concerne :** B11 (vague 5).
+**Options :**
+1. **Recommandé, dessiné — il est masqué, pas supprimé** : il disparaît des
+   listes de saisie, l'historique continue de l'afficher.
+2. Suppression interdite tant qu'il est utilisé.
+3. Suppression avec remplacement par un autre type dans tout l'historique.
+
+**Ce qui attend :** rien ne bloque ; cohérent avec le filtre `TypesVisibles`
+(D-55).
 **Réponse :**
