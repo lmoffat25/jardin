@@ -12,5 +12,6 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))  # -I retire ce dossier
 
 import vague1  # noqa: E402  (socle, pages, vague 1)
 import vague2  # noqa: E402,F401
+import vague3  # noqa: E402,F401
 
 sys.exit(vague1.main())

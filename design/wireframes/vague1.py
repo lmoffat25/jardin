@@ -180,6 +180,9 @@ def texte_flux(parent, s, taille=16, gras=False, couleur=TEXTE):
         "fontStyle": "Bold" if gras else "Regular", "fontSize": taille, "fills": [couleur]})
 
 
+RANGS_ECHEANCE: list[int] = []   # chaque ligne ouvre la fiche plante (T5, vague 3)
+
+
 def liste_du_jour(f, y, lignes, boutons_fait: dict):
     liste = boite("Liste du jour", f, "vertical", x=0, y=y, width=W)
     zone = None
@@ -196,6 +199,7 @@ def liste_du_jour(f, y, lignes, boutons_fait: dict):
         texte_flux(col, f"{inter} · {marque}{etat}", 15, gras=retard,
                    couleur=TEXTE if retard else SECOND)
         boutons_fait[plante] = d.bouton(ligne, 0, 0, 88, 48, "Fait")
+        RANGS_ECHEANCE.append(ligne)
     return liste
 
 
