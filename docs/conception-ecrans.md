@@ -23,6 +23,15 @@ n'existe pas encore, et le fichier est conçu pour l'attendre (§2).
 
 ## 1. Deux étapes, et un arrêt entre les deux
 
+> **Révision du 19/10/2026 (décision de Léon).** L'arrêt entre les deux
+> étapes n'est plus une porte : les vagues s'enchaînent sans attendre la
+> validation, et Léon revoit les wireframes et l'interface après coup. Ce qui
+> est écrit ci-dessous sur la « validation » se lit désormais comme une
+> **revue** : elle produit des demandes de correction, elle ne bloque rien.
+> Un écran se développe sur sa maquette telle qu'elle est (M12), et une
+> remarque ultérieure de Léon devient un sprint de correction. Les choix d'UX
+> faits par défaut sont inscrits au registre `docs/plan/questions-ux.md`.
+
 | Étape | Ce qu'on décide | Ce qu'on s'interdit |
 |---|---|---|
 | **1. Wireframes** | Les parcours : quels écrans, dans quel ordre, combien de gestes, quelle information à quel endroit, quels états | Couleur, police définitive, illustration, finition. Tout est en gris |
@@ -197,8 +206,8 @@ du dépôt (C4, RG-28).
 | 5 | B1, B10, B11, B12 | Écrans simples, peu de décisions |
 | 6 | B13, T7, T6 | La carte, construite après le cœur (CDC §6) |
 
-Les wireframes sont validés par vague. L'interface commence quand les vagues 1
-et 2 sont validées : ce sont elles qui fixent les composants principaux.
+Les wireframes se revoient par vague. L'interface commence quand les vagues 1
+et 2 sont dessinées : ce sont elles qui fixent les composants principaux.
 
 > **M8** — Chaque écran est dessiné dans **ses états**, pas seulement dans son
 > état heureux : **vide** (premier jour), **normal**, **chargé** (150 plantes,
@@ -282,7 +291,8 @@ Tableau (en-tête, ligne), Filtre, Icône.
 > **signale** dans la demande de fusion ; il ne s'improvise pas. C'est la même
 > règle que pour l'attendu d'un test (RG-49).
 
-> **M12** — Un écran sans maquette validée ne se développe pas, sauf les
+> **M12** — Un écran sans maquette ne se développe pas (depuis le 19/10/2026 :
+> une maquette dessinée suffit, la revue de Léon vient après), sauf les
 > écrans d'administration technique, qui n'existent pas en V1.
 
 **Écarté :** les tests de régression visuelle par comparaison d'images. Ils
