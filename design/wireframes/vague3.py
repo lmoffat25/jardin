@@ -19,7 +19,7 @@ LIENS_NAV: list[tuple[int, str]] = []       # (bouton, destination) à relier en
 
 def coquille(f, actif: str):
     """Navigation du bureau. Le jardin courant est en tête, toujours (RG-43)."""
-    nav = d.cadre("Navigation", f, 0, 0, NAV, BH, fond=SURFACE)
+    nav = d.cadre("Navigation", f, 0, 0, NAV, 1400, fond=SURFACE)   # rognée par l'écran
     logo = d.cadre("Marque/Logo (provisoire)", nav, 24, 20, 112, 32, rayon=6, trait=TRAIT,
                    pointille=True)
     d.texte(logo, 0, 7, 112, "Logo", 13, couleur=SECOND, align="center")

@@ -14,5 +14,6 @@ import vague1  # noqa: E402  (socle, pages, vague 1)
 import vague2  # noqa: E402,F401
 import vague3  # noqa: E402,F401
 import vague4  # noqa: E402,F401
+import vague5  # noqa: E402,F401
 
 sys.exit(vague1.main())
