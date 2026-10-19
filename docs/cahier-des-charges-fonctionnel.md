@@ -1,6 +1,6 @@
 # Cahier des charges fonctionnel — Service de gestion de jardin
 
-Version 0.12 — 19/10/2026 — Léon Moffat
+Version 0.13 — 19/10/2026 — Léon Moffat
 Statut : proposition de conception, à valider avant travaux techniques.
 
 **Changement de la 0.12.** Le produit est réalisé par des agents IA, sous le
@@ -9,6 +9,12 @@ par le seul coût de développement ont été repassés un par un (§12). Le pla
 terrain entre dans un jalon **V1** (§6). Le projet porte désormais sa propre
 conception de l'environnement de code, des tests et de la livraison continue
 (§8.8, chapitre technique 6).
+
+**Changement de la 0.13.** Le hors-ligne est **suspendu pour la V1** (RG-01,
+remplacée en V1 par RG-50) : c'était la principale source de complexité du
+projet. Le produit est conçu pour être **commercialisé**, et la mesure de la
+complexité est posée en §1.5 : ni surcomplication, ni simplification de façade.
+La conception des écrans a son propre document (`conception-ecrans.md`).
 
 **Comment lire ce document.** Il est long parce qu'il porte les raisons, pas
 seulement les décisions. Pour en prendre l'état rapidement :
@@ -97,8 +103,9 @@ Hors périmètre, explicitement, pour éviter la dérive :
 
 **Application web**, accessible au navigateur depuis l'ordinateur et depuis le
 téléphone, sans installation depuis un magasin d'applications. Le contexte
-terrain (§2.2) impose qu'elle soit installable et utilisable hors ligne, ce que
-les technologies web permettent aujourd'hui sans application native.
+terrain (§2.2) demande qu'elle s'ajoute à l'écran d'accueil du téléphone, ce
+que les technologies web permettent sans application native. Le fonctionnement
+hors ligne est suspendu pour la V1 (RG-01, §8.2).
 
 Contrainte d'hébergement, actée : le service doit tourner sur un **serveur
 Linux ordinaire**, sans service managé propriétaire ni base de données
@@ -122,6 +129,9 @@ Ce changement déplace le coût du projet. Il ne le supprime pas :
   l'air juste. Sans tests qui échouent quand le comportement est faux, rien ne
   distingue ce code d'un code correct. Chaque fonction ajoutée au périmètre
   ajoute donc des tests à écrire et des comportements à relire.
+- **Ce qui reste coûteux, c'est la complexité.** Un code plus compliqué que
+  son besoin coûte à chaque vérification, à chaque évolution et à chaque agent
+  qui doit le comprendre avant d'y toucher.
 - **Les raisons qui n'étaient pas techniques restent entières.** Un agent ne
   source pas une périodicité agronomique à la place d'une source, ne demande pas
   moins de saisie à l'utilisateur, et ne supprime pas une dépendance externe.
@@ -131,6 +141,21 @@ Ce changement déplace le coût du projet. Il ne le supprime pas :
 > ou contrôle exécuté en intégration continue. Une fonction qu'on ne sait
 > vérifier qu'à l'œil attend que ce test soit écrit. C'est la contrepartie d'un
 > code qu'on n'écrit plus soi-même.
+
+**La mesure de la complexité.** Le produit est destiné à être **commercialisé** :
+il se conçoit comme un logiciel professionnel, pas comme un outil personnel.
+Un mécanisme entre dans la conception s'il répond à l'une de ces deux
+questions :
+
+1. **Sert-il un besoin du produit maintenant**, ou dans un lot déjà prévu au §6 ?
+2. **Serait-il coûteux ou impossible à ajouter plus tard ?** Le cloisonnement
+   entre jardins, le versionnement des règles, les identifiants, les tests et
+   la chaîne de livraison sont dans ce cas : ils se posent dès le premier jour.
+
+Ce qui ne répond à aucune des deux attend son besoin, même si c'est une bonne
+pratique ailleurs. Et ce qui répond à l'une des deux reste, même si c'est
+long : simplifier un mécanisme nécessaire ne rend pas le produit plus simple,
+seulement plus fragile.
 
 ---
 
@@ -176,12 +201,21 @@ au fond du terrain. Sessions très courtes, très fréquentes.
 - Noter une observation libre (« cochenilles sur le prunier »).
 
 Exigences : cible tactile large, saisie par défaut intelligente (date = maintenant,
-plante = la dernière consultée ou la plus proche), **fonctionnement sans réseau**,
-aucun formulaire à plus de 4 champs obligatoires.
+plante = la dernière consultée ou la plus proche), **aucune saisie perdue quand
+le réseau manque** (RG-50), aucun formulaire à plus de 4 champs obligatoires.
 
 > **RG-01** — Toute action réalisable sur le terrain doit être réalisable hors
 > ligne et se synchroniser au retour du réseau, sans intervention de
 > l'utilisateur et sans perte.
+>
+> *Suspendue pour la V1 le 19/10/2026 (§12).* La conception qui la met en
+> œuvre (chapitre technique 1) est conservée pour une reprise après la V1, si
+> l'usage montre que la protection de RG-50 ne suffit pas.
+
+> **RG-50** — En V1, une saisie terrain qui ne part pas faute de réseau **n'est
+> jamais perdue en silence** : elle reste affichée comme non envoyée, se renvoie
+> d'un geste, et son renvoi ne crée jamais de doublon. L'utilisateur sait
+> toujours si ce qu'il vient de saisir est enregistré.
 
 ---
 
@@ -993,8 +1027,8 @@ et laisse le reste au lot « Ouverture ».
 - **Tableau de bord** : « à faire aujourd'hui / cette semaine / ce mois »,
   groupé par zone, avec l'explication de chaque échéance.
 - **Historique** par plante et par zone, filtrable, avec les échéances manquées.
-- **Vue terrain** mobile : liste du jour, action « fait » en un geste,
-  fonctionnement hors ligne.
+- **Vue terrain** mobile : liste du jour, action « fait » en un geste, saisie
+  protégée quand le réseau manque (RG-50).
 - **Mise en route guidée** : le parcours P0, qui amène un nouvel utilisateur de
   l'inscription à un inventaire exploitable sans le décourager.
 
@@ -1140,10 +1174,8 @@ le code court continuent d'identifier une plante (RG-13), la carte la situe.
   explication que le tableau de bord (RG-06). Un appui sur une plante ouvre sa
   fiche et permet l'action « fait ».
 - **Carte sur le terrain** : position du téléphone sur la carte, et plantes dues
-  autour de soi. Fonctionne **hors ligne** pour le périmètre du jardin : le fond
-  et les géométries du jardin courant sont mis en cache sur le téléphone. Un
-  jardin couvre quelques hectares au plus, ce qui représente un volume de tuiles
-  modeste.
+  autour de soi. Elle demande le réseau, comme le reste de la V1 ; la mise en
+  cache du fond sur le téléphone suivra le hors-ligne (RG-01).
 - **Ordre de tournée** : les échéances du jour ordonnées pour un parcours court.
   L'ordre proposé est une suggestion modifiable, jamais une contrainte. À
   500 plantes, une heuristique simple (plus proche voisin depuis la position de
@@ -1252,8 +1284,17 @@ l'échéance se recalcule immédiatement, la modification est datée.
 
 ### 8.2 Terrain / hors ligne
 
-- Application web installable (PWA), fonctionnant sans réseau pour la
-  consultation de la liste du jour et l'enregistrement d'interventions.
+**En V1 :**
+
+- Application web qui s'ajoute à l'écran d'accueil du téléphone, sans magasin
+  d'applications.
+- Le terrain demande le réseau. Une saisie qui ne part pas reste affichée et se
+  renvoie d'un geste, sans doublon (RG-50).
+
+**Suspendu, à reprendre après la V1 si l'usage le demande (RG-01) :**
+
+- Fonctionnement sans réseau pour la liste du jour et l'enregistrement
+  d'interventions.
 - Synchronisation automatique au retour du réseau, avec état visible
   (« 3 saisies en attente »).
 - Résolution de conflit : en usage mono-utilisateur, la dernière écriture
@@ -1460,7 +1501,7 @@ Points d'attention structurants pour la technique :
 
 5 bis. **Identité d'une échéance non matérialisée** : la plupart des échéances
    n'existent jamais en base (point 1). Elles doivent pourtant être désignables —
-   par la vue terrain hors ligne, qui les affiche et les solde. Leur identité est
+   par la vue terrain, qui les affiche et les solde. Leur identité est
    le couple **(règle, date due)**, déterministe et reproductible d'un calcul à
    l'autre, jamais un identifiant tiré au hasard à la génération.
 
@@ -1499,8 +1540,9 @@ celles du §10.2 :
 
 1. Je peux saisir 150 plantes réparties en 6 zones en moins d'une heure, en
    m'appuyant sur la duplication et l'import en lot.
-2. Depuis le téléphone, hors réseau, j'enregistre « taille du pommier du fond »
-   en moins de 15 secondes et 3 gestes ; la saisie remonte au retour du réseau.
+2. Depuis le téléphone, j'enregistre « taille du pommier du fond » en moins de
+   15 secondes et 3 gestes. Si le réseau manque à l'envoi, la saisie reste
+   affichée comme non envoyée, et son renvoi crée une seule intervention (RG-50).
 3. Le tableau de bord affiche, à toute date, la liste des interventions dues,
    groupées par zone, chacune avec une phrase d'explication de son échéance.
 4. Une taille de haie n'est jamais proposée entre le 1ᵉʳ avril et le 31 juillet,
@@ -1553,8 +1595,8 @@ sont aussi :
     (RG-48).
 18. Je trace une haie en ligne et une pelouse en polygone. Les deux reçoivent
     leurs échéances comme n'importe quelle plante.
-19. Sur le terrain, hors réseau, la carte du jardin s'affiche avec son fond, ma
-    position et les plantes dues aujourd'hui.
+19. Sur le terrain, la carte du jardin s'affiche avec son fond, ma position et
+    les plantes dues aujourd'hui.
 20. Le service d'orthophotographie est coupé : la carte s'affiche sur l'image
     calée ou sur un fond neutre, et aucune échéance, aucune saisie ni aucun
     ordre de tournée n'est affecté (RG-47).
@@ -1644,6 +1686,9 @@ Décisions actées, pour ne pas les rouvrir sans raison nouvelle.
 | 19/10/2026 | **NFC hors V1**, QR en V1 | La lecture NFC depuis le navigateur n'existe que sur une partie des téléphones ; le QR couvre le même besoin partout | §6 lot 4 |
 | 19/10/2026 | **Le projet porte la conception de son environnement de code** : dépôt, outillage, tests, intégration et livraison continues. Mise en production déclenchée par Léon seul | Un agent qui ne trouve pas la règle dans le dépôt l'invente ; une production sans geste humain n'a plus de relecteur | §8.8, RG-49, chapitre 6 |
 | 19/10/2026 | **Chaque critère d'acceptation a un test qui porte son numéro** | C'est ce qui rend vérifiable un code qu'on n'a pas écrit | §10, RG-46 |
+| 19/10/2026 | **Le produit est conçu pour être commercialisé ; la complexité se mesure à deux questions** : besoin actuel ou prévu, coût d'un ajout tardif | Décision de Léon : un projet professionnel, ni surcompliqué ni simplifié pour la forme. Une revue du dossier sur ce critère ne retire que le hors-ligne ; le reste répond à l'une des deux questions | §1.5 |
+| 19/10/2026 | **Hors-ligne suspendu pour la V1** (RG-01) ; RG-50 protège la saisie quand le réseau manque | Proposé par Léon. Il faisait exister à lui seul la file d'attente, le paquet terrain, les formats versionnés, un second bundle et une API dédiée, et le cache des tuiles avec la carte. Il s'ajoutera après la V1 sans rien casser : les identifiants sont déjà générés côté client (D2) | RG-01, RG-50, §8.2, critères 2 et 19, chapitres techniques 1, 3, 5 |
+| 19/10/2026 | **Les écrans se conçoivent dans FigCraft, en deux étapes** : wireframes validés par Léon, puis interface. Le fichier est construit pour qu'une marque future s'applique en un seul endroit | Décision de Léon : pas encore de marque, et la refonte de marque ne doit pas obliger à reprendre chaque écran | `conception-ecrans.md` |
 
 ---
 

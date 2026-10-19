@@ -19,6 +19,12 @@ au chapitre 7, à écrire.
 > Comme aux chapitres 2 à 4, les extraits sont des **esquisses** qui montrent la
 > forme. Rien n'a encore été exécuté : le dépôt n'existe pas.
 
+> **Hors-ligne suspendu pour la V1 — 19/10/2026** (CDC v0.13). Ce qui touche
+> le service worker, la file d'attente et l'API terrain dans ce chapitre
+> (§6 Vitest, déclencheurs du job `e2e`, version du service worker en recette)
+> attend la reprise. En V1, le job `e2e` se déclenche sur les pages terrain et
+> la carte.
+
 ---
 
 ## 1. Le principe : vérifier coûte plus cher qu'écrire

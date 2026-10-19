@@ -356,6 +356,15 @@ Huit ajouts, six nouveaux dossiers, presque aucune modification ailleurs.
 
 ## 3. Le front
 
+> **V1 sans hors-ligne — 19/10/2026** (CDC v0.13). Il n'y a en V1 **qu'un
+> seul bundle Inertia**. Les écrans terrain sont des pages Inertia pensées pour
+> le téléphone (`pages/Terrain/…`), avec la variante `terrain` des composants
+> (A23, inchangée). `apps/terrain/` avec `stockage/`, `file/`, `paquet/` et le
+> service worker, comme le module back `Terrain/` (`Paquet/`, `Mutations/`), ne
+> sont pas construits : ils reviendront avec le hors-ligne. A13 et A22 sont
+> suspendues ; A21 reste, parce que l'empreinte dans le nom de fichier sert
+> aussi le cache HTTP ordinaire.
+
 Le front suit la même logique, avec une différence imposée par la technique :
 **bureau et terrain sont deux bundles distincts**.
 
@@ -1068,7 +1077,7 @@ plein.
 | A10 | `Historique` est un objet interrogeable dès le MVP | R3 et R4 en auront besoin |
 | A11 | `JardinCourant` est explicite et lève une exception s'il est absent | Un `null` silencieux désactive D1 |
 | A12 | Les modules reprennent les cinq blocs du modèle de données, plus `Terrain` et `Support` | Découpage antérieur au code, donc stable |
-| A13 | Bureau et terrain sont **deux bundles distincts** | Le cache du service worker ne doit pas porter le code bureau |
+| A13 | Bureau et terrain sont **deux bundles distincts** — *suspendue en V1 (un seul bundle, §3)* | Le cache du service worker ne doit pas porter le code bureau |
 | A14 | Un module = des concepts métier, jamais une technologie | Empêche les modules `QRCode`, `Export`, `Notifications` |
 | A15 | Laravel standard à l'intérieur des modules ; **une seule frontière stricte**, le moteur | Maintenabilité en solo |
 | A16 | Chaque module déclare ses propres routes | Ajouter une fonctionnalité ne modifie aucun fichier existant |
@@ -1077,7 +1086,7 @@ plein.
 | A19 | Les dérivées d'images sont générées en file d'attente | Le redimensionnement bloquerait la saisie à trois gestes |
 | A20 | Un job porte son `jardin_id` et repositionne `JardinCourant` | Un job n'a ni session ni jardin courant (A11) |
 | A21 | Le nom de fichier d'une image contient une empreinte du contenu | Permet un cache définitif côté service worker, sans invalidation |
-| A22 | Une mutation en échec définitif remonte son contexte au rejeu suivant | Un bug de synchronisation est sinon indiagnosticable |
+| A22 | Une mutation en échec définitif remonte son contexte au rejeu suivant — *suspendue en V1* | Un bug de synchronisation est sinon indiagnosticable |
 | A23 | Les contraintes terrain (48 px, contraste) sont portées par les composants | Une règle appliquée à la main est oubliée un jour |
 | A24 | Une règle R1 hors saison **reporte** son échéance, elle n'en supprime jamais | Une règle qui cesse de produire ne redémarre jamais (RG-40) |
 | A25 | Le **rognage aux butoirs** fait partie de la projection d'une fenêtre | RG-37 et RG-25 sont justes séparément et franchissent l'interdit ensemble |

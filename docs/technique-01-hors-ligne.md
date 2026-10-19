@@ -11,6 +11,18 @@ chapitre porte les décisions **H1 à H11**.
 d'écritures et cache de la liste du jour. Pas de réplique locale complète, pas de
 moteur de règles côté client.
 
+> **Chapitre suspendu pour la V1 — 19/10/2026** (CDC v0.13, RG-01 suspendue,
+> §12). Il n'est pas implémenté en V1 et il est conservé pour la reprise du
+> hors-ligne. En V1, le terrain est fait de pages Inertia ordinaires qui
+> demandent le réseau ; RG-50 protège la saisie quand il manque.
+>
+> **Restent en vigueur en V1**, parce qu'elles ne dépendent pas du hors-ligne :
+> **H5** (l'identifiant généré par le client rend le renvoi d'une saisie
+> idempotent, ce qu'exige RG-50), **H9** (une intervention n'est jamais refusée
+> pour raison métier), **H10** (l'intervention et sa photo partent séparément :
+> la photo ne bloque jamais le fait) et **H11** (une échéance est désignée par
+> `(regle_id, due_le)`). Les autres décisions attendent la reprise.
+
 ---
 
 ## 1. Ce que le hors-ligne doit permettre

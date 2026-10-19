@@ -37,6 +37,9 @@ faiblit, ni la prise de photo, ni les gants.
 > certificat local dont l'autorité est installée sur le téléphone, ou un tunnel
 > qui expose le poste en HTTPS public.
 >
+> **Toujours nécessaire en V1, sans hors-ligne :** la géolocalisation et
+> l'accès à la caméra pour lire un QR demandent eux aussi un contexte sécurisé.
+>
 > *Non vérifié à ce jour :* `ddev` sait générer des certificats locaux et propose
 > une commande de partage par tunnel. Laquelle des deux voies est la moins
 > pénible reste à tester sur ce poste avant de s'y engager.
@@ -89,6 +92,13 @@ version ancienne — avec, dans sa file d'attente, des mutations **au format de
 cette version**. Si le format a changé entre-temps, elles sont rejetées à la
 première remontée. Et H6 dit que la file **s'arrête à la première erreur
 bloquante** : une seule mutation obsolète gèle tout ce qui la suit.
+
+> **Suspendu pour la V1 — 19/10/2026** (CDC v0.13). Sans file d'attente sur
+> le téléphone, il n'y a pas de mutation qui vieillisse : E5 à E8 et la mise à
+> jour du service worker reviennent avec le hors-ligne. E9 aussi : en V1, une
+> saisie faite pendant la maintenance tombe dans le cas de RG-50 (non envoyée,
+> renvoyée d'un geste). **E5 reste la première chose à écrire le jour de la
+> reprise**, avant toute mutation.
 
 ### Ce qu'il faut décider maintenant
 

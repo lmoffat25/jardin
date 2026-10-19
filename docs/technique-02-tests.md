@@ -3,6 +3,14 @@
 Version 0.2 — 24/08/2026
 Suite de `technique-01-hors-ligne.md` (v0.2). Décisions **TS-1 à TS-9**.
 
+> **Hors-ligne suspendu pour la V1 — 19/10/2026** (CDC v0.13). Les tests qui
+> exercent la file d'attente, le paquet terrain, le service worker et le
+> format 426 attendent la reprise du chapitre 1. Le test n°10 (« saisir hors
+> ligne, revenir en ligne ») est remplacé en V1 par le critère 2 : envoi
+> coupé par Playwright (`context.setOffline(true)` au moment de valider),
+> saisie toujours affichée comme non envoyée, renvoi, **une seule**
+> intervention en base. Le test n°3 (idempotence, H5) reste.
+
 **Ce chapitre vient avant l'architecture applicative, délibérément.** Savoir
 comment on testera le moteur de règles change la façon dont on l'écrit : un
 moteur couplé à la base de données ne se teste qu'en montant une base, et
