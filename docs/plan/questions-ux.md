@@ -33,6 +33,7 @@ que la réponse arrive avant le sprint.
 - [Q-UX-17 — Trop d'essais de connexion](#q-ux-17--trop-dessais-de-connexion)
 - [Q-UX-20 — Ce que « cette semaine » et « ce mois » veulent dire](#q-ux-20--ce-que--cette-semaine--et--ce-mois--veulent-dire)
 - [Q-UX-21 — La période optimale d'une fenêtre ajustée à la création](#q-ux-21--la-période-optimale-dune-fenêtre-ajustée-à-la-création)
+- [Q-UX-22 — Sauter une tonte](#q-ux-22--sauter-une-tonte)
 
 ---
 
@@ -393,4 +394,28 @@ d'origine : la garde-t-on ?
 **Ce qui attend :** rien ne bloque. Appliquée : la recommandation (sprint 7a,
 D-101), le 20/10/2026. Une autre réponse ne change que
 `AppliquerReglesTypes::fenetres`.
+**Réponse :**
+
+## Q-UX-22 — Sauter une tonte
+
+**Question :** « sauter cette occurrence » (CDC §4.4) a un sens clair pour une
+taille à fenêtre (R2) : la fenêtre de cette année est écartée, celle de l'an
+prochain est proposée. Pour une règle à intervalle (R1, la tonte tous les
+7 jours), que veut dire sauter ? Le CDC dit « calculée comme si celle-ci avait
+été faite ou non selon le type de règle », sans trancher pour R1.
+**Concerne :** B6 (fiche plante), le bouton « Sauter » d'une échéance R1, V105.
+**Options :**
+1. **Recommandé — une échéance R1 ne se saute pas en V1** : le bouton n'est
+   proposé que pour une règle à fenêtre ; une tonte qu'on ne fera pas se
+   rattrape au prochain passage, ou la règle se corrige (intervalle plus
+   long). Aucun changement du moteur.
+2. Sauter une R1 vaut « comme si elle avait été faite ce jour-là » :
+   l'intervalle repart de la date du saut. Le moteur doit lire les
+   suspensions d'une R1 comme une intervention (`Historique`, le pont).
+3. Sauter une R1 la repousse d'un intervalle sans rien écrire au journal,
+   avec le motif affiché sur l'échéance suivante.
+
+**Ce qui attend :** rien ne bloque. Appliquée : la recommandation (sprint 9a,
+D-106), le 20/10/2026 : `POST /echeances/suspendre` rend `422` pour une R1.
+Une autre réponse change `SuspendreEcheance` et, pour l'option 2, le moteur.
 **Réponse :**
