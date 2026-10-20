@@ -241,13 +241,13 @@ Chaque sprint, en plus de sa propre porte :
 
 ### 0c.1 Bundle
 
-- [ ] Installer `inertiajs/inertia-laravel`, `@inertiajs/react`, React 19, TypeScript. Créer `resources/views/app.blade.php`, `resources/js/app.tsx` (résolution `./pages/**/*.tsx`), `vite.config.ts` (un seul `input`), `tsconfig.json` (`strict: true`, `noUncheckedIndexedAccess: true`), et modifier `package.json` (scripts `build`, `typecheck`).
-- [ ] Installer par `composer require` (modifie `composer.json`) et `npm install` ; aucun middleware Inertia ici : Inertia rend sans lui, vue racine `app` par défaut, et `HandleInertiaRequests` naît au 2c avec ses props (D-34).
-- [ ] Créer `config/inertia.php` avec `testing.ensure_pages_exist => false` et un commentaire qui renvoie à D-20.
+- [x] Installer `inertiajs/inertia-laravel`, `@inertiajs/react`, React 19, TypeScript. Créer `resources/views/app.blade.php`, `resources/js/app.tsx` (résolution `./pages/**/*.tsx`), `vite.config.ts` (un seul `input`), `tsconfig.json` (`strict: true`, `noUncheckedIndexedAccess: true`), et modifier `package.json` (scripts `build`, `typecheck`).
+- [x] Installer par `composer require` (modifie `composer.json`) et `npm install` ; aucun middleware Inertia ici : Inertia rend sans lui, vue racine `app` par défaut, et `HandleInertiaRequests` naît au 2c avec ses props (D-34).
+- [x] Créer `config/inertia.php` avec `testing.ensure_pages_exist => false` et un commentaire qui renvoie à D-20.
 
 ### 0c.2 Test
 
-- [ ] `tests/Routes/InertiaTest.php` : une route de test enregistrée par le test rend `Temoin/Page` avec une prop ; `vite build` produit un seul point d'entrée applicatif (V7).
+- [x] `tests/Routes/InertiaTest.php` : une route de test enregistrée par le test rend `Temoin/Page` avec une prop ; `vite build` produit un seul point d'entrée applicatif (V7).
 
 ---
 

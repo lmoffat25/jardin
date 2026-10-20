@@ -17,6 +17,7 @@ ifeq ($(X),ddev exec)
 	ddev start
 endif
 	$(X) composer install --no-interaction --prefer-dist
+	$(X) npm ci --no-audit --no-fund
 	$(X) sh -c '[ -f .env ] || cp .env.example .env'
 	$(X) php artisan key:generate --no-interaction
 	$(X) php artisan migrate --force --no-interaction
