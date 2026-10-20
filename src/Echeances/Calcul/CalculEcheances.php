@@ -102,16 +102,22 @@ final class CalculEcheances
     }
 
     /**
-     * Les occurrences closes (D-05) : toute échéance matérialisée l'est.
+     * Les occurrences closes (D-05) : toute échéance matérialisée l'est, avec
+     * le décalage appliqué à son écriture, qui la retrouve si le profil a
+     * changé depuis (D-99).
      *
-     * @return list<array{regle_id: string, due_le: \DateTimeImmutable}>
+     * @return list<array{regle_id: string, due_le: \DateTimeImmutable, decalage_j: int}>
      */
     private function chargerCloses(): array
     {
         return array_values(EcheanceMaterialisee::query()
-            ->select(['regle_id', 'due_le'])
+            ->select(['regle_id', 'due_le', 'decalage_climatique_applique_j'])
             ->get()
-            ->map(fn (EcheanceMaterialisee $e) => ['regle_id' => $e->regle_id, 'due_le' => $e->due_le->toDateTimeImmutable()])
+            ->map(fn (EcheanceMaterialisee $e) => [
+                'regle_id' => $e->regle_id,
+                'due_le' => $e->due_le->toDateTimeImmutable(),
+                'decalage_j' => $e->decalage_climatique_applique_j,
+            ])
             ->all());
     }
 
