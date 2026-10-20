@@ -19,6 +19,7 @@ endif
 	$(X) composer install --no-interaction --prefer-dist
 	$(X) sh -c '[ -f .env ] || cp .env.example .env'
 	$(X) php artisan key:generate --no-interaction
+	$(X) php artisan migrate --force --no-interaction
 
 moteur:
 	$(call echec,moteur)
