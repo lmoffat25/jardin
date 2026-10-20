@@ -560,19 +560,19 @@ Chaque sprint, en plus de sa propre porte :
 
 ### 2a.1 Socle
 
-- [ ] Implémenter `src/Support/Jardin/JardinCourant.php` et `src/Support/Jardin/JardinCourantAbsent.php` : `id()` lève `JardinCourantAbsent` s'il n'est pas positionné ; jamais `null` (A11). Modifier `app/Providers/ModulesServiceProvider.php` : `JardinCourant` enregistré en `scoped` (remis à zéro par requête et par job).
-- [ ] Implémenter `src/Support/Jardin/JardinScope.php` : `apply()` ajoute `where <table>.jardin_id = JardinCourant::id()` ; aucune lecture ne passe sans jardin positionné.
-- [ ] Implémenter `src/Support/Jardin/AppartientAuJardin.php` : `bootAppartientAuJardin()` ajoute le scope et, au `creating`, `jardin_id ??= JardinCourant::id()` ; un `jardin_id` fourni et différent du courant lève `\LogicException` (aucune écriture croisée).
+- [x] Implémenter `src/Support/Jardin/JardinCourant.php` et `src/Support/Jardin/JardinCourantAbsent.php` : `id()` lève `JardinCourantAbsent` s'il n'est pas positionné ; jamais `null` (A11). Modifier `app/Providers/ModulesServiceProvider.php` : `JardinCourant` enregistré en `scoped` (remis à zéro par requête et par job).
+- [x] Implémenter `src/Support/Jardin/JardinScope.php` : `apply()` ajoute `where <table>.jardin_id = JardinCourant::id()` ; aucune lecture ne passe sans jardin positionné.
+- [x] Implémenter `src/Support/Jardin/AppartientAuJardin.php` : `bootAppartientAuJardin()` ajoute le scope et, au `creating`, `jardin_id ??= JardinCourant::id()` ; un `jardin_id` fourni et différent du courant lève `\LogicException` (aucune écriture croisée).
 
 ### 2a.2 Premiers modèles
 
-- [ ] Implémenter `src/Comptes/Domaine/Jardin.php` (référentiel du compte, sans le trait), `src/Jardin/Domaine/Zone.php` et `src/Jardin/Domaine/Plante.php` (trait `AppartientAuJardin`, uuid, casts). Ajouter `database/factories/JardinFactory.php` (profil `3`, Plaine, du jeu de référence), `ZoneFactory.php` et `PlanteFactory.php` (code court tiré d'un compteur de test jusqu'au 7a) — factories hors compte (D-29, D-43).
+- [x] Implémenter `src/Comptes/Domaine/Jardin.php` (référentiel du compte, sans le trait), `src/Jardin/Domaine/Zone.php` et `src/Jardin/Domaine/Plante.php` (trait `AppartientAuJardin`, uuid, casts). Ajouter `database/factories/JardinFactory.php` (profil `3`, Plaine, du jeu de référence), `ZoneFactory.php` et `PlanteFactory.php` (code court tiré d'un compteur de test jusqu'au 7a) — factories hors compte (D-29, D-43).
 
 ### 2a.3 Tests
 
-- [ ] `tests/Persistance/JardinCourantTest.php` : `id()` sans positionnement lève ; après, rend l'id (V32).
-- [ ] `tests/Persistance/JardinScopeTest.php` : listes, `find`, relation `Zone::plantes` depuis A ne rendent rien de B ; création sans `jardin_id` reçoit A ; création avec `jardin_id` de B lève (V33).
-- [ ] `tests/Architecture/ModelesCloisonnesTest.php` : toute classe `Src\*\Domaine\*` qui étend `Model` utilise `AppartientAuJardin`, sauf la liste fermée (`Jardin`, `Adhesion`, `Utilisateur`, `ProfilClimatique`, `FamilleBotanique`, `Espece`, `RegleReference`, `SourceRegle`, `TypeIntervention` — ce dernier filtré à part, voir 7c ; une classe de la liste peut ne pas exister encore) (V34).
+- [x] `tests/Persistance/JardinCourantTest.php` : `id()` sans positionnement lève ; après, rend l'id (V32).
+- [x] `tests/Persistance/JardinScopeTest.php` : listes, `find`, relation `Zone::plantes` depuis A ne rendent rien de B ; création sans `jardin_id` reçoit A ; création avec `jardin_id` de B lève (V33).
+- [x] `tests/Architecture/ModelesCloisonnesTest.php` : toute classe `Src\*\Domaine\*` qui étend `Model` utilise `AppartientAuJardin`, sauf la liste fermée (`Jardin`, `Adhesion`, `Utilisateur`, `ProfilClimatique`, `FamilleBotanique`, `Espece`, `RegleReference`, `SourceRegle`, `TypeIntervention` — ce dernier filtré à part, voir 7c ; une classe de la liste peut ne pas exister encore) (V34).
 
 ---
 
