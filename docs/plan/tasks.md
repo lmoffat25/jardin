@@ -629,22 +629,22 @@ Chaque sprint, en plus de sa propre porte :
 
 ### 2c.1 Connexion
 
-- [ ] Implémenter `src/Comptes/Http/ConnexionController.php` (`afficher`, `connecter`, `deconnecter`) : `Auth::attempt`, régénération de session, limitation à 5 essais par minute (`RateLimiter`), mise à jour de `derniere_connexion_le` ; erreur unique, sans dire quel champ est faux.
-- [ ] Créer `src/Comptes/routes.php` : les trois routes ; un groupe `auth` + `jardin` (middleware de 2c.2) pour toutes les routes métier des modules suivants, défini par `ModulesServiceProvider`.
-- [ ] Modifier `app/Providers/ModulesServiceProvider.php` : le groupe `auth` + `jardin` des routes métier, et l'enregistrement des commandes de `src/*/Console/*.php` (glob trié), sans liste à tenir (D-46).
-- [ ] Implémenter `src/Comptes/Console/CreerProprietaire.php` : refuse (code `1`, rien écrit) s'il existe déjà un utilisateur ; lit le mot de passe par `secret()` ; jamais en argument.
+- [x] Implémenter `src/Comptes/Http/ConnexionController.php` (`afficher`, `connecter`, `deconnecter`) : `Auth::attempt`, régénération de session, limitation à 5 essais par minute (`RateLimiter`), mise à jour de `derniere_connexion_le` ; erreur unique, sans dire quel champ est faux.
+- [x] Créer `src/Comptes/routes.php` : les trois routes ; un groupe `auth` + `jardin` (middleware de 2c.2) pour toutes les routes métier des modules suivants, défini par `ModulesServiceProvider`.
+- [x] Modifier `app/Providers/ModulesServiceProvider.php` : le groupe `auth` + `jardin` des routes métier, et l'enregistrement des commandes de `src/*/Console/*.php` (glob trié), sans liste à tenir (D-46).
+- [x] Implémenter `src/Comptes/Console/CreerProprietaire.php` : refuse (code `1`, rien écrit) s'il existe déjà un utilisateur ; lit le mot de passe par `secret()` ; jamais en argument.
 
 ### 2c.2 Jardin courant de la requête
 
-- [ ] Implémenter `src/Support/Http/PositionnerJardinCourant.php` (middleware `jardin`) : prend `session('jardin_id')` si l'utilisateur a une adhésion à ce jardin, sinon le premier jardin de ses adhésions (ordre de création) ; aucun jardin → redirection vers la création de jardin (`/jardins/nouveau`, B2) ; positionne `JardinCourant`.
-- [ ] Implémenter `src/Support/Http/HandleInertiaRequests.php` (D-34) : props `utilisateur {id, courriel}`, `jardinCourant {id, nom, profil {id, libelle, decalage_jours}}`, `jardins [{id, nom}]` (adhésions).
-- [ ] Modifier `bootstrap/app.php` : `HandleInertiaRequests` dans le groupe `web`, alias `jardin`, redirection des invités vers `/connexion`.
+- [x] Implémenter `src/Support/Http/PositionnerJardinCourant.php` (middleware `jardin`) : prend `session('jardin_id')` si l'utilisateur a une adhésion à ce jardin, sinon le premier jardin de ses adhésions (ordre de création) ; aucun jardin → redirection vers la création de jardin (`/jardins/nouveau`, B2) ; positionne `JardinCourant`.
+- [x] Implémenter `src/Support/Http/HandleInertiaRequests.php` (D-34) : props `utilisateur {id, courriel}`, `jardinCourant {id, nom, profil {id, libelle, decalage_jours}}`, `jardins [{id, nom}]` (adhésions).
+- [x] Modifier `bootstrap/app.php` : `HandleInertiaRequests` dans le groupe `web`, alias `jardin`, redirection des invités vers `/connexion`.
 
 ### 2c.3 Tests
 
-- [ ] `tests/Routes/ConnexionTest.php` : nominal (en-tête `Location` vers `/` ; la page d'arrivée est vérifiée au 6 par V76, D-47), mot de passe faux (message identique à courriel inconnu), route métier de test sans session → `Location` vers `/connexion`, `derniere_connexion_le` relue (V36).
-- [ ] `tests/Persistance/CreerProprietaireTest.php` : la commande figure dans `Artisan::all()` sans enregistrement manuel ; création, refus si un compte existe, mot de passe jamais dans la sortie (V37).
-- [ ] `tests/Routes/PropsPartageesTest.php` : une page de test authentifiée porte les trois props ; un `session('jardin_id')` d'un jardin sans adhésion est ignoré (V38).
+- [x] `tests/Routes/ConnexionTest.php` : nominal (en-tête `Location` vers `/` ; la page d'arrivée est vérifiée au 6 par V76, D-47), mot de passe faux (message identique à courriel inconnu), route métier de test sans session → `Location` vers `/connexion`, `derniere_connexion_le` relue (V36).
+- [x] `tests/Persistance/CreerProprietaireTest.php` : la commande figure dans `Artisan::all()` sans enregistrement manuel ; création, refus si un compte existe, mot de passe jamais dans la sortie (V37).
+- [x] `tests/Routes/PropsPartageesTest.php` : une page de test authentifiée porte les trois props ; un `session('jardin_id')` d'un jardin sans adhésion est ignoré (V38).
 
 ---
 
