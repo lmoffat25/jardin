@@ -21,4 +21,5 @@ Route::middleware('auth')->group(function () {
     Route::post('/jardins/{jardin}/basculer', [JardinController::class, 'basculer']);
 });
 
-Route::put('/jardin', [JardinController::class, 'modifier'])->middleware('metier');
+// Réservée au propriétaire (D-49) ; la policy `modifier` reste.
+Route::put('/jardin', [JardinController::class, 'modifier'])->middleware(['metier', 'role:proprietaire']);
