@@ -5,6 +5,7 @@ namespace Src\Jardin\Plantes;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
@@ -23,9 +24,11 @@ use Src\Support\Jardin\JardinCourant;
  * La fiche d'une plante (B6 au bureau, T5 au terrain) : la plante, les
  * échéances à venir de ses règles et ses manquées (RG-07, critère 6, V78).
  * Son historique se charge à part (`HistoriqueController`). Et la création
- * d'une plante (B7, T3, V83, V84).
+ * d'une plante (B7, T3, V83, V84), sa modification (V132) et son archivage
+ * (V88), réservés au propriétaire (`PlantePolicy`).
  *
  * @phpstan-import-type Saisie from CreerPlante
+ * @phpstan-import-type Modification from ModifierPlante
  */
 final class PlanteController
 {
@@ -37,6 +40,13 @@ final class PlanteController
     /** Un jour et un mois, « JJ/MM », qui existent une année bissextile. */
     private const JOUR_MOIS = 'date_format:d/m';
 
+    /** Les messages communs à la création et à la modification. */
+    private const MESSAGES = [
+        'nom.required' => 'Donnez un nom à la plante.',
+        'nom.unique' => 'Une plante de cette zone porte déjà ce nom.',
+        'zone_id.required' => 'Choisissez une zone.',
+    ];
+
     public function creer(Request $request, CreerPlante $creer, RechercheEspece $recherche): JsonResponse|RedirectResponse
     {
         $plante = $creer->executer($this->valider($request, $recherche));
@@ -46,10 +56,52 @@ final class PlanteController
             : redirect("/plantes/{$plante->id}");
     }
 
+    public function modifier(Request $request, string $plante, ModifierPlante $modifier): JsonResponse|RedirectResponse
+    {
+        $plante = $this->trouver($plante);
+        Gate::authorize('modifier', $plante);
+
+        $zone = $request->input('zone_id');
+        /** @var Modification $saisie */
+        $saisie = $request->validate([
+            'zone_id' => ['bail', 'required', new ZoneDuJardin],
+            // Unique dans la zone d'arrivée, la plante elle-même exclue (RG-13).
+            'nom' => ['required', 'string', 'max:120', ...(is_string($zone) && Str::isUuid($zone) ? [Rule::unique('plantes', 'nom')->where('zone_id', $zone)->ignore($plante->id)] : [])],
+            'repere' => ['nullable', 'string', 'max:200'],
+            'variete' => ['nullable', 'string', 'max:120'],
+            'plantee_le' => ['nullable', 'date_format:Y-m-d'],
+            'age_estime_ans' => ['nullable', 'integer', 'between:0,999'],
+            'notes' => ['nullable', 'string', 'max:5000'],
+        ], self::MESSAGES);
+
+        $plante = $modifier->executer($plante, $saisie);
+
+        return $request->wantsJson()
+            ? response()->json(['id' => $plante->id, 'code_court' => $plante->code_court])
+            : redirect("/plantes/{$plante->id}");
+    }
+
+    public function archiver(Request $request, string $plante, ArchiverPlante $archiver): JsonResponse|RedirectResponse
+    {
+        $plante = $this->trouver($plante);
+        Gate::authorize('archiver', $plante);
+
+        /** @var array{motif: string} $saisie */
+        $saisie = $request->validate(['motif' => ['required', 'string', 'max:200']], [
+            'motif.required' => 'Dites pourquoi la plante est archivée.',
+            'motif.max' => 'Le motif tient en 200 caractères.',
+        ]);
+
+        $plante = $archiver->executer($plante, $saisie['motif']);
+
+        return $request->wantsJson()
+            ? response()->json(['id' => $plante->id, 'code_court' => $plante->code_court])
+            : redirect("/plantes/{$plante->id}");
+    }
+
     public function afficher(Request $request, string $plante): Response
     {
-        // Par le scope du jardin courant : une plante de B est introuvable (D1).
-        $plante = Str::isUuid($plante) ? Plante::query()->with('zone')->findOrFail($plante) : abort(404);
+        $plante = $this->trouver($plante);
         $zone = $plante->zone ?? throw new LogicException("Plante {$plante->id} sans zone.");
         $jardin = Jardin::query()->findOrFail($this->jardinCourant->id());
 
@@ -129,12 +181,7 @@ final class PlanteController
             'ajustements.*.intervalles.*.mois_debut' => ['required', 'integer', 'between:1,12'],
             'ajustements.*.intervalles.*.mois_fin' => ['required', 'integer', 'between:1,12'],
             'ajustements.*.intervalles.*.jours' => ['required', 'integer', 'between:0,365'],
-        ], [
-            'nom.required' => 'Donnez un nom à la plante.',
-            'nom.unique' => 'Une plante de cette zone porte déjà ce nom.',
-            'zone_id.required' => 'Choisissez une zone.',
-            'espece_id.exists' => 'Espèce inconnue.',
-        ]);
+        ], [...self::MESSAGES, 'espece_id.exists' => 'Espèce inconnue.']);
 
         $variantes = isset($saisie['espece_id']) ? ($recherche->variantes([(int) $saisie['espece_id']])[(int) $saisie['espece_id']] ?? []) : [];
         /** @var array{variante?: string|null} $variante */
@@ -148,6 +195,12 @@ final class PlanteController
         );
 
         return [...$saisie, ...$variante, 'espece_id' => isset($saisie['espece_id']) ? (int) $saisie['espece_id'] : null];
+    }
+
+    /** Par le scope du jardin courant : une plante de B est introuvable (D1). */
+    private function trouver(string $id): Plante
+    {
+        return Str::isUuid($id) ? Plante::query()->with('zone')->findOrFail($id) : abort(404);
     }
 
     private static function jour(mixed $date): ?string
