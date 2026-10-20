@@ -537,9 +537,10 @@ CREATE UNIQUE INDEX fonds_de_plan_un_actif
 > précision. Le faire à l'affichage obligerait chaque écran à s'en souvenir.
 
 Une image calée compte dans le quota photo du jardin, et part avec lui à la
-suppression (D6). Le fond `orthophoto` ne stocke rien : les tuiles sont
-demandées au service IGN à l'affichage, sans cache sur le téléphone en V1 (le
-hors-ligne est suspendu, chapitre 1).
+suppression (D6) : elle est rangée sous `photos/{jardin}/plans/` (D-111). Le
+fond `orthophoto` ne stocke rien : les tuiles sont demandées au service IGN à
+l'affichage, sans cache sur le téléphone en V1 (le hors-ligne est suspendu,
+chapitre 1).
 
 ---
 

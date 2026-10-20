@@ -20,8 +20,14 @@ use Zxing\QrReader;
 
 uses(RefreshDatabase::class)->group('critere-22');
 
-/** Pixels par module : assez pour le décodeur, sans flou. */
-const PIXELS_PAR_MODULE = 8;
+/**
+ * Pixels par module, essayés dans l'ordre : le portage de ZXing manque
+ * certains QR à une échelle et les lit à une autre (D-111 ; l'adresse
+ * `https://jardin-11b.ddev.site/p/FRU-001` ne se lit qu'à 4). Un échec de
+ * lecture rend `false`, jamais un autre texte : essayer plusieurs échelles
+ * n'affaiblit pas la preuve.
+ */
+const PIXELS_PAR_MODULE = [8, 4, 6, 10];
 
 /**
  * Le texte d'un QR en SVG : chaque module foncé (`M x y h1 v1 h-1Z`) noirci
@@ -32,17 +38,24 @@ function lireQr(string $svg): string
     expect(preg_match('/viewBox="0 0 (\d+) (\d+)"/', $svg, $boite))->toBe(1);
     expect(preg_match_all('/M(\d+) (\d+) h1 v1 h-1Z/', $svg, $modules, PREG_SET_ORDER))->toBeGreaterThan(100);
 
-    $image = imagecreatetruecolor((int) $boite[1] * PIXELS_PAR_MODULE, (int) $boite[2] * PIXELS_PAR_MODULE);
-    imagefill($image, 0, 0, (int) imagecolorallocate($image, 255, 255, 255));
-    $noir = (int) imagecolorallocate($image, 0, 0, 0);
-    foreach ($modules as [, $x, $y]) {
-        $gauche = (int) $x * PIXELS_PAR_MODULE;
-        $haut = (int) $y * PIXELS_PAR_MODULE;
-        imagefilledrectangle($image, $gauche, $haut, $gauche + PIXELS_PAR_MODULE - 1, $haut + PIXELS_PAR_MODULE - 1, $noir);
+    foreach (PIXELS_PAR_MODULE as $pixels) {
+        $image = imagecreatetruecolor((int) $boite[1] * $pixels, (int) $boite[2] * $pixels);
+        imagefill($image, 0, 0, (int) imagecolorallocate($image, 255, 255, 255));
+        $noir = (int) imagecolorallocate($image, 0, 0, 0);
+        foreach ($modules as [, $x, $y]) {
+            $gauche = (int) $x * $pixels;
+            $haut = (int) $y * $pixels;
+            imagefilledrectangle($image, $gauche, $haut, $gauche + $pixels - 1, $haut + $pixels - 1, $noir);
+        }
+
+        // GD seul : Imagick n'est pas sûr d'être en CI.
+        $texte = (new QrReader($image, QrReader::SOURCE_TYPE_RESOURCE, useImagickIfAvailable: false))->text();
+        if (is_string($texte)) {
+            return $texte;
+        }
     }
 
-    // GD seul : Imagick n'est pas sûr d'être en CI.
-    return (string) (new QrReader($image, QrReader::SOURCE_TYPE_RESOURCE, useImagickIfAvailable: false))->text();
+    return '';
 }
 
 it('encode exactement l\'adresse donnée', function (string $url) {

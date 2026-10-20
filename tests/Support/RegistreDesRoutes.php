@@ -9,6 +9,7 @@ use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Route as Routes;
 use Illuminate\Support\Facades\Storage;
 use Src\Echeances\Domaine\Regle;
+use Src\Jardin\Domaine\FondDePlan;
 use Src\Jardin\Domaine\Plante;
 use Src\Jardin\Domaine\Zone;
 use Src\Journal\Domaine\Photo;
@@ -110,6 +111,39 @@ final class RegistreDesRoutes
                 'role' => 'proprietaire',
                 'parametres' => $plante,
                 'charge' => fn (string $id): array => ['type' => 'Point', 'coordinates' => [4.8357, 45.764]],
+            ],
+            // Depuis A, la plante de B est introuvable : 404 ; une photo de B
+            // n'est pas une photo de la plante : 422 (CouvertureTest). Les
+            // jardins témoins n'ont aucune photo : la première, sinon une
+            // photo qui n'existe pas.
+            'PUT /plantes/{plante}/couverture' => [
+                'nature' => 'ecrit',
+                'role' => 'proprietaire',
+                'parametres' => $plante,
+                'charge' => fn (string $id): array => ['photo_id' => (string) (Photo::query()->withoutGlobalScopes()->where('jardin_id', $id)->orderBy('id')->value('id') ?? '5e0c9a52-7a1d-4c3e-9f4b-0000000000ff')],
+            ],
+            // Crée un fond dans le jardin courant ; celui de B reste actif dans
+            // B (FondDePlanTest). Le disque est simulé, comme pour les photos.
+            'POST /fonds-de-plan' => [
+                'nature' => 'ecrit',
+                'role' => 'proprietaire',
+                'charge' => function (string $id): array {
+                    Storage::fake('local');
+
+                    return [
+                        'fichier' => UploadedFile::fake()->image('plan.png', 40, 30),
+                        'points' => [['x' => 0, 'y' => 0, 'lng' => 4.835, 'lat' => 45.765], ['x' => 40, 'y' => 30, 'lng' => 4.837, 'lat' => 45.7635]],
+                    ];
+                },
+            ],
+            'GET /fonds-de-plan/actif' => ['nature' => 'liste', 'role' => 'membre'],
+            // Les jardins témoins n'ont aucun fond : le premier, sinon un fond
+            // qui n'existe pas. Depuis A, l'image du fond de B rend 404
+            // (FondDePlanTest).
+            'GET /fonds-de-plan/{fond}/image' => [
+                'nature' => 'lit',
+                'role' => 'membre',
+                'parametres' => fn (string $id): array => ['fond' => (string) (FondDePlan::query()->withoutGlobalScopes()->where('jardin_id', $id)->orderBy('id')->value('id') ?? '5e0c9a52-7a1d-4c3e-9f4b-0000000000ff')],
             ],
             // Depuis A, une plante de B parmi les ids est introuvable : 422,
             // rien ne change (MasseTest).

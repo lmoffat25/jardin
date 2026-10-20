@@ -5,6 +5,8 @@ use Src\Jardin\Identification\CodeCourtController;
 use Src\Jardin\Identification\EtiquettesController;
 use Src\Jardin\Localisation\ProchesController;
 use Src\Jardin\Localisation\TourneeController;
+use Src\Jardin\Plan\FondDePlanController;
+use Src\Jardin\Plantes\CouvertureController;
 use Src\Jardin\Plantes\GeometrieController;
 use Src\Jardin\Plantes\PlanteController;
 use Src\Jardin\Zones\ZoneController;
@@ -19,6 +21,9 @@ Route::middleware('metier')->group(function () {
     Route::get('/plantes/proches', [ProchesController::class, 'lister']);
     Route::get('/plantes/{plante}', [PlanteController::class, 'afficher']);
     Route::get('/tournee', [TourneeController::class, 'proposer']);
+    // Le fond n'est qu'un agrément : sans lui, la carte a un fond neutre (RG-47).
+    Route::get('/fonds-de-plan/actif', [FondDePlanController::class, 'actif']);
+    Route::get('/fonds-de-plan/{fond}/image', [FondDePlanController::class, 'image']);
 });
 
 // L'inventaire ne s'écrit que par le propriétaire (CDC §2.1, D-49).
@@ -31,4 +36,6 @@ Route::middleware(['metier', 'role:proprietaire'])->group(function () {
     Route::put('/plantes/{plante}', [PlanteController::class, 'modifier']);
     Route::post('/plantes/{plante}/archiver', [PlanteController::class, 'archiver']);
     Route::put('/plantes/{plante}/geometrie', [GeometrieController::class, 'enregistrer']);
+    Route::put('/plantes/{plante}/couverture', [CouvertureController::class, 'choisir']);
+    Route::post('/fonds-de-plan', [FondDePlanController::class, 'importer']);
 });
