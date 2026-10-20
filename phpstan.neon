@@ -1,0 +1,13 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+
+parameters:
+    # Le plus strict tenable dès le premier commit, et il ne baisse jamais (C8, O18).
+    level: max
+    paths:
+        - app
+        - src
+        - bootstrap/app.php
+        - config
+        - database
+        - routes
