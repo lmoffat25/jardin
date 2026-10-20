@@ -29,6 +29,8 @@ use Src\Support\Jardin\AppartientAuJardin;
  * @property string $confiance
  * @property string $origine
  * @property bool $est_active
+ * @property int $version
+ * @property CarbonImmutable|null $remplacee_le
  * @property CarbonImmutable $creee_le
  * @property-read Plante $plante
  * @property-read TypeIntervention $typeIntervention

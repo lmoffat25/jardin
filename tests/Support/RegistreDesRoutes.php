@@ -54,6 +54,7 @@ final class RegistreDesRoutes
         $jardin = fn (string $id): array => ['nom' => 'Jardin renommé', 'profil_climatique_id' => 2];
         $plante = fn (string $id): array => ['plante' => (string) Plante::query()->withoutGlobalScopes()->where('jardin_id', $id)->orderBy('nom')->value('id')];
         $zone = fn (string $id): string => (string) Zone::query()->withoutGlobalScopes()->where('jardin_id', $id)->orderBy('nom')->value('id');
+        $regle = fn (string $id): string => (string) (Regle::query()->withoutGlobalScopes()->where('jardin_id', $id)->orderBy('id')->value('id') ?? '5e0c9a52-7a1d-4c3e-9f4b-0000000000ff');
 
         return [
             'GET /' => ['nature' => 'liste', 'role' => 'membre'],
@@ -116,6 +117,20 @@ final class RegistreDesRoutes
                     'regle_id' => (string) (Regle::query()->withoutGlobalScopes()->where('jardin_id', $id)->orderBy('id')->value('id') ?? '5e0c9a52-7a1d-4c3e-9f4b-0000000000ff'),
                     'due_le' => '2026-08-30',
                 ],
+            ],
+            // Depuis A, une règle de B est introuvable : 404, B intact
+            // (CorrectionRegleTest, SuspendreTest). Les jardins témoins n'ont
+            // aucune règle : la première, sinon une règle qui n'existe pas.
+            'PUT /regles/{regle}' => [
+                'nature' => 'ecrit',
+                'role' => 'proprietaire',
+                'parametres' => fn (string $id): array => ['regle' => $regle($id)],
+                'charge' => fn (string $id): array => ['periodicite_annees' => 2],
+            ],
+            'POST /echeances/suspendre' => [
+                'nature' => 'ecrit',
+                'role' => 'proprietaire',
+                'charge' => fn (string $id): array => ['regle_id' => $regle($id), 'due_le' => '2026-08-30', 'motif' => 'Sautée'],
             ],
             // Les types fournis et ceux du jardin courant (TypesVisibles, D-55).
             'GET /types-intervention' => ['nature' => 'liste', 'role' => 'membre'],

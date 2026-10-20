@@ -140,7 +140,7 @@ final class AppliquerReglesTypes
      *
      * @param  list<IntervalleLu>  $intervalles
      */
-    private static function verifierSaisons(array $intervalles, string $champ): void
+    public static function verifierSaisons(array $intervalles, string $champ): void
     {
         $couverts = [];
         foreach ($intervalles as $i) {

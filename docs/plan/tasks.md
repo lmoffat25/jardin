@@ -1607,19 +1607,19 @@ public function executer(SaisieIntervention $saisie, Utilisateur $auteur): Colle
 
 ### 9a.1 Correction
 
-- [ ] Implémenter `src/Echeances/Reglages/ValiderFenetres.php` (règle de validation partagée, utilise `Fenetre::projeter` sur les cinq profils).
-- [ ] Implémenter `src/Echeances/Reglages/ModifierRegle.php` : transaction ; `lockForUpdate` sur la règle ; v1 `est_active = false`, `remplacee_le = now()` **avant** l'insertion de v2 (l'index unique partiel l'exige) ; v2 = copie, `version + 1`, valeurs corrigées, `regle_reference_id` gardé, `origine = ajustee` (D-51), aucune colonne d'auteur (D-58) ; fenêtres et intervalles copiés puis corrigés ; v1 et ses fenêtres jamais modifiées au-delà de ces deux colonnes. Rend la prochaine échéance par `CalculEcheances` restreint à la plante.
-- [ ] Implémenter `src/Echeances/Reglages/RegleController.php` (`corriger`) et `src/Echeances/Policies/ReglePolicy.php` (propriétaire).
+- [x] Implémenter `src/Echeances/Reglages/ValiderFenetres.php` (règle de validation partagée, utilise `Fenetre::projeter` sur les cinq profils).
+- [x] Implémenter `src/Echeances/Reglages/ModifierRegle.php` : transaction ; `lockForUpdate` sur la règle ; v1 `est_active = false`, `remplacee_le = now()` **avant** l'insertion de v2 (l'index unique partiel l'exige) ; v2 = copie, `version + 1`, valeurs corrigées, `regle_reference_id` gardé, `origine = ajustee` (D-51), aucune colonne d'auteur (D-58) ; fenêtres et intervalles copiés puis corrigés ; v1 et ses fenêtres jamais modifiées au-delà de ces deux colonnes. Rend la prochaine échéance par `CalculEcheances` restreint à la plante.
+- [x] Implémenter `src/Echeances/Reglages/RegleController.php` (`corriger`) et `src/Echeances/Policies/ReglePolicy.php` (propriétaire).
 
 ### 9a.2 Suspension
 
-- [ ] Implémenter `src/Echeances/Solde/SuspendreEcheance.php` : vérifie que `(regle_id, due_le)` est une échéance que le moteur rend aujourd'hui pour cette règle (`422` sinon) ; `insertOrIgnore` en `suspendue` avec motif.
-- [ ] Modifier `src/Echeances/routes.php` (sous `role:proprietaire`) ; inscrire les deux routes au registre.
+- [x] Implémenter `src/Echeances/Solde/SuspendreEcheance.php` : vérifie que `(regle_id, due_le)` est une échéance que le moteur rend aujourd'hui pour cette règle (`422` sinon) ; `insertOrIgnore` en `suspendue` avec motif.
+- [x] Modifier `src/Echeances/routes.php` (sous `role:proprietaire`) ; inscrire les deux routes au registre.
 
 ### 9a.3 Tests
 
-- [ ] `tests/Routes/CorrectionRegleTest.php` : V102 (quatre cas), V103, V104.
-- [ ] `tests/Routes/SuspendreTest.php` : V105, quatre cas et la répétition.
+- [x] `tests/Routes/CorrectionRegleTest.php` : V102 (quatre cas), V103, V104.
+- [x] `tests/Routes/SuspendreTest.php` : V105, quatre cas et la répétition.
 
 ---
 

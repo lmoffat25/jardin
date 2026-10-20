@@ -179,7 +179,8 @@ src/
       Echeance, Etat, Decalage, Calendrier, Periode, JourMois
     Domaine/            Regle, Fenetre, IntervalleSaisonnier, Echeance (Eloquent)
     Calcul/             CalculEcheances.php (le pont)
-    Reglages/           ModifierRegle.php, RegleController.php
+    Reglages/           ModifierRegle.php, ValiderFenetres.php, RegleController.php
+    Policies/           ReglePolicy.php
     TableauDeBord/      TableauDeBordController.php
     Solde/              SolderEcheance.php, SuspendreEcheance.php
     routes.php
