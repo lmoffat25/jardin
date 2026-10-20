@@ -392,7 +392,7 @@ Chaque sprint, en plus de sa propre porte :
 
 ### 0t.1 README
 
-- [ ] Créer `README.md` selon le contrat ; demande de fusion en fusion automatique ; ligne de handoff après la fusion.
+- [x] Créer `README.md` selon le contrat ; demande de fusion en fusion automatique ; ligne de handoff après la fusion.
 
 ---
 
