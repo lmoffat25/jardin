@@ -2,7 +2,9 @@
 # Test de scripts/plan/enchainer.sh (V18 à V21), repris des dix cas de
 # test-buildfeature-run.sh (Treize Pourcent), plus ceux du jardin : sprint en
 # attente sauté, tous en attente → 5 et prévenance, pull en échec → 1, plafond
-# par défaut de 3 passes, ARRET: après un sprint fini.
+# par défaut de 3 passes, ARRET: après un sprint fini ; et depuis le 0g : une
+# ligne « En attente : rien » n'attend rien, une réponse de Léon est portée sur
+# main avant la passe, une autre modification du clone arrête la boucle en 1.
 #
 # Un faux claude (ENCHAINER_CLAUDE) tient lieu de session, un clone jetable de
 # clone principal (ENCHAINER_RACINE), avec son dépôt nu comme origin : chaque
@@ -23,7 +25,7 @@ cat > "$T/claude-construit" <<'SH'
 p=docs/plan/tasks.md
 echo "fausse passe : $*"
 cible="$(awk '/^## /{s = ($0 ~ /^## Sprint /) ? $0 : ""; att = 0}
-  s != "" && /^\*\*En attente :\*\*/{att = 1}
+  s != "" && /^\*\*En attente :\*\*.*Q-UX-[0-9]/{att = 1}
   s != "" && !att && /^- \[ \]/{print s; exit}' "$p")"
 awk -v c="$cible" '/^## /{on = ($0 == c)} on{sub(/^- \[ \]/, "- [x]")} {print}' "$p" > "$p.tmp" && mv "$p.tmp" "$p"
 git commit -q -am "coche $cible"
@@ -81,7 +83,19 @@ cat > "$T/prevenir" <<'SH'
 #!/usr/bin/env bash
 echo "$1" >> "$PREVENU"
 SH
-chmod +x "$T"/claude-* "$T/prevenir"
+# Faux gh de porter-reponses.sh : `pr merge` fusionne la branche dans main par un squash.
+cat > "$T/gh" <<'SH'
+#!/usr/bin/env bash
+case "$1 $2" in
+  "pr merge")
+    o="$(git remote get-url origin)"; d="$(mktemp -d)"
+    git clone -q "$o" "$d/c" && cd "$d/c" && git fetch -q origin "$3" \
+      && git merge -q --squash FETCH_HEAD > /dev/null && git -c user.name=gh -c user.email=gh@gh commit -q -m "fusion de $3" \
+      && git push -q origin main; c=$?; rm -rf "$d"; exit $c ;;
+  "pr view") echo MERGED ;;
+esac
+SH
+chmod +x "$T"/claude-* "$T/prevenir" "$T/gh"
 
 # preparer <nom> <contenu de tasks.md> → clone principal $T/<nom>, origin $T/<nom>.git
 preparer() {
@@ -258,6 +272,48 @@ preparer finarret "$DEUX"; lancer finarret claude-finit-et-arrete PREVENU="$T/pr
 code_attendu "sprint fini puis ARRET: → 3" 3
 [ "$(lignes finarret)" = 1 ] && ok "le sprint fini est compté" || ko "le sprint fini est compté"
 grep -q 'ARRET' "$T/prevenu-15" 2>/dev/null && ok "prévenance appelée sur 3" || ko "prévenance appelée sur 3"
+
+echo "16. « En attente : rien » n'attend rien (0g)"
+preparer rien '## Sprint 1 — Tranché
+
+**En attente :** rien — Q24 tranchée : Trappes, 6 j/°C
+
+- [ ] un
+'
+lancer rien claude-construit
+code_attendu "le sprint est construit, plan fini → 0" 0
+grep -q '^- \[x\] un' "$T/rien/docs/plan/tasks.md" && ok "sprint construit" || ko "sprint construit"
+
+REPONSE='## Sprint 1 — Attend
+
+**En attente :** Q-UX-3
+
+- [ ] un
+'
+QUESTIONS='# Questions
+
+## Q-UX-3 — Les noms
+
+**Question :** quels noms ?
+**Réponse :**
+'
+echo "17. une réponse de Léon est portée sur main avant la passe (V127)"
+preparer reponse "$REPONSE"
+printf '%s' "$QUESTIONS" > "$T/reponse/docs/plan/questions-ux.md"
+git -C "$T/reponse" add -A && git -C "$T/reponse" commit -q -m questions && git -C "$T/reponse" push -q
+sed -i.bak 's/^\*\*Réponse :\*\*$/**Réponse :** des noms numérotés/' "$T/reponse/docs/plan/questions-ux.md" && rm -f "$T/reponse/docs/plan/questions-ux.md.bak"
+lancer reponse claude-construit PORTER_GH="$T/gh" PORTER_PAUSE=0
+code_attendu "réponse portée, sprint libéré et construit → 0" 0
+sortie_contient "le port est annoncé" "CONFIRME porter-reponses .*Q-UX-3"
+grep -q '^- \[x\] un' "$T/reponse/docs/plan/tasks.md" && ok "le sprint qui attendait est construit" || ko "le sprint qui attendait est construit"
+git -C "$T/reponse.git" show main:docs/plan/questions-ux.md | grep -q 'des noms numérotés' && ok "main porte la réponse" || ko "main porte la réponse"
+
+echo "18. une autre modification du clone arrête la boucle en 1 (V127)"
+preparer sale "$DEUX"; echo '- [ ] ajout à la main' >> "$T/sale/docs/plan/tasks.md"
+lancer sale claude-construit
+code_attendu "copie de travail modifiée hors des réponses → 1" 1
+sortie_contient "porter-reponses le dit" "porter-reponses"
+[ ! -f "$T/sale/docs/plan/run.log" ] && ok "aucune session lancée" || ko "aucune session lancée"
 
 if [ "$fautes" -gt 0 ]; then echo "ECHOUE test de l'enchaînement : $fautes faute(s)"; exit 1; fi
 echo "CONFIRME test de l'enchaînement : tous les cas passent"

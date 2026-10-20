@@ -101,8 +101,9 @@ Chaque sprint, en plus de sa propre porte :
   les données de `bibliotheque/`, les fichiers produits par un générateur
   (squelette Laravel, `ddev config`, fichiers de verrou, `generes.d.ts`). Les
   classes de test sont les `tests/**/*Test.php` et `scripts/**/tests/test-*.sh`.
-  `scripts/plan/check-sprint-size.sh` (sprint 0g) recompte et refuse un sprint
-  au-delà du budget P5 (O28).
+  `scripts/plan/check-sprint-size.sh` (sprint 0g, `make plan`) recompte et
+  refuse un sprint au-delà du budget P5 (O28) ; un chemin cité dans une tâche
+  sans être modifié se déclare `` <!-- hors-compte: `chemin` raison --> `` (D-75).
 - **Routes** : les formulaires du bureau répondent en Inertia (redirection et
   erreurs de session, `422` en JSON) ; les actions de terrain (interventions,
   photos, « fait », plantes proches) répondent en JSON (décision D-21). Les
@@ -171,6 +172,8 @@ Chaque sprint, en plus de sa propre porte :
 
 ## Sprint 0b — Squelette, DDEV, Makefile, CI minimale
 <!-- taille : 4 assertions, 8 fichiers, 4 classes de test -->
+<!-- hors-compte: `.ddev/config.yaml` produit par `ddev config` (D-35) -->
+<!-- hors-compte: `src/Temoin/routes.php` module témoin écrit par le test dans un dossier temporaire -->
 
 **Objectif :** un clone neuf démarre en une commande, rend `/sante`, et la CI de la demande de fusion passe sur un test trivial.
 **Constructeur :** back (PHP, conteneurs, YAML)
@@ -293,6 +296,7 @@ Chaque sprint, en plus de sa propre porte :
 
 ## Sprint 0e — CI complète, fusion automatique, consignes des agents
 <!-- taille : 5 assertions, 7 fichiers, 3 classes de test -->
+<!-- hors-compte: `scripts/depot/appliquer-ruleset.sh` lancé, pas modifié (écrit au 0a) -->
 
 **Objectif :** la CI a tous ses jobs, la mutation tourne, la fusion est automatique sur CI verte, et un agent trouve sa consigne dans le dépôt.
 **Constructeur :** principal (ruleset et réglages du dépôt par l'API GitHub)
@@ -397,7 +401,7 @@ Chaque sprint, en plus de sa propre porte :
 ---
 
 ## Sprint 0g — Taille des sprints et réponses de Léon
-<!-- taille : 2 assertions, 4 fichiers, 2 classes de test -->
+<!-- taille : 2 assertions, 4 fichiers, 3 classes de test -->
 
 **Objectif :** la taille de chaque sprint se compte sur ses listes de fichiers, et une réponse de Léon écrite dans le clone principal arrive sur `main` sans geste git de sa part.
 **Constructeur :** principal (scripts de pilotage du plan)
@@ -412,23 +416,24 @@ Chaque sprint, en plus de sa propre porte :
 **Question UX possible :** aucune
 **Assertions :** V22, V127
 **Fichiers :** `scripts/plan/check-sprint-size.sh`, `scripts/plan/porter-reponses.sh`, `scripts/plan/enchainer.sh`, `Makefile`
-**Classes de test :** `scripts/plan/tests/test-check-sprint-size.sh`, `scripts/plan/tests/test-porter-reponses.sh`
+**Classes de test :** `scripts/plan/tests/test-check-sprint-size.sh`, `scripts/plan/tests/test-porter-reponses.sh`, `scripts/plan/tests/test-enchainer.sh`
 **Fin :** `make plan` rend les nombres de chaque sprint de ce plan ; une réponse écrite dans un clone de test arrive sur un `main` de test par une demande de fusion simulée.
 
 ### 0g.1 Taille
 
-- [ ] Implémenter `scripts/plan/check-sprint-size.sh` en adaptant celui de Treize Pourcent (D-13, D-29) : sections `## Sprint` de `tasks.md` ; assertions lues dans `## Carte de couverture` de `validation-contract.md` (motif `V\d+` ; une assertion barrée ne compte pas) ; fichiers et classes lus dans les lignes `**Fichiers :**` et `**Classes de test :**` (chemins entre accents graves, `aucun` = 0) ; catégories comptées et exclues de D-29 ; un chemin d'une catégorie comptée, cité dans le corps du sprint et absent de ses listes → `1` qui le nomme ; dérogation `<!-- derogation-taille: raison -->`.
-- [ ] Modifier `Makefile` : cible `plan`.
+- [x] Implémenter `scripts/plan/check-sprint-size.sh` en adaptant celui de Treize Pourcent (D-13, D-29) : sections `## Sprint` de `tasks.md` ; assertions lues dans `## Carte de couverture` de `validation-contract.md` (motif `V\d+` ; une assertion barrée ne compte pas) ; fichiers et classes lus dans les lignes `**Fichiers :**` et `**Classes de test :**` (chemins entre accents graves, `aucun` = 0) ; catégories comptées et exclues de D-29 ; un chemin d'une catégorie comptée, cité dans le corps du sprint et absent de ses listes → `1` qui le nomme ; dérogation `<!-- derogation-taille: raison -->`.
+- [x] Modifier `Makefile` : cible `plan`.
 
 ### 0g.2 Réponses
 
-- [ ] Implémenter `scripts/plan/porter-reponses.sh` (D-30) : compare `docs/plan/questions-ux.md` du clone à `origin/main` ; seules des lignes « Réponse : » vides sur `main` et remplies dans la copie de travail sont acceptées, toute autre différence → `1` sans rien envoyer ; pour chaque question répondue : branche `reponse/q-ux-<n>` depuis `origin/main` dans un worktree, la réponse recopiée, `Q-UX-n` retiré des lignes `**En attente :**` de `tasks.md` (la ligne disparaît quand elle est vide), demande de fusion « Réponse à Q-UX-n » avec `gh pr merge --auto --squash`, attente de la fusion (`gh pr checks --watch`), puis la copie de travail du clone principal est rendue propre. Variable `PORTER_GH` (faux `gh` des tests).
-- [ ] Modifier `scripts/plan/enchainer.sh` : appelle `porter-reponses.sh` avant chaque `git pull --ff-only` ; son code `1` arrête la boucle en `1`.
+- [x] Implémenter `scripts/plan/porter-reponses.sh` (D-30) : compare `docs/plan/questions-ux.md` du clone à `origin/main` ; seules des lignes « Réponse : » vides sur `main` et remplies dans la copie de travail sont acceptées, toute autre différence → `1` sans rien envoyer ; pour chaque question répondue : branche `reponse/q-ux-<n>` depuis `origin/main` dans un worktree, la réponse recopiée, `Q-UX-n` retiré des lignes `**En attente :**` de `tasks.md` (la ligne disparaît quand elle est vide), demande de fusion « Réponse à Q-UX-n » avec `gh pr merge --auto --squash`, attente de la fusion (`gh pr checks --watch`), puis la copie de travail du clone principal est rendue propre. Variable `PORTER_GH` (faux `gh` des tests).
+- [x] Modifier `scripts/plan/enchainer.sh` : appelle `porter-reponses.sh` avant chaque `git pull --ff-only` ; son code `1` arrête la boucle en `1`.
 
 ### 0g.3 Tests
 
-- [ ] `scripts/plan/tests/test-check-sprint-size.sh` : ce plan passe ; un sprint fabriqué à six assertions rend `1` ; un sprint dont le commentaire `taille` ne dit pas le compte de ses listes rend `1` ; un chemin `src/…` cité dans une tâche et absent de `**Fichiers :**` rend `1` (V22).
-- [ ] `scripts/plan/tests/test-porter-reponses.sh` : dépôt nu local en `origin`, faux `gh` qui fusionne ; une réponse écrite dans le clone → une branche, une demande de fusion, `main` porte la réponse et le sprint n'a plus de ligne `En attente`, la copie de travail est propre et `pull --ff-only` passe ; une autre modification non commitée → `1`, rien d'envoyé (V127).
+- [x] `scripts/plan/tests/test-check-sprint-size.sh` : ce plan passe ; un sprint fabriqué à six assertions rend `1` ; un sprint dont le commentaire `taille` ne dit pas le compte de ses listes rend `1` ; un chemin `src/…` cité dans une tâche et absent de `**Fichiers :**` rend `1` (V22).
+- [x] `scripts/plan/tests/test-porter-reponses.sh` : dépôt nu local en `origin`, faux `gh` qui fusionne ; une réponse écrite dans le clone → une branche, une demande de fusion, `main` porte la réponse et le sprint n'a plus de ligne `En attente`, la copie de travail est propre et `pull --ff-only` passe ; une autre modification non commitée → `1`, rien d'envoyé (V127).
+- [x] `scripts/plan/tests/test-enchainer.sh` : une réponse écrite dans le clone est portée avant la passe et libère son sprint ; une autre modification du clone arrête la boucle en `1` ; une ligne `**En attente :**` sans `Q-UX-n` n'attend rien (V127, D-76).
 
 ---
 
