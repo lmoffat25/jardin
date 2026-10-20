@@ -356,9 +356,10 @@ Une même fenêtre projetée pour « Nord, Est, océanique frais » (+7) et pour
 « Midi » (−15) donne des débuts, fins et optimales décalés de 22 jours.
 
 **V44 — Un butoir rogne, il ne déplace pas** · moteur · RG-44, RG-45, A25, critère 4
-Fenêtre de haie `01/08 → 31/03` avec butoirs `01/08` et `31/03` : en montagne
-(+21) elle devient `22/08 → 31/03`, dans le Midi (−15) `01/08 → 16/03`. Sans
-butoir, les mêmes projections débordent (`22/08 → 21/04`, `17/07 → 16/03`).
+Fenêtre de haie `16/08 → 15/03` avec butoirs `16/08` et `15/03` : en montagne
+(+21) elle devient `06/09 → 15/03`, dans le Midi (−15) `16/08 → 28/02` (29/02
+les années bissextiles). Sans butoir, les mêmes projections débordent
+(`06/09 → 05/04`, `01/08 → 28/02`).
 
 **V45 — Le 29 février n'est pas un cas d'erreur** · moteur · chap. 2 §3, décision D-09
 Une borne au 29/02 est projetée au 29/02 les années bissextiles et au 28/02 les
@@ -438,13 +439,13 @@ Une échéance R1 passée est rendue due aujourd'hui si la saison est ouverte, e
 **V59 — Les invariants tiennent chaque jour de l'année** · moteur · C11, chap. 6 §6.2, TS-8
 `make balayage` évalue chaque jour d'une année bissextile et d'une année
 ordinaire, pour les cinq profils et chaque règle du jeu témoin : aucune taille de
-haie due du 01/04 au 31/07 ; exactement une échéance à venir par règle active ;
+haie due du 16/03 au 15/08 ; exactement une échéance à venir par règle active ;
 aucune échéance R1 due hors saison ; aucun intervalle décalé ; deux calculs
 identiques, mêmes identités. `make moteur` reste sous la seconde.
 
 **V60 — Une haie n'est jamais taillée en nidification, dans aucun climat** · moteur · **critère 4**, RG-44
-Pour les cinq profils et chaque jour du 01/04 au 31/07, la règle de haie témoin
-(`01/08 → 31/03`, butoirs `01/08` et `31/03`) n'est ni ouverte, ni optimale, ni
+Pour les cinq profils et chaque jour du 16/03 au 15/08, la règle de haie témoin
+(`16/08 → 15/03`, butoirs `16/08` et `15/03`) n'est ni ouverte, ni optimale, ni
 urgente.
 
 **V61 — Les tests du moteur tuent ses mutations** · câblage · C9, C10, O16
@@ -496,19 +497,19 @@ mémoire.
 
 **V68 — La cohérence agronomique tient** · base · B-T1, B-T2, B-T3
 Aucun fruitier à noyau n'a de fenêtre de taille qui recouvre décembre à février ;
-toute haie a une fenêtre qui exclut le 01/04 → 31/07 ; aucun arbuste à floraison
+toute haie a une fenêtre qui exclut le 16/03 → 15/08 ; aucun arbuste à floraison
 printanière n'est taillé avant sa floraison.
 
 **V69 — La bibliothèque tient dans les cinq climats** · base · B-T12, B-T13, B-T14, B7, B8
-Toute haie porte les butoirs `01/08` et `31/03` ; pour chaque profil, chaque
+Toute haie porte les butoirs `16/08` et `15/03` ; pour chaque profil, chaque
 fenêtre projetée puis rognée dure au moins 14 jours et contient sa période
-optimale ; aucune fenêtre de haie projetée ne recouvre le 01/04 → 31/07. Le
+optimale ; aucune fenêtre de haie projetée ne recouvre le 16/03 → 15/08. Le
 calcul passe par la projection du moteur, pas par une copie.
 
 **V70 — La haie livrée respecte la nidification de bout en bout** · base · **critère 4**
 La règle de haie de la bibliothèque, chargée en base, copiée sur une plante de
 chacun des cinq jardins témoins (un par profil), n'est jamais proposée entre le
-01/04 et le 31/07 par le calcul complet.
+16/03 et le 15/08 par le calcul complet.
 
 ---
 
@@ -940,7 +941,7 @@ sous la borne de V124.
 | 1 — 150 plantes en moins d'une heure | V85, V86 | Coller depuis un tableur (B3 · 04, D-62) et chronométrage du parcours P0 (B3) |
 | 2 — Saisie terrain en 15 s, renvoi sans doublon | V94, V96 | 3 gestes, état « non envoyé » (T1–T4) |
 | 3 — Tableau de bord à toute date, avec explication | V50, V76, V130 | Affichage groupé (B4) |
-| 4 — Haie jamais taillée du 01/04 au 31/07, cinq profils | V44, V60, V70 | — |
+| 4 — Haie jamais taillée du 16/03 au 15/08, cinq profils | V44, V60, V70 | — |
 | 5 — Tonte à ~7 j en avril, ~10 j en octobre | V55 | — |
 | 6 — Taille non soldée au 31 mars : manquée, suivante l'hiver d'après | V47, V73, V78 | Historique de la plante (B6) |
 | 7 — Saisie rétroactive, recalcul | V99 | — |

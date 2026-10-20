@@ -86,14 +86,14 @@ référence.
 | # | Test | Ce qu'il attrape |
 |---|---|---|
 | B-T1 | Aucun fruitier à **noyau** n'a de fenêtre de taille recouvrant décembre → février | La confusion pépins/noyaux, l'erreur la plus coûteuse |
-| B-T2 | Toute espèce de type **haie** a une fenêtre excluant le 1ᵉʳ avril → 31 juillet | RG-37, nidification |
+| B-T2 | Toute espèce de type **haie** a une fenêtre excluant le 16 mars → 15 août | RG-37, nidification |
 | B-T3 | Un arbuste à floraison **printanière** n'est pas taillé avant sa floraison | Suppression de la floraison de l'année |
 
 ### Cohérence structurelle
 
 | # | Test | Ce qu'il attrape |
 |---|---|---|
-| B-T4 | Toute fenêtre dure entre **14 jours et 5 mois** — sauf celle qui porte un **butoir d'interdiction**, tolérée jusqu'à **9 mois** | Une fenêtre de 11 mois = une valeur non renseignée déguisée. L'exception couvre la haie, `01/08 → 31/03` = 8 mois, exigée par le critère 4 du CDC |
+| B-T4 | Toute fenêtre dure entre **14 jours et 5 mois** — sauf celle qui porte un **butoir d'interdiction**, tolérée jusqu'à **9 mois** | Une fenêtre de 11 mois = une valeur non renseignée déguisée. L'exception couvre une fenêtre de haie qui irait d'un butoir à l'autre, `16/08 → 15/03` = 7 mois (critère 4 du CDC) |
 | B-T5 | Tout intervalle de tonte **non nul** est entre **5 et 21 jours** | Un `90` saisi pour `9`. Le `0` est une valeur légitime : il marque le hors-saison (RG-40), il n'est pas une saisie manquante |
 | B-T6 | La période optimale est **incluse** dans sa fenêtre | Incohérence de saisie |
 | B-T7 | Une espèce n'a **pas deux règles** du même type d'intervention | Doublon d'import |
@@ -115,9 +115,9 @@ tests ci-dessus vérifient le climat de référence ; ceux-ci vérifient les cin
 
 | # | Test | Ce qu'il attrape |
 |---|---|---|
-| B-T12 | Toute espèce de type **haie** porte un butoir de début au 01/08 et un butoir de fin au 31/03 | Une fenêtre correcte mais non bornée — RG-44 |
+| B-T12 | Toute espèce de type **haie** porte un butoir de début au 16/08 et un butoir de fin au 15/03 | Une fenêtre correcte mais non bornée — RG-44 |
 | B-T13 | Pour **chacun des cinq profils climatiques**, la fenêtre projetée puis rognée dure ≥ 14 jours et contient toujours sa période optimale | Un butoir qui rogne trop, ou une fenêtre dont l'optimale sort du butoir |
-| B-T14 | Pour chacun des cinq profils, aucune fenêtre de haie projetée ne recouvre le 01/04 → 31/07 | **Le bug qui a motivé RG-44** : à +21 j la fenêtre débordait sur avril, à −15 j sur juillet |
+| B-T14 | Pour chacun des cinq profils, aucune fenêtre de haie projetée ne recouvre le 16/03 → 15/08 | **Le bug qui a motivé RG-44** : à +21 j la fenêtre débordait sur fin mars–avril, à −15 j sur début août |
 
 > **B8 — Un test qui ne tourne que sur le climat de référence ne prouve rien.**
 > C'était le défaut de la première version de ce protocole : B-T1 et B-T2

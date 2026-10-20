@@ -1,7 +1,12 @@
 # Cahier des charges fonctionnel — Service de gestion de jardin
 
-Version 0.13 — 19/10/2026 — Léon Moffat
+Version 0.14 — 20/10/2026 — Léon Moffat
 Statut : proposition de conception, à valider avant travaux techniques.
+
+**Changement de la 0.13.** L'annexe A est sourcée (`docs/plan/sourcing-annexe-a.md`).
+La période de nidification passe à 16/03 → 15/08 (elle datait de 2015), avec les
+butoirs, le critère 4 et les tests qui en dépendent. Cinq questions sont
+ouvertes au §11 (Q19 à Q23).
 
 **Changement de la 0.12.** Le produit est réalisé par des agents IA, sous le
 pilotage de Léon, et non plus développé à la main (§1.5). Les reports motivés
@@ -623,7 +628,7 @@ que trivial.
   floraison), avec un intervalle minimal de 12 à 15 jours entre deux
   applications.
 - Certaines interventions sont **interdites** sur une période : ne pas tailler
-  les haies du 1er avril au 31 juillet (nidification).
+  les haies du 16 mars au 15 août (nidification).
 
 Un modèle à intervalle unique produirait donc des échéances fausses la moitié
 du temps, et des échéances fausses font abandonner l'outil en une saison.
@@ -672,7 +677,7 @@ engagement de saisie qu'on ne peut pas demander la première année.
 
 **R5 — Contrainte d'exclusion** *(lot 3 et lot 5)*
 Interdit ou déconseille une échéance produite par une autre règle : pas de
-taille de haie du 01/04 au 31/07 (nidification), pas de traitement avant la
+taille de haie du 16/03 au 15/08 (nidification), pas de traitement avant la
 pluie, pas de solanacée avant trois ans.
 *Peut attendre :* voir ci-dessous.
 
@@ -681,8 +686,8 @@ pluie, pas de solanacée avant trois ans.
 La contrainte a l'air indispensable — l'interdiction de tailler les haies en
 période de nidification est réelle et sérieuse. Mais **une fenêtre bien définie
 fait déjà le travail** : au lieu d'une fenêtre « toute l'année » corrigée par
-une interdiction avril–juillet, on écrit directement une fenêtre
-« 01/08 → 31/03 ». Le résultat affiché est le même, sans second mécanisme.
+une interdiction de mi-mars à mi-août, on écrit directement une fenêtre
+« 16/08 → 15/03 ». Le résultat affiché est le même, sans second mécanisme.
 
 La contrainte ne devient réellement nécessaire que dans trois cas, et aucun
 n'est au MVP :
@@ -701,11 +706,11 @@ n'est au MVP :
 #### Le butoir : ce que le décalage climatique n'a pas le droit de franchir
 
 RG-37 ne suffit pas seule, et c'est un piège qui ne se voit qu'en combinant deux
-règles justes. Une fenêtre de haie écrite `01/08 → 31/03` exclut bien la
+règles justes. Une fenêtre de haie écrite `16/08 → 15/03` exclut bien la
 nidification — **dans le climat de référence**. Mais RG-25 décale les fenêtres
-selon le jardin : à +21 jours (montagne) elle devient `22/08 → 21/04`, et l'outil
-propose une taille de haie le 15 avril. À −15 jours (Midi) elle devient
-`17/07 → 16/03`, et il la propose le 20 juillet. Dans les deux cas, le critère
+selon le jardin : à +21 jours (montagne) elle devient `06/09 → 05/04`, et l'outil
+propose une taille de haie le 1er avril. À −15 jours (Midi) elle devient
+`01/08 → 28/02`, et il la propose le 5 août. Dans les deux cas, le critère
 d'acceptation n°4 est faux et l'interdiction est franchie.
 
 Le décalage climatique est une approximation ; une interdiction n'en est pas
@@ -723,7 +728,7 @@ une. Il faut donc une borne que l'approximation ne franchit pas.
 >
 > | Usage | Exemple | Nature |
 > |---|---|---|
-> | **Interdiction** | pas de taille de haie du 01/04 au 31/07 | légale ou écologique — aucun climat n'y échappe |
+> | **Interdiction** | pas de taille de haie du 16/03 au 15/08 | écologique (légale pour les exploitations agricoles, recommandée pour un jardin, voir Q19) — aucun climat n'y échappe |
 > | **Plausibilité agronomique** | on ne plante pas en décembre, même à Perpignan | borne ce qu'un décalage de 21 jours rendrait absurde |
 >
 > **Le rognage se teste, il ne se suppose pas.** Si, pour l'un des cinq profils
@@ -800,13 +805,19 @@ fertilisation) qui s'appliquent automatiquement à la création d'une plante.
 > **RG-09** — Une règle de la bibliothèque est une **proposition**, jamais une
 > contrainte. La plante fait foi.
 
-**Contenu de départ, sourcé et prêt** (annexe A) : pommier, poirier, prunier,
-cerisier, haie persistante, haie caduque, rosier, arbuste à floraison estivale,
-pelouse — plus les traitements communs aux fruitiers.
+**Contenu de départ, sourcé et prêt** (annexe A, sourçage du 19/10/2026) :
+pommier, poirier, prunier, cerisier, vigne, groseillier à grappes, cassissier,
+haie persistante, haie caduque, rosier, arbuste à floraison printanière,
+arbuste à floraison estivale, pelouse.
 
-**À sourcer avant d'entrer dans la liste de départ** : pêcher, vigne,
-framboisier, groseillier, et la transposition en R2 de l'arbuste à floraison
-printanière (l'annexe A ne lui donne qu'une règle R4, reportée au lot 1).
+**Sourcés, en attente d'une décision** : pêcher (incompatible avec B-T1 tel
+qu'il est écrit, Q20), framboisier (deux règles selon qu'il est remontant ou
+non, Q21).
+
+**Encore à sourcer** : les traitements communs aux fruitiers (cuivre, huile
+blanche), écrits en R3 dans l'annexe A alors que le MVP n'a que R1 et R2 (Q23).
+Le groseillier à maquereau est écarté de la liste de départ : une seule source
+retenue.
 
 Cette seconde liste n'est pas une omission, c'est l'application de B4 et B5 du
 protocole de bibliothèque : une périodicité non consultée est une invention
@@ -1545,9 +1556,9 @@ celles du §10.2 :
    affichée comme non envoyée, et son renvoi crée une seule intervention (RG-50).
 3. Le tableau de bord affiche, à toute date, la liste des interventions dues,
    groupées par zone, chacune avec une phrase d'explication de son échéance.
-4. Une taille de haie n'est jamais proposée entre le 1ᵉʳ avril et le 31 juillet,
-   **et ce pour chacun des cinq profils climatiques**. La bibliothèque livre une
-   fenêtre 01/08 → 31/03 qui exclut d'emblée la nidification, et ses butoirs
+4. Une taille de haie n'est jamais proposée entre le 16 mars et le 15 août,
+   **et ce pour chacun des cinq profils climatiques**. La bibliothèque livre des
+   fenêtres comprises dans 16/08 → 15/03 qui exclut d'emblée la nidification, et ses butoirs
    (RG-44) empêchent le décalage climatique de la faire déborder de part ou
    d'autre. C'est le décalage, pas la fenêtre, qui fait échouer ce critère quand
    les butoirs manquent.
@@ -1635,6 +1646,11 @@ sont aussi :
 | Q16 | Dépôt public ou privé | Un dépôt public reçoit des minutes d'intégration continue gratuites, mais expose le code et l'historique des décisions | **Tranchée le 19/10/2026** — public pendant le développement, privé ensuite. Ce qui a été public le reste (chapitre 6, §2) |
 | Q17 | Serveur de production | Le CDC exige un serveur Linux ordinaire, mais ne dit pas lequel. Le déploiement automatique doit savoir où il va | **Ouverte** — à trancher avant le premier déploiement, pas avant de coder |
 | Q18 | Conditions d'usage des orthophotos IGN | Licence, attribution à afficher, limite de débit éventuelle : non relues à ce jour, seul l'accès sans clé a été vérifié | **Ouverte** — à lire avant de livrer la V1 ; le fond reste un agrément (RG-47) |
+| Q19 | Nature de la nidification pour une haie de jardin | Les sources la donnent comme une recommandation pour un particulier, une obligation pour un exploitant agricole. Le produit l'applique comme un butoir que rien ne franchit (RG-44) : dire « interdit » à un particulier est inexact, dire « déconseillé » affaiblit la règle | **Ouverte** — garder un butoir dur et formuler l'explication en « période de nidification, taille déconseillée », ou laisser l'utilisateur lever le butoir sur sa plante |
+| Q20 | Pêcher et B-T1 | B-T1 interdit à tout fruitier à noyau une fenêtre de taille qui recouvre décembre → février ; toutes les sources taillent le pêcher en février–mars. La bibliothèque ne se publie pas tant que les deux coexistent | **Ouverte** — exception nominative au pêcher dans B-T1, ou B-T1 restreint au cerisier et au prunier |
+| Q21 | Framboisier remontant et non remontant | Deux tailles différentes ; B-T7 interdit deux règles du même type sur une espèce | **Ouverte** — deux espèces de bibliothèque (proposition du sourçage), ou une espèce et le choix de la règle à la création de la plante |
+| Q22 | Périodicité de la haie caduque | Une haie taillée de jardin se reprend chaque année (non sourcé), une haie bocagère tous les 2 à 3 ans (sourcé) | **Ouverte** — 1 an par défaut, ou 2 ans |
+| Q23 | Traitements fruitiers | Écrits en R3 (hors MVP) et non sourcés, alors que le plan les attend dans la bibliothèque du sprint 4b | **Ouverte** — les sourcer et les écrire en R2 à deux fenêtres (RG-36), ou les retirer de la liste de départ |
 
 ---
 
@@ -1692,39 +1708,50 @@ Décisions actées, pour ne pas les rouvrir sans raison nouvelle.
 | 19/10/2026 | **L'agent travaille sans interruption** ; il n'arrête Léon que pour une question d'expérience utilisateur ou un acte qui l'engage. Fusion automatique sur CI verte, production par Léon seul | Décision de Léon : les décisions techniques sont déléguées et écrites, pas soumises | Chapitre 7 (`docs/plan/`), chapitre 6 C24 révisée, C26 |
 | 19/10/2026 | **Plus d'arrêt pour l'expérience utilisateur non plus** (précise la ligne précédente). Une question d'UX se tranche par la recommandation de l'agent et s'inscrit au registre `docs/plan/questions-ux.md` ; les wireframes ne sont plus une porte bloquante, ils se revoient après coup. Seuls arrêts : les actes qui engagent Léon (dépôt public, secret ou compte, dépense, production) | Décision de Léon : « fais, on fera des changements après s'il faut ; si le code est bien écrit, ce ne sera pas trop difficile » | Chapitre 7 §3 (P2, P3), chapitre 6 C26, `conception-ecrans.md` §1 |
 
+| 20/10/2026 | **La période de nidification devient 16/03 → 15/08** ; butoirs de haie 16/08 et 15/03 | Le 01/04 → 31/07 de la v0.13 venait de l'arrêté PAC de 2015, périmé. Le sourçage s'appuie sur six textes concordants. RG-37, RG-44, critère 4, B-T2, B-T12, B-T14 et les jeux témoins du plan sont corrigés en conséquence | Annexe A, RG-44, `docs/plan/sourcing-annexe-a.md` |
+| 20/10/2026 | **L'annexe A prend les valeurs du sourçage**, avec leur niveau de confiance | Les valeurs de la v0.13 venaient de sources de vulgarisation. La haie persistante passe à une seule fenêtre (la seconde tombait en nidification), le rosier perd « jusqu'en novembre », la pelouse reçoit des intervalles mensuels. Vigne, groseillier à grappes, cassissier et arbuste à floraison printanière entrent dans la liste de départ ; le groseillier à maquereau en est écarté | Annexe A, §5.1 |
+| 20/10/2026 | **Les questions que le sourçage ne tranche pas sont posées à Léon**, pas résolues : nature de la nidification, pêcher, framboisier, haie caduque, traitements | Elles engagent le comportement du produit ou une règle de test, pas seulement une valeur | Q19 à Q23 |
 ---
 
 ## Annexe A — Périodicités de référence
 
-Base de départ pour la bibliothèque. À vérifier et corriger à l'usage : ces
-valeurs sont des ordres de grandeur issus de sources de vulgarisation, pas des
-prescriptions agronomiques locales.
+Base de départ pour la bibliothèque, **sourcée le 19/10/2026** selon B1–B4 du
+protocole de bibliothèque. Chaque valeur, ses citations, les désaccords entre
+sources et l'arbitrage retenu sont dans `docs/plan/sourcing-annexe-a.md` ; ce
+tableau n'en est que le résumé. Une valeur `indicative` repose sur des sources
+concordantes mais de rang inférieur, ou sur une transposition ; elle s'affiche
+comme telle (§5.1).
 
-| Objet | Intervention | Règle | Paramètres |
-|---|---|---|---|
-| Pommier, poirier (à pépins) | Taille d'entretien | R2 | Fenêtre 01/12 → 31/03 hors gel, optimale 01/02 → 15/03. Annuelle si jeune ou palissé, tous les 2–3 ans en forme libre adulte |
-| Cerisier, prunier (à noyaux) | Taille | R2 ou R4 | Après récolte, 01/08 → 30/09. Ne pas tailler en hiver (gommose, chancre). Reprise sévère étalée sur 3 ans |
-| Fruitiers | Traitement cuivre | R3 | 2 à 3 passages/an : chute des feuilles (~nov), fin d'hiver avant débourrement (~fév), complément printanier si humide. Minimum 12–15 j entre deux |
-| Fruitiers | Huile blanche | R3 | 2 passages en fin d'hiver, à ~1 mois d'intervalle |
-| Haie persistante | Taille | R2 ×2 | Fin d'hiver (~mars) et fin d'été (~sept–oct) |
-| Haie caduque | Taille | R2 | 1×/an, fin d'hiver |
-| Toutes haies | Taille | **Butoirs** (RG-44) | Butoir de début 01/08, butoir de fin 31/03. Interdiction de nidification 01/04 → 31/07 : elle borne la fenêtre après décalage climatique, sans mécanisme R5 |
-| Arbuste à floraison printanière | Taille | R4 | Juste après la fanaison |
-| Arbuste à floraison estivale | Taille | R2 | Fin d'hiver ; rosiers jusqu'en novembre |
-| Pelouse (zone) | Tonte | R1 saisonnier | ~7 j au printemps, 10–14 j en été selon sécheresse, 7–10 j de mi-septembre à l'automne, nulle en hiver |
-| Planche (zone) | Rotation | R5 | Pas de retour de la même famille botanique avant 3 à 4 ans |
+| Objet | Intervention | Règle | Paramètres | Confiance |
+|---|---|---|---|---|
+| Pommier, poirier (à pépins) | Taille d'hiver | R2 | Fenêtre 01/12 → 31/03, optimale 01/02 → 31/03, chaque année | vérifiée |
+| Cerisier | Taille | R2 | Après récolte, 01/08 → 30/09, chaque année. Pas de taille d'hiver (gommose, chancre) | vérifiée |
+| Prunier | Taille | R2 | Mêmes valeurs que le cerisier | indicative |
+| Pêcher | Taille de fructification | R2 | 01/02 → 31/03, optimale 01/03 → 31/03, chaque année. **Contredit B-T1** (Q20) | indicative |
+| Vigne | Taille d'hiver | R2 | 01/12 → 31/03, optimale 01/02 → 31/03, chaque année | vérifiée |
+| Framboisier non remontant | Taille | R2 | 01/02 → 31/03, chaque année (Q21) | vérifiée |
+| Framboisier remontant (récolte d'automne) | Taille | R2 | 01/11 → 28/02, chaque année (Q21) | vérifiée |
+| Groseillier à grappes | Taille | R2 | 01/01 → 15/03, optimale 01/02 → 28/02, chaque année | vérifiée |
+| Cassissier | Taille | R2 | 01/11 → 28/02, chaque année | vérifiée |
+| Haie persistante | Taille | R2, **une** fenêtre | 16/08 → 30/09, chaque année. La taille de printemps des sources tombe en nidification : elle est retirée | vérifiée |
+| Haie caduque | Taille | R2 | 01/11 → 15/03 ; périodicité à trancher (Q22) | indicative |
+| Toutes haies | Taille | **Butoirs** (RG-44) | Butoir de début 16/08, butoir de fin 15/03 : la période de nidification 16/03 → 15/08 borne la fenêtre après décalage climatique, sans mécanisme R5 | vérifiée |
+| Arbuste à floraison printanière | Taille | R2 (transposition de la règle R4 « après la fanaison ») | 01/04 → 31/07, optimale 01/05 → 30/06 | indicative |
+| Arbuste à floraison estivale | Taille | R2 | 01/02 → 31/03, optimale 01/03 → 31/03, chaque année | vérifiée |
+| Rosier (buisson remontant) | Taille | R2 | 01/02 → 31/03, chaque année. Le « jusqu'en novembre » de la v0.13 n'est confirmé par aucune source | vérifiée |
+| Pelouse (zone) | Tonte | R1 saisonnier | Janvier–février : aucune ; mars–mai : 7 j ; juin–août : 14 j ; septembre–octobre : 7 j ; novembre–décembre : aucune | indicative |
+| Fruitiers | Traitement cuivre | R3 | 2 à 3 passages/an : chute des feuilles (~nov), fin d'hiver avant débourrement (~fév), complément printanier si humide. Minimum 12–15 j entre deux. **Non sourcé** (Q23) | — |
+| Fruitiers | Huile blanche | R3 | 2 passages en fin d'hiver, à ~1 mois d'intervalle. **Non sourcé** (Q23) | — |
+| Planche (zone) | Rotation | R5 | Pas de retour de la même famille botanique avant 3 à 4 ans. Lot 3, hors du sourçage | — |
 
-**Espèces annoncées en §5.1 mais absentes de ce tableau**, à sourcer selon B1–B4
-du protocole de bibliothèque avant d'entrer dans la liste de départ : pêcher,
-vigne, framboisier, groseillier. L'arbuste à floraison printanière n'a ici qu'une
-règle R4, reportée au lot 1 : sa transposition en fenêtre R2 reste à écrire.
+**Correction de la v0.13.** La période de nidification était écrite
+01/04 → 31/07 : c'était celle de l'arrêté PAC de 2015, remplacée depuis la PAC
+2023-2027 par **16/03 → 15/08** (fiche Telepac BCAE 8 de 2026, instruction
+interministérielle du 17/07/2026, communiqué de la préfecture de l'Yonne). Pour
+une haie de jardin, ce n'est pas une interdiction légale mais une recommandation,
+doublée de l'interdiction permanente de détruire un nid d'espèce protégée
+(Q19).
 
-**Sources** (consultées le 23/08/2026) :
-[Salon du Jardin — taille des fruitiers par espèce](https://salondujardin.fr/taille-arbres-fruitiers-2026/) ·
-[Pépins & Cie — calendrier de taille](https://pepinsetcie.fr/quand-tailler-un-arbre-fruitier-calendrier-pratique-et-erreurs-a-eviter/) ·
-[Gerbeaud — traitement d'hiver des arbres](https://www.gerbeaud.com/jardin/fiches/fp_arbres_traitement_hiver.php3) ·
-[Au Jardin — traitement hivernal des fruitiers](https://www.aujardin.info/fiches/traitement-hivernal-arbres-fruitiers.php) ·
-[Jardiner Malin — période de taille des haies](https://www.jardiner-malin.fr/fiche/taille-haies-periode.html) ·
-[Guide Jardins & Paysages — fréquence de tonte par saison](https://www.guide-jardins-paysage.fr/2025/02/a-quelle-frequence-faut-il-tondre-sa-pelouse-selon-les-saisons/) ·
-[Gerbeaud — rotation des cultures](https://www.gerbeaud.com/jardin/fiches/modeles-rotation-des-cultures-au-potager,1531.html) ·
-[Jardiner Autrement — rotation au potager](https://www.jardiner-autrement.fr/la-rotation-des-cultures-au-potager/)
+**Sources de la v0.13** (vulgarisation, consultées le 23/08/2026) : remplacées
+par celles de `docs/plan/sourcing-annexe-a.md`, qui dit aussi lesquelles ont été
+exclues et pourquoi.

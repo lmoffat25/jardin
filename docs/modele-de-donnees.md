@@ -410,9 +410,9 @@ traitement en deux passages sans avoir besoin de R3.
 > jardin (RG-25). Un butoir, lui, ne bouge pas : il est appliqué **après** le
 > décalage et **rogne** la fenêtre projetée.
 >
-> Sans lui, la fenêtre de haie `01/08 → 31/03` — écrite précisément pour exclure
-> la nidification (RG-37) — devient `22/08 → 21/04` en montagne et
-> `17/07 → 16/03` dans le Midi. L'interdiction est franchie dans les deux sens,
+> Sans lui, la fenêtre de haie `16/08 → 15/03` — écrite précisément pour exclure
+> la nidification (RG-37) — devient `06/09 → 05/04` en montagne et
+> `01/08 → 28/02` dans le Midi. L'interdiction est franchie dans les deux sens,
 > et rien ne proteste : chacune des deux règles est juste prise isolément.
 >
 > Un butoir rogne, il ne déplace pas. Si le rognage laisse moins de 14 jours ou

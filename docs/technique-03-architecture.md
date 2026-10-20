@@ -777,15 +777,15 @@ test n°1 du §6 du chapitre 2 attrape.
 > ultérieure.** RG-37 dit que la bibliothèque livre des fenêtres qui excluent
 > déjà les périodes interdites, et RG-25 dit que le moteur décale les fenêtres.
 > Les deux sont justes ; **ensemble, elles franchissent l'interdit**. La fenêtre
-> de haie `01/08 → 31/03` devient :
+> de haie `16/08 → 15/03` devient :
 >
-> | Profil | Décalage | Sans butoir | Avec butoirs `01/08` / `31/03` |
+> | Profil | Décalage | Sans butoir | Avec butoirs `16/08` / `15/03` |
 > |---|---|---|---|
-> | Montagne | +21 j | `22/08 → 21/04` — taille proposée le 15 avril | `22/08 → 31/03` |
-> | Midi | −15 j | `17/07 → 16/03` — taille proposée le 20 juillet | `01/08 → 16/03` |
+> | Montagne | +21 j | `06/09 → 05/04` — taille proposée le 1er avril | `06/09 → 15/03` |
+> | Midi | −15 j | `01/08 → 28/02` — taille proposée le 5 août | `16/08 → 28/02` |
 >
 > Le butoir **rogne**, il ne déplace pas : la fenêtre montagnarde perd ses trois
-> semaines d'avril, elle ne glisse pas de trois semaines. Déplacer
+> semaines de fin mars–début avril, elle ne glisse pas de trois semaines. Déplacer
 > réintroduirait une contrainte R5, reportée au lot 3.
 >
 > C'est aussi ce qui borne le cas plus doux : on ne plante pas en décembre, même

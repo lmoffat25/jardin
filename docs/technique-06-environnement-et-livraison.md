@@ -274,7 +274,7 @@ des invariants :
 
 | Invariant | Règle |
 |---|---|
-| Aucune taille de haie n'est due entre le 01/04 et le 31/07 | RG-44, critère 4 |
+| Aucune taille de haie n'est due entre le 16/03 et le 15/08 | RG-44, critère 4 |
 | Une règle active produit exactement une échéance à venir | RG-40 |
 | Une échéance R1 n'est jamais due hors saison | Critère 15 |
 | Le décalage ne s'applique jamais à la valeur d'un intervalle | RG-25 |

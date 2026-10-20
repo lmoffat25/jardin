@@ -805,7 +805,7 @@ private static function etat(Periode $p, \DateTimeImmutable $j, bool $faiteDansL
 
 ### 3b.2 Tests
 
-- [ ] Créer `tests/Moteur/Temoins/JeuTemoin.php` : fabriques de règles témoins (pommier `01/12 → 31/03`, optimale `01/02 → 15/03` ; cerisier `01/08 → 30/09`, optimale jusqu'au 31/08 ; haie `01/08 → 31/03` avec butoirs) — **jeux témoins, jamais copiés dans `bibliotheque/`**.
+- [ ] Créer `tests/Moteur/Temoins/JeuTemoin.php` : fabriques de règles témoins (pommier `01/12 → 31/03`, optimale `01/02 → 15/03` ; cerisier `01/08 → 30/09`, optimale jusqu'au 31/08 ; haie `16/08 → 15/03` avec butoirs `16/08` et `15/03`) — **jeux témoins, jamais copiés dans `bibliotheque/`**.
 - [ ] `tests/Moteur/EtatsTest.php` : V46, chaque jour du 01/09/2026 au 30/04/2027, un seul état et l'ordre de la cascade.
 - [ ] `tests/Moteur/ManqueeTest.php` : V47 (01/04/2027 ; règle créée en cours de fenêtre → aucune manquée). Groupe `critere-6`.
 - [ ] `tests/Moteur/PluriannuelTest.php` : V48.
@@ -941,7 +941,7 @@ private static function prochaineR1(Regle $r, ?\DateTimeImmutable $derniere, Dec
 ### 3e.1 Balayages
 
 - [ ] `tests/Moteur/Balayage/BalayageAnnuelTest.php` : les cinq invariants de V59, chaque jour de 2027 et 2028, cinq profils, règles du jeu témoin. Groupe `balayage`.
-- [ ] `tests/Moteur/NidificationTest.php` : V60, cinq profils, 01/04 → 31/07. Groupe `critere-4` (dans `make test`, il est court).
+- [ ] `tests/Moteur/NidificationTest.php` : V60, cinq profils, 16/03 → 15/08. Groupe `critere-4` (dans `make test`, il est court).
 - [ ] Modifier `tests/Pest.php` et `phpunit.xml` (groupe `balayage` exclu par défaut), `Makefile` (`balayage`, `moteur` = `tests/Moteur` sans `balayage`, avec mesure du temps : échec au-delà d'une seconde).
 
 ### 3e.2 Mutation
@@ -1046,7 +1046,7 @@ especes:
 **Objectif :** la bibliothèque contient les espèces déjà sourcées du CDC §5.1, chaque règle citant deux sources selon le protocole, et les tests B-T1 à B-T3 et B-T12 à B-T14 passent sur elle.
 **Constructeur :** back (avec recherche documentaire)
 **Risque :** complet
-**Lecture :** protocole de bibliothèque en entier ; CDC §5.1 (liste de départ), annexe A ; critère 4 ; décisions D-52, D-63.
+**Lecture :** protocole de bibliothèque en entier ; CDC §5.1 (liste de départ), annexe A ; `docs/plan/sourcing-annexe-a.md` (sources retenues, citations et sources exclues : le point de départ, chaque source étant rouverte dans la session, B4) ; critère 4 ; décisions D-52, D-63.
 **Contrat :** fichiers `bibliotheque/fruitiers.yaml`, `haies.yaml`, `ornement.yaml`, `pelouse.yaml`, `traitements.yaml` ; `make sources`.
 **Tests d'abord :** `tests/Persistance/CoherenceBibliothequeTest.php` sur des fichiers témoins fautifs ; premier rouge attendu : « aucun fruitier à noyau trouvé ».
 **Preuve :** rouge
@@ -1057,12 +1057,12 @@ especes:
 **Assertions :** V66, V68, V69
 **Fichiers :** `src/Bibliotheque/Console/VerifierSources.php`, `Makefile`
 **Classes de test :** `tests/Persistance/CoherenceBibliothequeTest.php`, `tests/Persistance/ClimatsBibliothequeTest.php`, `tests/Persistance/NidificationBoutEnBoutTest.php`, `tests/Architecture/WorkflowTest.php`
-**Fin :** pommier, poirier, prunier, cerisier, haie persistante, haie caduque, rosier, arbuste à floraison estivale, pelouse et traitements fruitiers sont chargés avec deux sources par règle (URL, libellé, date de consultation), chaque valeur venant d'une source consultée dans la session (B4) ; rosier et arbuste à floraison estivale sont `verifiee` ou `indicative` selon ce que les sources permettent ; une espèce ou une règle sans source est absente des fichiers et inscrite dans `bibliotheque/retraits.yaml`.
+**Fin :** pommier, poirier, prunier, cerisier, vigne, groseillier à grappes, cassissier, haie persistante, haie caduque, rosier, arbustes à floraison printanière et estivale et pelouse sont chargés ; les traitements fruitiers suivent la réponse de Léon à Q23 du CDC (sans réponse : absents, inscrits dans `bibliotheque/retraits.yaml`) ; tous avec deux sources par règle (URL, libellé, date de consultation), chaque valeur venant d'une source consultée dans la session (B4) ; rosier et arbuste à floraison estivale sont `verifiee` ou `indicative` selon ce que les sources permettent ; une espèce ou une règle sans source est absente des fichiers et inscrite dans `bibliotheque/retraits.yaml`.
 **Coût :** recherche documentaire lente et jugement de qualité, comportement jamais observé (la projection des cinq profils sur des valeurs réelles) → **couper** : les cinq espèces à sourcer passent au 4d ; ici, seules celles que le CDC dit déjà sourcées.
 
 ### 4c.1 Contenu
 
-- [ ] Pour chaque espèce, consulter les sources (B1–B4) pendant la session ; écrire **deux sources par règle** (`url`, `libelle`, `consultee_le`). Rosier et arbuste à floraison estivale : `verifiee` si deux sources indépendantes concordent, sinon `indicative` avec les sources trouvées (D-52). Chaque site consulté est jugé : un site qui vend ce dont il parle (pépiniériste, jardinerie — Pépins & Cie compris s'il en est un) est une source commerciale, refusée (B3), et son domaine va dans `bibliotheque/sources-exclues.yaml` avec la raison. Une valeur sans source vérifiable n'est pas écrite : la règle ou l'espèce reste absente, inscrite dans `bibliotheque/retraits.yaml` avec sa raison, recopiée dans `decisions-agents.md`. **Aucune valeur de mémoire, aucune valeur reprise d'un test.** Un écart entre les sources et l'annexe A du CDC s'écrit dans `decisions-agents.md` ; l'annexe A est relue par Léon, l'agent n'y touche pas. Toute haie porte les butoirs `01/08` et `31/03` (B7, RG-44).
+- [ ] Pour chaque espèce, consulter les sources (B1–B4) pendant la session ; écrire **deux sources par règle** (`url`, `libelle`, `consultee_le`). Rosier et arbuste à floraison estivale : `verifiee` si deux sources indépendantes concordent, sinon `indicative` avec les sources trouvées (D-52). Chaque site consulté est jugé : un site qui vend ce dont il parle (pépiniériste, jardinerie — Pépins & Cie compris s'il en est un) est une source commerciale, refusée (B3), et son domaine va dans `bibliotheque/sources-exclues.yaml` avec la raison. Une valeur sans source vérifiable n'est pas écrite : la règle ou l'espèce reste absente, inscrite dans `bibliotheque/retraits.yaml` avec sa raison, recopiée dans `decisions-agents.md`. **Aucune valeur de mémoire, aucune valeur reprise d'un test.** Un écart entre les sources et l'annexe A du CDC s'écrit dans `decisions-agents.md` ; l'annexe A est relue par Léon, l'agent n'y touche pas. Toute haie porte les butoirs `16/08` et `15/03` (B7, RG-44).
 - [ ] Créer les cinq fichiers YAML ; lancer `bibliotheque:charger` sur une base vide.
 
 ### 4c.2 Sources
@@ -1073,14 +1073,14 @@ especes:
 
 - [ ] `tests/Persistance/CoherenceBibliothequeTest.php` : B-T1, B-T2, B-T3 (V68).
 - [ ] `tests/Persistance/ClimatsBibliothequeTest.php` : B-T12, B-T13, B-T14, par `Fenetre::projeter` (V69).
-- [ ] `tests/Persistance/NidificationBoutEnBoutTest.php` : V70 — chargée, copiée sur une plante de cinq jardins témoins, calcul complet chaque jour du 01/04 au 31/07 (nécessite le pont et la matérialisation : **ce test est écrit ici en `todo()` et activé au sprint 5b**, case à cocher là-bas). Groupe `critere-4`.
+- [ ] `tests/Persistance/NidificationBoutEnBoutTest.php` : V70 — chargée, copiée sur une plante de cinq jardins témoins, calcul complet chaque jour du 16/03 au 15/08 (nécessite le pont et la matérialisation : **ce test est écrit ici en `todo()` et activé au sprint 5b**, case à cocher là-bas). Groupe `critere-4`.
 
 ---
 
 ## Sprint 4d — Espèces à sourcer
 <!-- taille : 1 assertion, 0 fichier, 1 classe de test -->
 
-**Objectif :** pêcher, vigne, framboisier, groseillier et arbuste à floraison printanière entrent dans la bibliothèque avec leurs sources, ou en sortent avec la raison.
+**Objectif :** pêcher et framboisier, sourcés le 19/10/2026 mais suspendus aux questions Q20 et Q21 du CDC, entrent dans la bibliothèque selon la réponse de Léon, ou en sortent avec la raison.
 **Constructeur :** back (recherche documentaire)
 **Risque :** léger (données et tests seuls)
 **Lecture :** protocole de bibliothèque ; CDC §5.1 (espèces à sourcer), annexe A ; décisions D-52, D-63.
@@ -1097,7 +1097,7 @@ especes:
 **Fin :** chaque espèce de la liste de départ a une règle sourcée, ou figure dans `bibliotheque/retraits.yaml` avec la raison de son retrait, recopiée dans `decisions-agents.md` (D-63).
 **Coût :** recherche documentaire, résultat incertain (l'espèce peut sortir) → **accepter**, le sprint est petit et n'en bloque aucun autre.
 
-- [ ] Sourcer chaque espèce selon B1–B4, deux sources par règle et domaines commerciaux refusés comme au 4c (D-52) ; ajouter les règles ; arbuste à floraison printanière en R2 (CDC §5.1).
+- [ ] Reprendre les sources du pêcher et du framboisier dans `docs/plan/sourcing-annexe-a.md`, les rouvrir (B4), deux sources par règle et domaines commerciaux refusés comme au 4c (D-52) ; ajouter les règles selon les réponses à Q20 (B-T1) et Q21 (une ou deux espèces). Sans réponse : retrait motivé.
 - [ ] `tests/Persistance/CompletudeBibliothequeTest.php` : la liste de départ, lue dans le test, a pour chaque espèce soit une règle chargée, soit une entrée `retiree:` dans `bibliotheque/retraits.yaml` avec sa raison (B-T10).
 
 ---
