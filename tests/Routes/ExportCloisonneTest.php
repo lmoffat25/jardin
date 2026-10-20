@@ -73,8 +73,12 @@ it('ne joint pas le nom d\'une ligne de B, même quand une ligne de A la désign
         DB::table($table)->where('jardin_id', $a)->update(['plante_id' => $planteB]);
     }
     // Les fenêtres et intervalles de A gardent leurs règles, de A, qui
-    // désignent maintenant une plante de B ; les échéances, une règle de B.
-    $regleB = (string) DB::table('regles')->where('jardin_id', $b)->orderBy('id')->value('id');
+    // désignent maintenant une plante de B ; les échéances, une règle de B
+    // qui n'a pas d'échéance (sinon l'unicité (regle_id, due_le) refuse, selon
+    // l'ordre tiré des uuid).
+    $regleB = (string) DB::table('regles')->where('jardin_id', $b)
+        ->whereNotIn('id', DB::table('echeances')->where('jardin_id', $b)->select('regle_id'))
+        ->orderBy('id')->value('id');
     DB::table('echeances')->where('jardin_id', $a)->update(['regle_id' => $regleB]);
 
     $texte = toutLeTexte(Export::fichiers(Export::telecharger($this->jardins->desDeux, $a)->assertOk()));

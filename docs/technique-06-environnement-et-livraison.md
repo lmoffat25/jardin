@@ -181,10 +181,11 @@ Un `Makefile` porte toutes les commandes. L'intégration continue appelle les
 | `make statique` | Formatage vérifié, analyse statique, typage TS, types générés à jour, audit des dépendances, taille des sprints (`make plan`) | Avant tout envoi |
 | `make plan` | Taille de chaque sprint du plan (`docs/plan/README.md` P5, décision D-75) | Quand le plan change |
 | `make test` | N1 à N3 et front (§6.4) | Avant tout envoi |
-| `make balayage` | Invariants calendaires sur toute l'année (§6.2) | Avant tout envoi qui touche le moteur ou la bibliothèque |
+| `make balayage` | Invariants calendaires sur toute l'année (§6.2), et tests de volume à 500 plantes (D-25) | Avant tout envoi qui touche le moteur ou la bibliothèque |
 | `make e2e` | N4 (Playwright) | Avant un envoi qui touche le terrain ou la carte |
 | `make mutation` | Tests de mutation du moteur (§6.1) | Avant un envoi qui touche le moteur |
 | `make criteres` | Correspondance critères du CDC ↔ tests (§6.3) | Toujours |
+| `make jardin-demo` | Le jardin fictif de 500 plantes (§3, D-113), remplacé s'il existe ; refusé en production | Pour voir l'application peuplée, et pour remplir la recette |
 | `make verifier` | Tout ce qui précède, dans cet ordre | Avant d'annoncer qu'un travail est terminé |
 
 > **C5** — **`make verifier` est la définition de « terminé ».** Un agent ne
