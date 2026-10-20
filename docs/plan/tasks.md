@@ -1262,17 +1262,17 @@ Fichier `src/Echeances/Calcul/CalculEcheances.php` (nom de la classe, PSR-4). `S
 
 ### 6.1 Lectures
 
-- [ ] Implémenter `src/Echeances/TableauDeBord/RegrouperEcheances.php` : à partir de `CalculEcheances::pourJardin` puis `MaterialiserManquees`, range en aujourd'hui (`etat ∈ {ouverte, optimale, urgente}` et R1 due ≤ aujourd'hui), semaine, mois, planning (le reste des `a_venir`, par mois) ; groupe au-delà de 10.
-- [ ] Implémenter `src/Echeances/TableauDeBord/TableauDeBordController.php` (`bureau`, `terrain`) et `src/Echeances/TableauDeBord/DetailGroupeController.php` ; `src/Echeances/routes.php`.
-- [ ] Implémenter `src/Jardin/Plantes/PlanteController.php` (`afficher` : plante par le scope, `404` sinon ; échéances à venir et manquées de ses règles) ; `src/Journal/Historique/HistoriqueController.php` ; `src/Jardin/routes.php`, `src/Journal/routes.php`.
-- [ ] Inscrire les cinq routes au registre du test de cloisonnement.
+- [x] Implémenter `src/Echeances/TableauDeBord/RegrouperEcheances.php` : à partir de `CalculEcheances::pourJardin` puis `MaterialiserManquees`, range en aujourd'hui (`etat ∈ {ouverte, optimale, urgente}` et R1 due ≤ aujourd'hui), semaine, mois, planning (le reste des `a_venir`, par mois) ; groupe au-delà de 10.
+- [x] Implémenter `src/Echeances/TableauDeBord/TableauDeBordController.php` (`bureau`, `terrain`) et `src/Echeances/TableauDeBord/DetailGroupeController.php` ; `src/Echeances/routes.php`.
+- [x] Implémenter `src/Jardin/Plantes/PlanteController.php` (`afficher` : plante par le scope, `404` sinon ; échéances à venir et manquées de ses règles) ; `src/Journal/Historique/HistoriqueController.php` ; `src/Jardin/routes.php`, `src/Journal/routes.php`.
+- [x] Inscrire les cinq routes au registre du test de cloisonnement.
 
 ### 6.2 Tests
 
-- [ ] `tests/Routes/TableauDeBordTest.php` : V76 (trois dates `travelTo`, sans session, autre jardin, relecture : seules des manquées écrites ; après `POST /connexion`, la redirection suivie arrive sur `Bureau/TableauDeBord`, D-47) ; V80. Groupe `critere-3`.
-- [ ] `tests/Routes/AgregationTest.php` : V77 (14 tailles dans une zone). Groupe `critere-11`.
-- [ ] `tests/Routes/FichePlanteTest.php` : V78 (dont manquée visible). Groupe `critere-6`.
-- [ ] `tests/Routes/Volume500Test.php` : V79 (nombre de requêtes constant, temps mesuré, seuil écrit dans `decisions-agents.md`). Groupes `volume`, `critere-11`.
+- [x] `tests/Routes/TableauDeBordTest.php` : V76 (trois dates `travelTo`, sans session, autre jardin, relecture : seules des manquées écrites ; après `POST /connexion`, la redirection suivie arrive sur `Bureau/TableauDeBord`, D-47) ; V80. Groupe `critere-3`.
+- [x] `tests/Routes/AgregationTest.php` : V77 (14 tailles dans une zone). Groupe `critere-11`.
+- [x] `tests/Routes/FichePlanteTest.php` : V78 (dont manquée visible). Groupe `critere-6`.
+- [x] `tests/Routes/Volume500Test.php` : V79 (nombre de requêtes constant, temps mesuré, seuil écrit dans `decisions-agents.md`). Groupes `volume`, `critere-11`.
 
 ---
 

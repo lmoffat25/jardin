@@ -85,10 +85,12 @@ test:
 	$(X) bash scripts/plan/tests/test-porter-reponses.sh
 	$(X) bash scripts/ddev/tests/test-nommer-worktree.sh
 
-# Les invariants calendaires, chaque jour de deux années (C11, V59) : à part de la suite rapide.
+# Les invariants calendaires, chaque jour de deux années (C11, V59), et les tests de
+# volume à 500 plantes (D-25) : à part de la suite rapide.
 balayage:
 	$(call echec,balayage)
 	$(X) vendor/bin/pest tests/Moteur --group=balayage
+	$(X) vendor/bin/pest tests/Routes --group=volume
 
 e2e:
 	$(call echec,e2e)

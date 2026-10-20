@@ -9,10 +9,11 @@
             <directory>tests</directory>
         </testsuite>
     </testsuites>
-    <!-- Les balayages sont à part de la suite rapide (C11) : make balayage. -->
+    <!-- Les balayages et les volumes sont à part de la suite rapide (C11, D-25) : make balayage. -->
     <groups>
         <exclude>
             <group>balayage</group>
+            <group>volume</group>
         </exclude>
     </groups>
     <source>
