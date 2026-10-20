@@ -158,7 +158,6 @@ Classement pur : elle ne porte **ni intervention, ni règle, ni échéance**
 | `id` | uuid · PK | oui | 0 | |
 | `jardin_id` | uuid · FK | oui | 0 | |
 | `nom` | texte | oui | 0 | « Verger haut », « Devant la maison » |
-| `ordre_tournee` | entier | non | 0 | Ordonne la vue terrain avant que la carte n'existe |
 | `zone_parente_id` | uuid · FK | non | 3 | Colonne prévue, non alimentée au MVP — la hiérarchie arrive avec le potager |
 
 ### 3.2 PLANTE

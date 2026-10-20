@@ -100,7 +100,7 @@ réseau.
 paquet_terrain {
   version               // horodatage de génération, pour l'invalidation
   jardin { id, nom, profil_climatique }
-  zones[]               // id, nom, ordre_tournee
+  zones[]               // id, nom
   plantes[]             // id, code_court, nom, zone_id, repere,
                         // position { lat, lon }, miniature_url, espece_libelle
   echeances[]           // cle = (regle_id, due_le)  ← H11, jamais un id de base

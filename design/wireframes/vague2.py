@@ -110,27 +110,22 @@ b2c, b2c_cartes, _ = b2("B2 · 03 · Votre jardin — climat manquant", None, va
                         erreur=True)
 
 # --- B3 · Les zones -----------------------------------------------------------
-ZONES = ["Verger haut", "Verger bas", "Haies", "Pelouse", "Massif d'entrée"]
+ZONES = ["Haies", "Massif d'entrée", "Pelouse", "Verger bas", "Verger haut"]  # alphabétique
 
 b3z = ecran("B3 · 01 · Les zones")
 entete(b3z, 1, "Le Clos")
 d.texte(b3z, CX, 112, COL, "Les zones de votre terrain", 32, gras=True)
 d.texte(b3z, CX, 160, COL, "Une zone groupe le travail : « ce matin, je fais le verger ». Cinq à dix "
-        "suffisent. Rangez-les dans l'ordre où vous passez de l'une à l'autre : la liste du "
-        "jour suivra cet ordre.", 17, couleur=SECOND)
+        "suffisent, et vous pourrez en ajouter à tout moment.", 17, couleur=SECOND)
 for i, z in enumerate(ZONES):
     r = d.cadre(f"Zone · {z}", b3z, CX, 236 + i * 58, COL, 50, fond=FOND, rayon=8, trait=TRAIT)
-    for k in range(3):  # poignée de glisser
-        d.cadre("Poignée", r, 18, 18 + k * 6, 16, 2, fond=TRAIT)
-    d.texte(r, 52, 13, 420, z, 17)
-    # Monter/descendre : l'équivalent au glisser, exigé par WCAG 2.5.7.
-    # Icônes : leur nom accessible (« Monter », « Descendre », « Retirer ») est le libellé
-    # du composant Icône/* à l'étape 2.
-    for j, s in enumerate(["↑", "↓", "×"]):
-        d.bouton(r, COL - 136 + j * 44, 7, 36, 36, s)
+    d.texte(r, 20, 13, 520, z, 17)
+    # Aucun ordre à régler : la tournée du jour se calcule depuis la position (CDC §12,
+    # 20/10/2026). Icône : son nom accessible (« Retirer ») est le libellé du composant Icône/*.
+    d.bouton(r, COL - 48, 7, 36, 36, "×")
 nouvelle = d.cadre("Zone · nouvelle", b3z, CX, 236 + 5 * 58, COL, 50, fond=FOND, rayon=8,
                    trait=FORT)
-d.texte(nouvelle, 52, 13, 500, "Ajouter une zone, puis Entrée", 17, couleur=TRAIT)
+d.texte(nouvelle, 20, 13, 500, "Ajouter une zone, puis Entrée", 17, couleur=TRAIT)
 d.texte(b3z, CX, 236 + 6 * 58 + 8, 90, "Idées :", 14, couleur=SECOND)
 for s, x, w in [("Potager", 0, 130), ("Bord de la maison", 140, 220), ("Bas du terrain", 370, 190)]:
     d.bouton(b3z, CX + 70 + x, 236 + 6 * 58, w, 40, f"+ {s}")
@@ -151,7 +146,7 @@ LIGNES = [  # nb, nom, espèce, repère, résultat, gras ? (zone « Verger bas �
     ("1", "Pommier 'Calville blanc'", "Pommier", "au bout du rang",
      "FRU-015 · taille, à faire avant le 31 mars", False),
 ]
-COMPTES = {"Verger haut": 2, "Verger bas": 14}
+COMPTES = {"Haies": 1, "Pelouse": 1, "Verger bas": 14}
 
 
 def tableau(f, y, lignes, saisie=None):
@@ -228,11 +223,11 @@ def pied_plantes(f, suivante):
 # Premier passage : le tableau est vide.
 b3v = ecran("B3 · 02 · Les plantes — vide")
 entete(b3v, 2, "Le Clos")
-b3v_coller, _ = barre_plantes(b3v, "Verger haut", None)
+b3v_coller, _ = barre_plantes(b3v, "Haies", None)
 tableau(b3v, 244, [], saisie=["1", "", "", "", ""])
 d.texte(b3v, TX, 408, TW, "Une zone vide ? Passez à la suivante, vous y reviendrez. Les arbres "
         "d'abord : ce sont eux qui ont les dates les plus strictes.", 15, couleur=SECOND)
-_, b3v_suite = pied_plantes(b3v, "Verger bas")
+_, b3v_suite = pied_plantes(b3v, "Massif d'entrée")
 
 # En cours : la bibliothèque propose une espèce sur la ligne en saisie.
 b3p = ecran("B3 · 03 · Les plantes — en cours")
@@ -247,7 +242,7 @@ for i, (s, n) in enumerate([("Cerisier", "Prunus avium"), ("Cerisier acide (grio
     o = d.cadre(f"Suggestion · {s}", liste, 1, 1 + i * 50, 298, 50, fond=SURFACE if i == 0 else FOND)
     d.texte(o, 12, 6, 270, s, 15, gras=True)
     d.texte(o, 12, 27, 270, n, 13, couleur=SECOND)
-b3p_fini, _ = pied_plantes(b3p, "Haies")
+b3p_fini, _ = pied_plantes(b3p, "Verger haut")
 
 # Coller une liste depuis un tableur (superposition).
 col = ecran("B3 · 04 · Coller depuis un tableur", 760)

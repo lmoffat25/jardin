@@ -24,13 +24,25 @@ def coquille(f, actif: str):
     d.texte(nav, 24, 76, 200, "JARDIN", 12, gras=True, couleur=SECOND)
     choix = d.cadre("Jardin courant", nav, 24, 96, NAV - 48, 44, fond=FOND, rayon=8, trait=TRAIT)
     d.texte(choix, 12, 12, NAV - 72, "Le Clos  ↓", 16, gras=True)
-    for i, nom in enumerate(["À faire", "Plantes", "Zones", "Carte", "Étiquettes",
-                             "Types d'intervention", "Export"]):
-        sel = nom == actif
-        b = d.cadre(f"Navigation · {nom}", nav, 16, 168 + i * 46, NAV - 32, 40,
-                    fond=FOND if sel else None, rayon=8)
-        d.texte(b, 12, 10, NAV - 56, nom, 16, gras=sel, couleur=TEXTE if sel else SECOND)
-        LIENS_NAV.append((b, nom))
+    # Trois groupes, séparés par un filet : le travail du jour ; le jardin ; les réglages et
+    # ce qui sert une fois par saison (Léon, 20/10/2026).
+    y = 168
+    for g, groupe in enumerate([["À faire"], ["Plantes", "Zones", "Carte"],
+                                ["Types d'intervention", "Étiquettes", "Export"]]):
+        if g:
+            d.cadre("Séparateur", nav, 24, y + 7, NAV - 48, 1, fond=TRAIT)
+            y += 16
+        for nom in groupe:
+            _nav_lien(nav, nom, actif, y)
+            y += 46
+
+
+def _nav_lien(nav, nom, actif, y):
+    sel = nom == actif
+    b = d.cadre(f"Navigation · {nom}", nav, 16, y, NAV - 32, 40, fond=FOND if sel else None,
+                rayon=8)
+    d.texte(b, 12, 10, NAV - 56, nom, 16, gras=sel, couleur=TEXTE if sel else SECOND)
+    LIENS_NAV.append((b, nom))
 
 
 # Le mot d'une pastille est l'état qu'elle dit : il en choisit la couleur (passe interface).

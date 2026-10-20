@@ -45,7 +45,8 @@ et la méthode du chapitre 7 (`README.md`). Contrat : `validation-contract.md`.
 - Règles : [9a](#sprint-9a--correction-de-règle-versionnée-et-suspension) ·
   [9b](#sprint-9b--règles-libres)
 - Positions : [10a](#sprint-10a--géométries-priorité-des-sources-plantes-proches) ·
-  [10b](#sprint-10b--code-court-étiquettes-qr)
+  [10b](#sprint-10b--code-court-étiquettes-qr) ·
+  [10c](#sprint-10c--la-tournée-du-jour)
 - Photos : [11a](#sprint-11a--photos-et-dérivées-en-file) ·
   [11b](#sprint-11b--photo-de-couverture-fond-de-plan-nettoyage)
 - Export : [12a](#sprint-12a--export-intégral) ·
@@ -1214,20 +1215,20 @@ Fichier `src/Echeances/Calcul/CalculEcheances.php` (nom de la classe, PSR-4). `S
 ---
 
 ## Sprint 7a — Zones, création de plante, code court
-<!-- taille : 5 assertions, 8 fichiers, 3 classes de test -->
+<!-- taille : 4 assertions, 8 fichiers, 3 classes de test -->
 
-**Objectif :** déclarer des zones dans l'ordre de la tournée, et créer une plante qui reçoit son code court et une copie des règles de son espèce.
+**Objectif :** déclarer des zones, et créer une plante qui reçoit son code court et une copie des règles de son espèce.
 **Constructeur :** back
 **Risque :** complet
-**Lecture :** CDC RG-09, RG-13, RG-39, §3.9, parcours P0 et P4 ; chapitre 4 S8 ; chapitre 3 §2 (Inventaire, Identification, `AppliquerReglesTypes`) ; CDC critère 21 ; décisions D-03, D-51, D-53.
-**Contrat :** `GET /zones` → `Bureau/Zones` (B3), zones actives par `ordre_tournee` ; `POST /zones {nom}` (ajoutée en fin d'ordre) ; `PUT /zones/{zone} {nom}` ; `PUT /zones/ordre {ids: uuid[]}` (liste complète des zones actives, D-53) ; règle de validation `ZoneDuJardin` (zone du jardin courant, non archivée) ; `POST /plantes {nom, zone_id, espece_id?, repere?, variete?, plantee_le?, regles_ecartees?: string[], ajustements?: {<cle_regle>: {...}}}` → `302 /plantes/{id}` ou JSON `201 {id, code_court}` (B7, T3) ; `AttribuerCodeCourt::pour(?Espece): string` ; `AppliquerReglesTypes::executer(Plante, Espece, array $ecartees, array $ajustements): void`.
+**Lecture :** CDC RG-09, RG-13, RG-39, §3.9, parcours P0 et P4 ; chapitre 4 S8 ; chapitre 3 §2 (Inventaire, Identification, `AppliquerReglesTypes`) ; décisions D-03, D-51, D-53, D-65.
+**Contrat :** `GET /zones` → `Bureau/Zones` (B3), zones actives par ordre alphabétique ; `POST /zones {nom}` ; `PUT /zones/{zone} {nom}` ; règle de validation `ZoneDuJardin` (zone du jardin courant, non archivée) ; `POST /plantes {nom, zone_id, espece_id?, repere?, variete?, plantee_le?, regles_ecartees?: string[], ajustements?: {<cle_regle>: {...}}}` → `302 /plantes/{id}` ou JSON `201 {id, code_court}` (B7, T3) ; `AttribuerCodeCourt::pour(?Espece): string` ; `AppliquerReglesTypes::executer(Plante, Espece, array $ecartees, array $ajustements): void`.
 **Tests d'abord :** `tests/Persistance/CodeCourtTest.php` ; premier rouge attendu : « classe AttribuerCodeCourt absente ».
 **Preuve :** rouge
 **Itérer sur / lancer une fois :** les trois classes / `make verifier`.
 **Porte :** `make verifier`, puis la CI de la demande de fusion.
 **Vérification en marche :** sans objet
 **Question UX possible :** aucune
-**Assertions :** V81, V82, V83, V84, V131
+**Assertions :** V81, V82, V83, V84
 **Fichiers :** `src/Jardin/Domaine/CompteurCodeCourt.php`, `src/Jardin/Identification/AttribuerCodeCourt.php`, `src/Jardin/Zones/ZoneController.php`, `src/Jardin/Zones/ZoneDuJardin.php`, `src/Jardin/Plantes/CreerPlante.php`, `src/Bibliotheque/ReglesTypes/AppliquerReglesTypes.php`, `src/Jardin/Plantes/PlanteController.php`, `src/Jardin/routes.php`
 **Classes de test :** `tests/Persistance/CodeCourtTest.php`, `tests/Routes/ZonesTest.php`, `tests/Routes/CreerPlanteTest.php`
 **Fin :** une plante créée porte un code jamais réattribué et les règles de son espèce, au `jardin_id` du jardin courant.
@@ -1239,7 +1240,7 @@ Fichier `src/Echeances/Calcul/CalculEcheances.php` (nom de la classe, PSR-4). `S
 ### 7a.2 Zones et plantes
 
 - [ ] Implémenter `src/Jardin/Zones/ZoneDuJardin.php` (règle de validation : zone trouvée par le scope et `archivee_le` nulle ; sinon « Zone introuvable dans ce jardin. ») ; tout choix de zone des sprints suivants passe par elle (D-53).
-- [ ] Implémenter `src/Jardin/Zones/ZoneController.php` (`lister`, `creer`, `renommer`, `ordonner`) : validation `nom` requis, 1 à 120, `unique:zones,nom` **restreint au jardin courant** ; zone par le scope, `404` sinon ; `creer` pose `ordre_tournee = max + 1` sous verrou dans la transaction ; `ordonner` exige la liste complète des zones actives, sans doublon (`422` sinon, rien ne change), et réécrit `ordre_tournee` de 1 à n (D-53).
+- [ ] Implémenter `src/Jardin/Zones/ZoneController.php` (`lister`, `creer`, `renommer`) : validation `nom` requis, 1 à 120, `unique:zones,nom` **restreint au jardin courant** ; zone par le scope, `404` sinon ; liste par nom (D-65).
 - [ ] Implémenter `src/Jardin/Plantes/CreerPlante.php` : transaction ; zone (par `ZoneDuJardin`) et espèce vérifiées ; `AttribuerCodeCourt` ; `Plante::create` ; si espèce, `AppliquerReglesTypes`.
 - [ ] Implémenter `src/Bibliotheque/ReglesTypes/AppliquerReglesTypes.php` : pour chaque règle de référence en vigueur non écartée, crée `regles` (version 1, active, `regle_reference_id`, confiance, `origine` = `bibliotheque` sans ajustement, `ajustee` sinon, D-51) puis ses `fenetres` et `intervalles_saisonniers` depuis `parametres`, ajustements appliqués ; tout au `jardin_id` courant.
 - [ ] Modifier `src/Jardin/Plantes/PlanteController.php` (`creer`) et `src/Jardin/routes.php` ; inscrire les routes au registre du test de cloisonnement.
@@ -1247,7 +1248,7 @@ Fichier `src/Echeances/Calcul/CalculEcheances.php` (nom de la classe, PSR-4). `S
 ### 7a.3 Tests
 
 - [ ] `tests/Persistance/CodeCourtTest.php` : V81 (séquence, archivage puis création : code nouveau ; deux créations concurrentes par deux connexions : codes distincts — ce cas utilise `DatabaseMigrations` et non la transaction de test, pour que le verrou de la première connexion soit réel).
-- [ ] `tests/Routes/ZonesTest.php` : V82, les quatre cas ; V131 (création en fin d'ordre, réordonnancement complet, liste incomplète ou zone de B → `422` sans changement, rendu dans l'ordre). Groupe `critere-21`.
+- [ ] `tests/Routes/ZonesTest.php` : V82, les quatre cas ; liste rendue par ordre alphabétique.
 - [ ] `tests/Routes/CreerPlanteTest.php` : V83 (les quatre cas) et V84.
 
 ---
@@ -1661,6 +1662,30 @@ public function executer(SaisieIntervention $saisie, Utilisateur $auteur): Colle
 - [ ] `tests/Routes/CodeCourtTest.php` : V112 (casse ; `FRU-001` dans A et B mène à A ; code de B seul → `404` identique à inexistant). Groupe `critere-22`.
 - [ ] `tests/Routes/EtiquettesTest.php` : V113. Groupe `critere-10`.
 - [ ] `tests/Routes/QrTest.php` : V114. Groupe `critere-22`.
+
+---
+
+## Sprint 10c — La tournée du jour
+<!-- taille : 1 assertion, 3 fichiers, 1 classe de test -->
+
+**Objectif :** depuis la position du téléphone, les échéances du jour sont proposées dans un ordre de parcours court.
+**Constructeur :** back
+**Risque :** léger (lecture seule, aucune écriture)
+**Lecture :** CDC lot 4 « Ordre de tournée », critère 21 ; chapitre 3 §2 (Localisation) ; décisions D-26, D-65 ; sprint 10a (`PlantesProches`).
+**Contrat :** `GET /tournee?lng=&lat=` → JSON `{tournee: [{cle: {regle_id, due_le}, plante {id, nom, code_court, zone}, distance_m?}]}` (T7, D-65).
+**Tests d'abord :** `tests/Routes/TourneeTest.php` ; premier rouge attendu : « route /tournee absente ».
+**Preuve :** rouge
+**Itérer sur / lancer une fois :** la classe / `make verifier`.
+**Porte :** `make verifier`, puis la CI de la demande de fusion.
+**Vérification en marche :** sans objet
+**Question UX possible :** aucune — T7 · 03 est dessiné
+**Assertions :** V131
+**Fichiers :** `src/Jardin/Localisation/Tournee.php`, `src/Jardin/Localisation/TourneeController.php`, `src/Jardin/routes.php`
+**Classes de test :** `tests/Routes/TourneeTest.php`
+**Fin :** le critère 21 est vrai côté serveur.
+
+- [ ] Implémenter `src/Jardin/Localisation/Tournee.php` : échéances du jour rendues par le moteur ; plus proche voisin de plante en plante depuis la position (haversine au point représentatif, D-26) ; puis les plantes sans position, groupées par zone dans l'ordre alphabétique. Implémenter `TourneeController.php` ; modifier `routes.php` ; inscrire au registre.
+- [ ] `tests/Routes/TourneeTest.php` : V131, les trois cas (position, sans position, autre jardin), aucune écriture en base. Groupe `critere-21`.
 
 ---
 

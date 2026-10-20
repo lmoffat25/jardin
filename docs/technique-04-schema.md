@@ -174,7 +174,6 @@ CREATE TABLE zones (
     jardin_id        uuid NOT NULL REFERENCES jardins(id) ON DELETE CASCADE,
     zone_parente_id  uuid REFERENCES zones(id),        -- lot 3, non alimenté
     nom              varchar(120) NOT NULL,
-    ordre_tournee    smallint,
     archivee_le      timestamptz,                       -- décision D-04 du plan
     cree_le          timestamptz NOT NULL DEFAULT now(),
     UNIQUE (jardin_id, nom)

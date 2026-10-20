@@ -320,10 +320,13 @@ Regroupement géographique et opérationnel : « verger haut », « potager »,
 « devant la maison », « bas du terrain ». Une zone sert à :
 
 - filtrer et regrouper les échéances (« ce matin je fais le verger haut ») ;
-- appliquer une intervention à toutes les plantes d'une zone en une saisie ;
-- ordonner la tournée terrain.
+- appliquer une intervention à toutes les plantes d'une zone en une saisie.
 
-Elle porte un nom, un ordre de tournée, et appartient à un jardin.
+Elle porte un nom et appartient à un jardin. Les zones se listent par ordre
+alphabétique ; dans « À faire », groupée par zone, la zone dont l'échéance est
+la plus proche vient en premier. L'outil ne retient pas d'ordre de passage, qui varie d'une année
+et d'une sortie à l'autre. L'ordre de la tournée du jour se calcule depuis la
+position du téléphone (lot 4), il ne se déclare pas.
 
 **Zones plates au MVP** : pas de sous-zones. Le besoin réel de hiérarchie
 apparaît avec le potager (un potager qui contient ses planches), donc au lot 3.
@@ -1720,6 +1723,7 @@ Décisions actées, pour ne pas les rouvrir sans raison nouvelle.
 | 20/10/2026 | **L'annexe A prend les valeurs du sourçage**, avec leur niveau de confiance | Les valeurs de la v0.13 venaient de sources de vulgarisation. La haie persistante passe à une seule fenêtre (la seconde tombait en nidification), le rosier perd « jusqu'en novembre », la pelouse reçoit des intervalles mensuels. Vigne, groseillier à grappes, cassissier et arbuste à floraison printanière entrent dans la liste de départ ; le groseillier à maquereau en est écarté | Annexe A, §5.1 |
 | 20/10/2026 | **Les questions que le sourçage ne tranche pas sont posées à Léon**, pas résolues : nature de la nidification, pêcher, framboisier, haie caduque, traitements | Elles engagent le comportement du produit ou une règle de test, pas seulement une valeur | Q19 à Q23 |
 | 20/10/2026 | **Une espèce peut porter des variantes de conduite** ; le framboisier en a deux, remontant et non remontant, choisies à la création de la plante | Décision de Léon (Q21). Deux espèces auraient obligé l'utilisateur à savoir que « framboisier remontant » est une espèce à part ; une variante pose la question au moment où elle compte | RG-51, §5.1, annexe A |
+| 20/10/2026 | **Les zones ne portent plus d'ordre de tournée** ; elles se listent par ordre alphabétique, et la tournée du jour se calcule depuis la position (lot 4) | Remarque de Léon : sur un petit terrain l'ordre n'apporte rien, sur un grand il change d'une année et d'une sortie à l'autre. Le déclarer à la mise en route coûtait une étape pour une donnée vite fausse. Le critère 21 est tenu par la tournée calculée et modifiable du jour | §3.3, critère 21, modèle de données |
 | 20/10/2026 | **La nidification reste un butoir dur ; l'explication dit « déconseillée »** | Décision de Léon (Q19) : ne rien changer au comportement. Dire « interdit » à un particulier serait inexact, mais l'outil ne propose pas ce qu'il déconseille | RG-44 |
 | 20/10/2026 | **B-T1 garde sa portée, avec une exception nominative : pêcher et nectarinier peuvent avoir une fenêtre en février, jamais en décembre ni en janvier** ; le pêcher entre dans la liste de départ, fenêtre 01/03 → 31/03 | Décision de Léon (Q20) : suivre la majorité. Sur les espèces à noyau établies par des sources de rang, quatre évitent l'hiver (cerisier, prunier, reine-claude, abricotier), deux se taillent en fin d'hiver. Décembre et janvier restent interdits à tous, ce qui continue d'attraper la confusion pépins/noyaux. Le 01/02 de l'ancienne fenêtre ne venait que de la vulgarisation ; « en mars » vient de la SNHF | B-T1, §5.1, annexe A, `docs/plan/recherche-q20-q22.md` |
 | 20/10/2026 | **La haie caduque se taille chaque année** | Q22 : deux sources de jardin indépendantes concordent sur au moins une taille annuelle. Elles en recommandent même deux ou trois ; le modèle n'en garde qu'une, celle qui respecte les butoirs de nidification | Annexe A, `docs/plan/recherche-q20-q22.md` |

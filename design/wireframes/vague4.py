@@ -21,12 +21,12 @@ ECHEANCES = [  # zone, plante, geste, état, fort, quand, explication
      "Règle que vous avez définie, à la chute des feuilles."),
     ("Verger haut", "Pommier 'Reine des reinettes'", "Traitement cuivre", "ouverte", False,
      "jusqu'au 15 nov.", "Règle que vous avez définie."),
-    ("Verger bas", "Poirier 'Conférence'", "Traitement cuivre", "ouverte", False,
-     "jusqu'au 15 nov.", "Règle que vous avez définie."),
     ("Pelouse", "Pelouse devant la maison", "Tonte", "ouverte", False,
      "d'ici ven. 24 oct.", "Règle de la bibliothèque · 7 jours après la dernière tonte "
      "(17 oct.)."),
-]
+    ("Verger bas", "Poirier 'Conférence'", "Traitement cuivre", "ouverte", False,
+     "jusqu'au 15 nov.", "Règle que vous avez définie."),
+]  # zones dans l'ordre de leur échéance la plus proche (CDC §3.3)
 COLS = [("", 44), ("Plante", 330), ("Geste", 190), ("État", 120), ("Quand", 260),
         ("", CW - 44 - 330 - 190 - 120 - 260)]
 

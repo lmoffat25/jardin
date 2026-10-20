@@ -666,14 +666,14 @@ Une zone archivée sort des listes et des choix de zone ; le traitement d'une
 zone qui contient des plantes actives suit la réponse à Q-UX-6 ; une zone de B
 → `404`.
 
-**V131 — L'ordre de tournée se règle** · API · *flux critique* · **critère 21** (versant serveur), décision D-53 · écran B3
-- Nominal : une zone créée prend la dernière place ; un ordre complet des zones
-  actives remplace l'ordre précédent ; la liste des zones les rend dans cet
-  ordre.
-- Refus : une liste incomplète ou avec doublon → `422`, l'ordre ne change pas.
-- Autre jardin : une zone de B dans la liste → `422`, rien ne change dans A ni
-  dans B.
-- En base : `ordre_tournee` de 1 à n, sans trou.
+**V131 — La tournée du jour se propose depuis la position** · API · *flux critique* · **critère 21** (versant serveur), décision D-65 · écran T7
+- Nominal : depuis une position, les échéances du jour sont rendues dans
+  l'ordre du plus proche voisin, de plante en plante ; les plantes sans
+  position suivent, groupées par zone dans l'ordre alphabétique.
+- Sans position : le même groupement par zone, sans tri par distance.
+- Autre jardin : aucune échéance de B dans la tournée de A.
+- Rien n'est écrit en base : l'ordre modifié à l'écran ne vaut que pour la
+  sortie en cours (T7 · 03).
 
 **V132 — Modifier une plante** · API · *flux critique* · CDC §6 lot 0, RG-13, décision D-54 · écran B6
 - Nominal : nom, zone, repère, variété, date de plantation et notes se
@@ -961,7 +961,7 @@ sous la borne de V124.
 | 18 — Haie en ligne, pelouse en polygone, avec échéances | V109 | Tracé (B13) |
 | 19 — Carte terrain avec fond, position, plantes dues | — | Entièrement partie B (T7) |
 | 20 — Service d'orthophotographie coupé | — | Entièrement partie B (Playwright, C14) |
-| 21 — Ordre de tournée modifiable | V131 | Réordonner à l'écran et tournée sur la carte (B3, T7, Vitest) |
+| 21 — Ordre de tournée modifiable | V131 | Réordonner à l'écran et revenir à l'ordre proposé (T7, Vitest) |
 | 22 — QR scanné, fiche ouverte, rien hors du jardin | V112, V114 | Lecture caméra (T6) |
 | 23 — Carte fluide à 500 plantes | V125 (données) | Entièrement partie B pour la fluidité (B13) |
 | 24 — 12 pommiers créés puis posés sur la carte | V85, V110 | Placement à la carte (B13) |
@@ -1001,7 +1001,7 @@ Chaque assertion est couverte par au moins un sprint de `tasks.md`.
 | 5a | V31, V71, V72, V74 |
 | 5b | V70, V73, V75 |
 | 6 | V76, V77, V78, V79, V80 |
-| 7a | V81, V82, V83, V84, V131 |
+| 7a | V81, V82, V83, V84 |
 | 7b | V88, V132 |
 | 7c | V89, V90, V91 |
 | 7d | V85, V86, V87 |
@@ -1013,6 +1013,7 @@ Chaque assertion est couverte par au moins un sprint de `tasks.md`.
 | 9b | V106 |
 | 10a | V107, V108, V109, V110, V111 |
 | 10b | V112, V113, V114 |
+| 10c | V131 |
 | 11a | V115, V116, V117, V118 |
 | 11b | V119, V120, V121 |
 | 12a | V122, V123, V124, V130 |
