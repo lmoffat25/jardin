@@ -272,21 +272,21 @@ Chaque sprint, en plus de sa propre porte :
 
 ### 0d.1 Analyse statique
 
-- [ ] Ajouter Larastan à `composer.json` ; créer `phpstan.neon` (niveau `max` ; si `max` n'est pas tenable sur le squelette, le niveau le plus haut qui l'est, écrit avec sa raison — O18) ; Pint sans `pint.json` (le préréglage par défaut est `laravel`, D-36) ; `eslint.config.js` (typescript-eslint `strictTypeChecked`, react-hooks) ; Prettier et ESLint dans `package.json`.
-- [ ] Modifier `Makefile` : cible `statique` comme au contrat.
-- [ ] `scripts/tests/test-statique.sh` : pour chaque outil, copie le dépôt dans un dossier temporaire, y introduit une violation témoin (variable non typée, espace en trop, `any`, dépendance vulnérable fictive dans un `composer.lock` de test), attend un échec de `make statique` (V9).
+- [x] Ajouter Larastan à `composer.json` ; créer `phpstan.neon` (niveau `max` ; si `max` n'est pas tenable sur le squelette, le niveau le plus haut qui l'est, écrit avec sa raison — O18) ; Pint sans `pint.json` (le préréglage par défaut est `laravel`, D-36) ; `eslint.config.js` (typescript-eslint `strictTypeChecked`, react-hooks) ; Prettier et ESLint dans `package.json`.
+- [x] Modifier `Makefile` : cible `statique` comme au contrat.
+- [x] `scripts/tests/test-statique.sh` : pour chaque outil, copie le dépôt dans un dossier temporaire, y introduit une violation témoin (variable non typée, espace en trop, `any`, dépendance vulnérable fictive dans un `composer.lock` de test), attend un échec de `make statique` (V9).
 
 ### 0d.2 Crochets
 
-- [ ] Créer `scripts/hooks/pre-commit` (Pint et Prettier sur les fichiers indexés, puis `git add` de ces fichiers) et `scripts/hooks/pre-push` (`make statique && make test`).
-- [ ] Modifier `Makefile` : `setup` copie les crochets dans `$(git rev-parse --git-common-dir)/hooks` (C17).
-- [ ] `scripts/hooks/tests/test-crochets.sh` : dépôt jetable, `make setup`, `git worktree add`, envoi vers un dépôt nu local depuis le worktree ; le crochet a tourné (marqueur écrit par une cible `test` factice) ; un commit qui indexe un fichier PHP mal formaté le reçoit formaté (`pre-commit`) (V10).
+- [x] Créer `scripts/hooks/pre-commit` (Pint et Prettier sur les fichiers indexés, puis `git add` de ces fichiers) et `scripts/hooks/pre-push` (`make statique && make test`).
+- [x] Modifier `Makefile` : `setup` copie les crochets dans `$(git rev-parse --git-common-dir)/hooks` (C17).
+- [x] `scripts/hooks/tests/test-crochets.sh` : dépôt jetable, `make setup`, `git worktree add`, envoi vers un dépôt nu local depuis le worktree ; le crochet a tourné (marqueur écrit par une cible `test` factice) ; un commit qui indexe un fichier PHP mal formaté le reçoit formaté (`pre-commit`) (V10).
 
 ### 0d.3 Frontières et critères
 
-- [ ] `tests/Architecture/FrontieresTest.php` (Pest `arch()`) : `Src\Echeances\Moteur` n'utilise ni `Illuminate`, ni `Carbon`, ni les fonctions `now`, `time`, `date` ; `Src` n'utilise pas `DB::table`, `DB::select`, `DB::statement`, `DB::insert`, `DB::update`, `DB::delete` (V11).
-- [ ] Implémenter `scripts/criteres.sh` : extrait les numéros 1 à 24 du tableau du CDC §10 (`docs/cahier-des-charges-fonctionnel.md`), cherche `->group('critere-NN')` dans `tests/`, liste les manquants ; code `0`, ou `1` si `LIVRAISON=1` et un manquant. Cible `make criteres`.
-- [ ] `tests/Architecture/CriteresTest.php` : lance le script sur un CDC et un dossier de tests témoins ; vérifie la liste et les deux codes (V12).
+- [x] `tests/Architecture/FrontieresTest.php` (Pest `arch()`) : `Src\Echeances\Moteur` n'utilise ni `Illuminate`, ni `Carbon`, ni les fonctions `now`, `time`, `date` ; `Src` n'utilise pas `DB::table`, `DB::select`, `DB::statement`, `DB::insert`, `DB::update`, `DB::delete` (V11).
+- [x] Implémenter `scripts/criteres.sh` : extrait les numéros 1 à 24 du tableau du CDC §10 (`docs/cahier-des-charges-fonctionnel.md`), cherche `->group('critere-NN')` dans `tests/`, liste les manquants ; code `0`, ou `1` si `LIVRAISON=1` et un manquant. Cible `make criteres`.
+- [x] `tests/Architecture/CriteresTest.php` : lance le script sur un CDC et un dossier de tests témoins ; vérifie la liste et les deux codes (V12).
 
 ---
 

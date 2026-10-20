@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# Crochet pre-commit (chapitre 6 §7) : Pint et Prettier sur les fichiers indexés,
+# puis réindexation de ce qu'ils ont reformaté. Installé par `make setup`.
+set -eu
+fichiers=$(git diff --cached --name-only --diff-filter=ACMR -- '*.php' '*.ts' '*.tsx' '*.css' | tr '\n' ' ')
+[ -z "${fichiers// /}" ] && exit 0
+make --no-print-directory formater FICHIERS="$fichiers"
+# shellcheck disable=SC2086
+git add -- $fichiers

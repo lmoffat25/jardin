@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# Crochet pre-push (chapitre 6 §7, C16) : make statique puis make test.
+set -eu
+make --no-print-directory statique
+make --no-print-directory test

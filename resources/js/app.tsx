@@ -8,7 +8,7 @@ import type { ComponentType } from 'react';
 // terrain sont des pages de ce même bundle.
 const pages = import.meta.glob<{ default: ComponentType }>('./pages/**/*.tsx');
 
-createInertiaApp({
+void createInertiaApp({
     resolve: async (nom) => {
         const charger = pages[`./pages/${nom}.tsx`];
         if (charger === undefined) {

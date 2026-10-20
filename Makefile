@@ -10,7 +10,7 @@ endif
 # Échec forcé d'une cible, pour le test de l'enchaînement (V5) : ECHEC=<cible>.
 echec = @if [ "$(ECHEC)" = "$(1)" ]; then echo "échec forcé : $(1)"; exit 1; fi
 
-.PHONY: setup moteur statique test balayage e2e mutation criteres verifier
+.PHONY: setup crochets formater moteur statique test balayage e2e mutation criteres verifier
 
 setup:
 ifeq ($(X),ddev exec)
@@ -21,6 +21,19 @@ endif
 	$(X) sh -c '[ -f .env ] || cp .env.example .env'
 	$(X) php artisan key:generate --no-interaction
 	$(X) php artisan migrate --force --no-interaction
+	$(MAKE) crochets
+
+# Crochets git copiés là où git les lit, worktrees compris : `git rev-parse
+# --git-common-dir`, jamais un test `-d .git` (dans un worktree, .git est un fichier, C17).
+crochets:
+	@d="$$(git rev-parse --git-common-dir)/hooks"; mkdir -p "$$d" \
+	  && cp scripts/hooks/pre-commit scripts/hooks/pre-push "$$d/" && chmod +x "$$d/pre-commit" "$$d/pre-push" \
+	  && echo "crochets installés dans $$d"
+
+# Pint et Prettier sur une liste de fichiers (FICHIERS=…), pour le crochet pre-commit.
+formater:
+	$(if $(filter %.php,$(FICHIERS)),$(X) vendor/bin/pint $(filter %.php,$(FICHIERS)))
+	$(if $(filter %.ts %.tsx %.css,$(FICHIERS)),$(X) npx prettier --write $(filter %.ts %.tsx %.css,$(FICHIERS)))
 
 moteur:
 	$(call echec,moteur)
@@ -28,11 +41,19 @@ moteur:
 
 statique:
 	$(call echec,statique)
-	@echo "(vide)"
+	$(X) vendor/bin/phpstan analyse --no-progress --memory-limit=1G
+	$(X) vendor/bin/pint --test
+	$(X) npm run -s typecheck
+	$(X) npm run -s lint
+	$(X) npm run -s format:check
+	$(X) composer audit --locked --no-interaction
+	$(X) npm audit --audit-level=high
 
 test:
 	$(call echec,test)
 	$(X) vendor/bin/pest
+	$(X) bash scripts/tests/test-statique.sh
+	$(X) bash scripts/hooks/tests/test-crochets.sh
 
 balayage:
 	$(call echec,balayage)
@@ -46,9 +67,10 @@ mutation:
 	$(call echec,mutation)
 	@echo "(vide)"
 
+# Informatif pendant un jalon, bloquant à sa livraison : LIVRAISON=1 (C12).
 criteres:
 	$(call echec,criteres)
-	@echo "(vide)"
+	@LIVRAISON=$(LIVRAISON) scripts/criteres.sh
 
 # Dans cet ordre ; la première cible qui échoue arrête l'enchaînement (C5, V5).
 verifier:
