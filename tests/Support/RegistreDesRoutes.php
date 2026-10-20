@@ -81,8 +81,19 @@ final class RegistreDesRoutes
                 'parametres' => $plante,
                 'charge' => fn (string $id): array => ['motif' => 'Arrachée'],
             ],
+            'GET /plantes' => ['nature' => 'liste', 'role' => 'membre'],
+            // Depuis A, une plante de B parmi les ids est introuvable : 422,
+            // rien ne change (MasseTest).
+            'PUT /plantes/lot' => [
+                'nature' => 'ecrit',
+                'role' => 'proprietaire',
+                'charge' => fn (string $id): array => ['ids' => [$plante($id)['plante']], 'repere' => 'Repère du lot'],
+            ],
             'GET /plantes/{plante}' => ['nature' => 'lit', 'role' => 'membre', 'parametres' => $plante],
             'GET /plantes/{plante}/historique' => ['nature' => 'lit', 'role' => 'membre', 'parametres' => $plante],
+            // Les types fournis et ceux du jardin courant (TypesVisibles, D-55).
+            'GET /types-intervention' => ['nature' => 'liste', 'role' => 'membre'],
+            'POST /types-intervention' => ['nature' => 'ecrit', 'role' => 'proprietaire', 'charge' => fn (string $id): array => ['libelle' => 'Type créé', 'famille' => 'entretien']],
             'GET /jardins/nouveau' => ['nature' => 'liste', 'role' => 'membre'],
             // Crée un jardin neuf, dont le créateur est propriétaire : aucun
             // rôle n'est exigé dans le jardin courant.
