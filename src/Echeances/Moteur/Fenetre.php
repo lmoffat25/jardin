@@ -38,12 +38,13 @@ final readonly class Fenetre
         $optimalFin = $this->optimalFin === null ? null : $decalage->appliquer($this->dateDans($anneeDeDebut, $this->optimalFin));
 
         // 2. Rogner ensuite : un butoir est une date fixe, jamais décalée (RG-44, A25) ;
-        //    celui de début sur l'année de début, celui de fin sur l'année de fin (D-09).
+        //    celui de début sur l'année de début (D-09), celui de fin à sa première
+        //    occurrence depuis le début de la fenêtre (D-96).
         if ($this->butoirDebut !== null) {
             $debut = max($debut, Calendrier::date($anneeDeDebut, $this->butoirDebut->mois, $this->butoirDebut->jour));
         }
         if ($this->butoirFin !== null) {
-            $fin = min($fin, Calendrier::date($anneeDeFin, $this->butoirFin->mois, $this->butoirFin->jour));
+            $fin = min($fin, $this->dateDans($anneeDeDebut, $this->butoirFin));
         }
 
         // 3. L'optimale est contenue dans la fenêtre rognée (D-09).

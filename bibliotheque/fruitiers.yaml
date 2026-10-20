@@ -1,0 +1,184 @@
+# Fruitiers, vigne et petits fruits (CDC §5.1). Chaque valeur vient d'une page
+# rouverte le 20/10/2026 (B4) ; les citations sont dans le libellé de la source.
+# Une borne JJ/MM qui transcrit un mot (« fin d'hiver ») est une transcription,
+# pas une valeur citée (docs/plan/sourcing-annexe-a.md, convention 5, D-95).
+especes:
+  - cle: pommier
+    nom_commun: Pommier
+    nom_latin: Malus domestica
+    famille: Rosaceae
+    categorie: fruitier
+    regles:
+      - cle: pommier-taille-hiver
+        type_intervention: "Taille d'entretien/fructification"
+        type_regle: R2
+        confiance: verifiee
+        sources:
+          - url: https://document.environnement.brussels/opac_css/elecfile/IF_Potager_Jardinfruitier_fruittuin_FR
+            libelle: "Bruxelles Environnement, « Mon jardin fruitier » (2018) : « La taille se fait généralement en hiver lorsqu'il ne gèle pas pour les arbres à pépin. »"
+            consultee_le: 2026-10-20
+          - url: https://www.parc-montagnedereims.fr/app/uploads/2023/08/guide-verger-web-1.pdf
+            libelle: "PNR de la Montagne de Reims, guide verger, A. Pinelle (2022) : « Arbres à pépins : ils sont généralement taillés en fin d'hiver »"
+            consultee_le: 2026-10-20
+          - url: https://www.aujardin.info/fiches/taille-pommiers.php
+            libelle: "Au Jardin, taille des pommiers (2011) : « En hiver après les poiriers (janvier-février) sur les arbres formés. »"
+            consultee_le: 2026-10-20
+        fenetres:
+          - {debut: 01/12, fin: 31/03, optimal: [01/02, 31/03], libelle: "Hors gel, de préférence en fin d'hiver"}
+        periodicite_annees: 1
+
+  - cle: poirier
+    nom_commun: Poirier
+    nom_latin: Pyrus communis
+    famille: Rosaceae
+    categorie: fruitier
+    regles:
+      - cle: poirier-taille-hiver
+        type_intervention: "Taille d'entretien/fructification"
+        type_regle: R2
+        confiance: verifiee
+        sources:
+          - url: https://document.environnement.brussels/opac_css/elecfile/IF_Potager_Jardinfruitier_fruittuin_FR
+            libelle: "Bruxelles Environnement, « Mon jardin fruitier » (2018) : « La taille se fait généralement en hiver lorsqu'il ne gèle pas pour les arbres à pépin. »"
+            consultee_le: 2026-10-20
+          - url: https://www.parc-montagnedereims.fr/app/uploads/2023/08/guide-verger-web-1.pdf
+            libelle: "PNR de la Montagne de Reims, guide verger, A. Pinelle (2022) : « Arbres à pépins : ils sont généralement taillés en fin d'hiver »"
+            consultee_le: 2026-10-20
+        fenetres:
+          - {debut: 01/12, fin: 31/03, optimal: [01/02, 31/03], libelle: "Hors gel, de préférence en fin d'hiver"}
+        periodicite_annees: 1
+
+  - cle: cerisier
+    nom_commun: Cerisier
+    nom_latin: Prunus avium
+    famille: Rosaceae
+    categorie: fruitier
+    regles:
+      - cle: cerisier-taille-ete
+        type_intervention: "Taille d'entretien/fructification"
+        type_regle: R2
+        confiance: verifiee
+        sources:
+          - url: https://www.snhf.org/fiche-plante/cerisier/
+            libelle: "SNHF, fiche cerisier, D. Retournard (2020) : « Taillez l'arbre uniquement en été ou en début d'automne. »"
+            consultee_le: 2026-10-20
+          - url: https://varietes_cerise.ctifl.fr/varietes_cerise/Media/Rubrique/29/Pseudomonas.pdf
+            libelle: "CTIFL, « Le chancre bactérien du cerisier » (2014) : « Ne pas tailler pendant la période automnale […] en été après la récolte pendant une période sèche. »"
+            consultee_le: 2026-10-20
+          - url: https://www.rhs.org.uk/fruit/cherries/grow-your-own
+            libelle: "RHS, How to grow cherries (2026) : « Pruning should be carried out annually, as soon as harvesting is finished – usually in late July or August »"
+            consultee_le: 2026-10-20
+        fenetres:
+          - {debut: 01/08, fin: 30/09, optimal: [01/08, 30/09], libelle: "Après la récolte, par temps sec"}
+        periodicite_annees: 1
+
+  - cle: prunier
+    nom_commun: Prunier
+    nom_latin: Prunus domestica
+    famille: Rosaceae
+    categorie: fruitier
+    regles:
+      - cle: prunier-taille-ete
+        type_intervention: "Taille d'entretien/fructification"
+        type_regle: R2
+        confiance: verifiee
+        sources:
+          - url: https://www.rhs.org.uk/fruit/plums/grow-your-own
+            libelle: "RHS, How to grow plums (2026) : « Established trees should be pruned in summer » ; « Avoid pruning plum trees during the dormant season or in mid- to late autumn »"
+            consultee_le: 2026-10-20
+          - url: https://www.parc-montagnedereims.fr/app/uploads/2023/08/guide-verger-web-1.pdf
+            libelle: "PNR de la Montagne de Reims, guide verger, A. Pinelle (2022) : « Arbres à noyaux : ils peuvent être taillés en fin d'été après la récolte. »"
+            consultee_le: 2026-10-20
+          - url: https://document.environnement.brussels/opac_css/elecfile/IF_Potager_Jardinfruitier_fruittuin_FR
+            libelle: "Bruxelles Environnement, « Mon jardin fruitier » (2018) : « Les arbres à noyaux apprécient donc généralement plus une taille durant la récolte. »"
+            consultee_le: 2026-10-20
+        fenetres:
+          - {debut: 01/06, fin: 30/09, optimal: [01/06, 30/09], libelle: "En été, par temps sec"}
+        periodicite_annees: 1
+
+  - cle: pecher
+    nom_commun: Pêcher
+    nom_latin: Prunus persica
+    famille: Rosaceae
+    categorie: fruitier
+    regles:
+      - cle: pecher-taille-fructification
+        type_intervention: "Taille d'entretien/fructification"
+        type_regle: R2
+        confiance: indicative
+        sources:
+          - url: https://www.snhf.org/fiche-plante/pechers-et-nectariniers/
+            libelle: "SNHF, « Pêchers et nectariniers », C. Bureaux (2020) : « Pour une bonne production, une taille fruitière s'effectue en mars. »"
+            consultee_le: 2026-10-20
+          - url: https://www.rhs.org.uk/fruit/peaches/grow-your-own
+            libelle: "RHS, How to grow peaches (2026) : « as with other stone fruits, peach trees should only be pruned in spring or summer »"
+            consultee_le: 2026-10-20
+        fenetres:
+          - {debut: 01/03, fin: 31/03, optimal: [01/03, 31/03], libelle: "En mars, au plus tard au début de la floraison"}
+        periodicite_annees: 1
+
+  - cle: vigne
+    nom_commun: Vigne
+    nom_latin: Vitis vinifera
+    famille: Vitaceae
+    categorie: vigne
+    regles:
+      - cle: vigne-taille-hiver
+        type_intervention: "Taille d'entretien/fructification"
+        type_regle: R2
+        confiance: verifiee
+        sources:
+          - url: https://vignevin-charentes.com/wp-content/uploads/2024/01/5-Conduite-de-la-vigne-preparation-des-vendanges-et-aleas-climatiques-part-2.pdf
+            libelle: "Guide viticulture durable Charentes-Cognac (2024) : « de la chute des feuilles jusqu'au débourrement » ; « Préférer une taille tardive »"
+            consultee_le: 2026-10-20
+          - url: https://www.aujardin.info/plantes/vigne.php
+            libelle: "Au Jardin, vigne, V. Macrelle (2026) : « On taille en fin d'hiver (pas trop tard sinon la vigne « pleure », pas trop tôt sinon les bourgeons gèlent). »"
+            consultee_le: 2026-10-20
+        fenetres:
+          - {debut: 01/12, fin: 31/03, optimal: [01/02, 31/03], libelle: "Repos végétatif, de préférence tard"}
+        periodicite_annees: 1
+
+  - cle: groseillier-a-grappes
+    nom_commun: Groseillier à grappes
+    nom_latin: Ribes rubrum
+    famille: Grossulariaceae
+    categorie: petits_fruits
+    regles:
+      - cle: groseillier-a-grappes-taille-hiver
+        type_intervention: "Taille d'entretien/fructification"
+        type_regle: R2
+        confiance: verifiee
+        sources:
+          - url: https://document.environnement.brussels/opac_css/elecfile/IF%20Potager%2007%20Arbustes%20petits%20fruits%20FR
+            libelle: "Bruxelles Environnement, info-fiche potager n° 7 (2012) : « Taillez en février ou au début mars, en dehors des périodes de gel. »"
+            consultee_le: 2026-10-20
+          - url: https://www.aujardin.info/plantes/groseillier_a_grappes.php
+            libelle: "Au Jardin, groseillier à grappes (2011) : « Dans le courant février, éliminez les branches de plus de trois ans. »"
+            consultee_le: 2026-10-20
+        fenetres:
+          - {debut: 01/01, fin: 15/03, optimal: [01/02, 28/02], libelle: "Hors gel, supprimer le vieux bois"}
+        periodicite_annees: 1
+
+  - cle: cassissier
+    nom_commun: Cassissier
+    nom_latin: Ribes nigrum
+    famille: Grossulariaceae
+    categorie: petits_fruits
+    regles:
+      - cle: cassissier-taille-hiver
+        type_intervention: "Taille d'entretien/fructification"
+        type_regle: R2
+        confiance: indicative
+        sources:
+          - url: https://opera-connaissances.chambres-agriculture.fr/doc_num.php?explnum_id=145267
+            libelle: "Chambre d'agriculture de l'Isère, fiche Cassis AB (2012) : calendrier « Décembre / Janvier — Taille d'hiver » ; supprimer « le vieux bois (3 ans et plus) »"
+            consultee_le: 2026-10-20
+          - url: https://www.aujardin.info/fiches/planter-tailler-entretenir-cassissier.php
+            libelle: "Au Jardin, cassissier (2015) : « En novembre et en février, supprimez le vieux bois (4 ans et plus) »"
+            consultee_le: 2026-10-20
+          - url: https://www.snhf.org/fiche-plante/cassissier/
+            libelle: "SNHF, fiche cassissier (2020) : « Elle sera renouvelée tous les ans par quart. »"
+            consultee_le: 2026-10-20
+        fenetres:
+          - {debut: 01/11, fin: 28/02, optimal: [01/11, 28/02], libelle: "Repos végétatif, supprimer le vieux bois"}
+        periodicite_annees: 1

@@ -1,0 +1,72 @@
+# Rosier et arbustes d'ornement (CDC §5.1). `periode_floraison` dit au test
+# B-T3 quel arbuste fleurit au printemps (D-95). Pages rouvertes le 20/10/2026 (B4).
+especes:
+  - cle: rosier
+    nom_commun: Rosier
+    nom_latin: Rosa
+    famille: Rosaceae
+    categorie: ornement
+    description: "Rosier buisson remontant."
+    regles:
+      - cle: rosier-taille-printemps
+        type_intervention: "Taille d'entretien/fructification"
+        type_regle: R2
+        confiance: verifiee
+        sources:
+          - url: https://www.snhf.org/taillons-nos-rosiers/
+            libelle: "SNHF, « Taillons nos rosiers », C. Jourdan (2013) : « la taille définitive au printemps (février, mars, suivant les régions). »"
+            consultee_le: 2026-10-20
+          - url: https://www.aujardin.info/fiches/comment-tailler-rosiers.php
+            libelle: "Au Jardin, comment tailler les rosiers (2017) : « Taillez les rosiers de février à avril hors période de gel. »"
+            consultee_le: 2026-10-20
+        fenetres:
+          - {debut: 01/02, fin: 31/03, optimal: [01/02, 31/03], libelle: "Hors gel, selon la région"}
+        periodicite_annees: 1
+
+  - cle: arbuste-floraison-printaniere
+    nom_commun: Arbuste à floraison printanière
+    categorie: arbuste
+    periode_floraison: printemps
+    description: "Forsythia, lilas, deutzia, weigela, spirée de printemps : fleurissent sur le bois de l'année passée."
+    regles:
+      - cle: arbuste-floraison-printaniere-taille
+        type_intervention: "Taille d'entretien/fructification"
+        type_regle: R2
+        confiance: indicative
+        sources:
+          - url: https://www.aujardin.info/fiches/taille-arbustes-floraison-printaniere.php
+            libelle: "Au Jardin, I. Makoto (2023) : « Ces arbustes devront être taillés après leur floraison en fin de printemps ou en tout début d'été »"
+            consultee_le: 2026-10-20
+          - url: https://www.snhf.org/taille-douce-arbustes/
+            libelle: "SNHF, « La taille douce des arbustes », N. Sallé (2017) : « plantes fleurissant sur les bois d'1 an ou plus : tailler après la floraison »"
+            consultee_le: 2026-10-20
+          - url: https://fredon.fr/sites/default/files/Guide%20d%C3%A9chets%20verts/Fiches%20particuliers%20d%C3%A9chets%20verts/Fiche_5_mieux_tailler_imprim.pdf
+            libelle: "FREDON France, fiche 5 « Mieux tailler » (2020) : « Tailler juste après la floraison. » (spirée à floraison printanière)"
+            consultee_le: 2026-10-20
+        fenetres:
+          - {debut: 01/05, fin: 15/07, optimal: [01/05, 30/06], libelle: "Juste après la floraison, selon l'espèce"}
+        periodicite_annees: 1
+
+  - cle: arbuste-floraison-estivale
+    nom_commun: Arbuste à floraison estivale
+    categorie: arbuste
+    periode_floraison: été
+    description: "Arbre à papillons, caryopteris, perovskia, spirée d'été : fleurissent sur le bois de l'année."
+    regles:
+      - cle: arbuste-floraison-estivale-taille
+        type_intervention: "Taille d'entretien/fructification"
+        type_regle: R2
+        confiance: verifiee
+        sources:
+          - url: https://www.snhf.org/taille-douce-arbustes/
+            libelle: "SNHF, « La taille douce des arbustes », N. Sallé (2017) : « plantes fleurissant sur les bois de l'année : tailler en fin d'hiver. »"
+            consultee_le: 2026-10-20
+          - url: https://fredon.fr/sites/default/files/Guide%20d%C3%A9chets%20verts/Fiches%20particuliers%20d%C3%A9chets%20verts/Fiche_5_mieux_tailler_imprim.pdf
+            libelle: "FREDON France, fiche 5 « Mieux tailler » (2020) : « Tailler en hiver, hors période de gel (février, mars). »"
+            consultee_le: 2026-10-20
+          - url: https://www.aujardin.info/fiches/tailler-entretenir-arbre-papillons.php
+            libelle: "Au Jardin, arbre à papillons (2016) : « Elle se pratique en mars juste avant le débourrement. »"
+            consultee_le: 2026-10-20
+        fenetres:
+          - {debut: 01/02, fin: 31/03, optimal: [01/03, 31/03], libelle: "Fin d'hiver, hors gel"}
+        periodicite_annees: 1

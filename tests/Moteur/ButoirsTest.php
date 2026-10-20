@@ -75,3 +75,21 @@ it('ne rogne pas l\'optimale d\'une fenêtre sans butoir', function () {
 
     expect(optimale($p))->toBe(['08/03/2027', '05/04/2027']);
 });
+
+it('pose le butoir de fin à sa première occurrence après le début de la fenêtre (D-96)', function (int $decalage, array $attendu) {
+    // Une haie taillée en fin d'été, sans passer le 1er janvier : le butoir de fin
+    // 15/03 est celui de l'année suivante, il ne rogne pas la fenêtre à vide.
+    $finEte = new Fenetre(new JourMois(16, 8), new JourMois(30, 9), butoirDebut: new JourMois(16, 8), butoirFin: new JourMois(15, 3));
+
+    expect(bornesHaie($finEte->projeter(2026, Decalage::jours($decalage))))->toBe($attendu);
+})->with([
+    'Tempéré' => [0, ['16/08/2026', '30/09/2026']],
+    'Très doux' => [-15, ['16/08/2026', '15/09/2026']],
+    'Montagne' => [21, ['06/09/2026', '21/10/2026']],
+]);
+
+it('rogne au butoir de fin de la même année quand il suit le début', function () {
+    $hiver = new Fenetre(new JourMois(1, 1), new JourMois(31, 3), butoirFin: new JourMois(15, 3));
+
+    expect(bornesHaie($hiver->projeter(2027, Decalage::jours(7))))->toBe(['08/01/2027', '15/03/2027']);
+});

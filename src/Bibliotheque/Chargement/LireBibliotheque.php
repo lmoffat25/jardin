@@ -261,7 +261,9 @@ final class LireBibliotheque
             $this->cles($source, ['url', 'libelle', 'consultee_le'], $ici);
             $url = $this->texte($source, 'url', $ici, 500);
             $hote = parse_url($url, PHP_URL_HOST);
-            if (filter_var($url, FILTER_VALIDATE_URL) === false || ! is_string($hote) || ! preg_match('#^https?://#', $url)) {
+            // Un tiret bas dans l'hôte (varietes_cerise.ctifl.fr) se résout et répond, mais
+            // FILTER_VALIDATE_URL le refuse : il est lu comme un tiret (D-95).
+            if (filter_var(str_replace('_', '-', $url), FILTER_VALIDATE_URL) === false || ! is_string($hote) || ! preg_match('#^https?://#', $url)) {
                 $this->erreur("{$ici}.url", 'adresse illisible');
             }
             $hote = strtolower($hote);

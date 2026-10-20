@@ -13,7 +13,7 @@ dans := $(if $(X),$(X),sh -c)
 # Échec forcé d'une cible, pour le test de l'enchaînement (V5) : ECHEC=<cible>.
 echec = @if [ "$(ECHEC)" = "$(1)" ]; then echo "échec forcé : $(1)"; exit 1; fi
 
-.PHONY: setup installer crochets formater moteur types statique plan test balayage e2e mutation criteres verifier
+.PHONY: setup installer crochets formater moteur types statique plan test balayage e2e mutation criteres sources verifier
 
 setup:
 ifeq ($(X),ddev exec)
@@ -105,6 +105,12 @@ mutation:
 criteres:
 	$(call echec,criteres)
 	@LIVRAISON=$(LIVRAISON) scripts/criteres.sh
+
+# Chaque source de la bibliothèque chargée en base, interrogée (V66, C14) : à la
+# main seulement, jamais par la CI ni par verifier (un site tiers tombé ne bloque
+# pas une fusion).
+sources:
+	$(X) php artisan bibliotheque:verifier-sources
 
 # Dans cet ordre ; la première cible qui échoue arrête l'enchaînement (C5, V5).
 verifier:
