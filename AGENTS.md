@@ -29,10 +29,11 @@ Toutes passent par `make` (chapitre 6 §4), sur le poste comme en CI.
 | `make statique` | Types générés à jour, PHPStan, Pint, tsc, ESLint, Prettier, audits des dépendances, puis `make plan` |
 | `make plan` | Taille de chaque sprint du plan (P5) : une ligne par sprint, `1` au-delà du budget |
 | `make test` | Toute la suite Pest, et les tests des outils |
-| `make balayage` | Invariants calendaires sur toute l'année |
+| `make balayage` | Invariants calendaires sur toute l'année, et tests de volume à 500 plantes |
 | `make e2e` | Parcours Playwright |
 | `make mutation` | Mutation du moteur |
 | `make criteres` | Critères du CDC sans test ; `LIVRAISON=1` le rend bloquant |
+| `make jardin-demo` | Le jardin fictif de 500 plantes et deux ans d'historique, remplacé s'il existe ; jamais en production |
 | `make sources` | Les sources de la bibliothèque interrogées, à la main ; jamais en CI |
 | `make verifier` | Tout, dans l'ordre : **c'est la définition de « terminé »** (C5) |
 

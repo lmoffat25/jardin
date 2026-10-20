@@ -13,7 +13,7 @@ dans := $(if $(X),$(X),sh -c)
 # Échec forcé d'une cible, pour le test de l'enchaînement (V5) : ECHEC=<cible>.
 echec = @if [ "$(ECHEC)" = "$(1)" ]; then echo "échec forcé : $(1)"; exit 1; fi
 
-.PHONY: setup installer crochets formater moteur types statique plan test balayage e2e mutation criteres sources verifier
+.PHONY: setup installer crochets formater moteur types statique plan test balayage e2e mutation criteres sources jardin-demo verifier
 
 setup:
 ifeq ($(X),ddev exec)
@@ -90,7 +90,7 @@ test:
 balayage:
 	$(call echec,balayage)
 	$(X) vendor/bin/pest tests/Moteur --group=balayage
-	$(X) vendor/bin/pest tests/Routes --group=volume
+	$(X) vendor/bin/pest tests/Routes tests/Persistance --group=volume
 
 e2e:
 	$(call echec,e2e)
@@ -113,6 +113,11 @@ criteres:
 # pas une fusion).
 sources:
 	$(X) php artisan bibliotheque:verifier-sources
+
+# Le jardin fictif de 500 plantes (chapitre 6 §3, V125), remplacé s'il existe ;
+# la commande refuse de tourner en production.
+jardin-demo:
+	$(X) php artisan jardin:demo
 
 # Dans cet ordre ; la première cible qui échoue arrête l'enchaînement (C5, V5).
 verifier:

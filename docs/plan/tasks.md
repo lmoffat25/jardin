@@ -1887,10 +1887,10 @@ public function executer(SaisieIntervention $saisie, Utilisateur $auteur): Colle
 **Classes de test :** `tests/Persistance/JardinDemoTest.php`, `tests/Persistance/SeuilsDemoTest.php`
 **Fin :** `make jardin-demo` puis le tableau de bord et la liste tiennent leurs seuils, mesurés et écrits.
 
-- [ ] Implémenter `database/seeders/DemonstrationSeeder.php` : un jardin « Démonstration » (profil Plaine), 8 zones, 500 plantes réparties sur les espèces chargées (par `CreerPlante`), dont 20 lignes et 10 polygones, coordonnées inventées autour d'un point fictif écrit dans le fichier (jamais celui du jardin pilote, C4), deux ans d'interventions (par `EnregistrerIntervention`, `travelTo`) ; relancé, il supprime puis recrée ce seul jardin.
-- [ ] Implémenter `src/Support/Console/JardinDemo.php` (découverte par D-46) ; modifier `Makefile` (`jardin-demo`).
-- [ ] `tests/Persistance/JardinDemoTest.php` : V125 (nombres, formes, relance, refus en production). Groupe `critere-23`.
-- [ ] `tests/Persistance/SeuilsDemoTest.php` : V126. Groupe `volume`.
+- [x] Implémenter `database/seeders/DemonstrationSeeder.php` : un jardin « Démonstration » (profil Plaine), 8 zones, 500 plantes réparties sur les espèces chargées (par `CreerPlante`), dont 20 lignes et 10 polygones, coordonnées inventées autour d'un point fictif écrit dans le fichier (jamais celui du jardin pilote, C4), deux ans d'interventions (par `EnregistrerIntervention`, `travelTo`) ; relancé, il supprime puis recrée ce seul jardin.
+- [x] Implémenter `src/Support/Console/JardinDemo.php` (découverte par D-46) ; modifier `Makefile` (`jardin-demo`).
+- [x] `tests/Persistance/JardinDemoTest.php` : V125 (nombres, formes, relance, refus en production). Groupe `critere-23`.
+- [x] `tests/Persistance/SeuilsDemoTest.php` : V126. Groupe `volume`.
 
 ---
 
