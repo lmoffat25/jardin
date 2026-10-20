@@ -1,0 +1,5 @@
+source;producteur;url;licence;mise_a_jour;consulte_le
+Code officiel géographique 2026;Insee;https://www.insee.fr/fr/statistiques/fichier/8740222/v_commune_2026.csv;Licence Ouverte;2026-02-24;2026-10-20
+Base officielle des codes postaux;La Poste;https://datanova.laposte.fr/data-fair/api/v1/datasets/laposte-hexasmal/metadata-attachments/base-officielle-codes-postaux.csv;Licence Ouverte;2026-10-08;2026-10-20
+Fiches climatologiques 1991-2020;Météo-France;https://meteofrance.s3.sbg.io.cloud.ovh.net/data/synchro_ftp/REF_STATION/liste_fiches_clim.geojson;Licence Ouverte 2.0;2026-10-15;2026-10-20
+Service altimétrique, RGE ALTI;IGN (Géoplateforme);https://data.geopf.fr/altimetrie/1.0/calcul/alti/rest/elevation.json;Licence Ouverte 2.0;2026-10-20;2026-10-20

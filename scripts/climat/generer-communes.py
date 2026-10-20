@@ -39,6 +39,8 @@ import urllib.parse
 import urllib.request
 
 COG = "https://www.insee.fr/fr/statistiques/fichier/8740222/v_commune_2026.csv"
+# L'Insee ne rend pas de Last-Modified : date de publication lue sur data.gouv.fr.
+COG_PUBLIE = "2026-02-24"
 LA_POSTE = (
     "https://datanova.laposte.fr/data-fair/api/v1/datasets/laposte-hexasmal/"
     "metadata-attachments/base-officielle-codes-postaux.csv"
@@ -202,7 +204,7 @@ def main(argv: list[str]) -> int:
     consulte = datetime.date.today().isoformat()
 
     print("COG de l'Insee, base des codes postaux…", file=sys.stderr)
-    cog, date_cog = telecharger(COG, cache, "v_commune_2026.csv")
+    cog, _ = telecharger(COG, cache, "v_commune_2026.csv")
     noms, parents = lire_cog(cog)
     poste, date_poste = telecharger(LA_POSTE, cache, "base-officielle-codes-postaux.csv")
     par_commune = lire_la_poste(poste, noms, parents)
@@ -237,7 +239,7 @@ def main(argv: list[str]) -> int:
     with open(sortie / "sources.csv", "w", newline="", encoding="utf-8") as f:
         w = csv.writer(f, delimiter=";", lineterminator="\n")
         w.writerow(["source", "producteur", "url", "licence", "mise_a_jour", "consulte_le"])
-        w.writerow(["Code officiel géographique 2026", "Insee", COG, "Licence Ouverte", date_cog, consulte])
+        w.writerow(["Code officiel géographique 2026", "Insee", COG, "Licence Ouverte", COG_PUBLIE, consulte])
         w.writerow(["Base officielle des codes postaux", "La Poste", LA_POSTE, "Licence Ouverte", date_poste, consulte])
         w.writerow(["Fiches climatologiques 1991-2020", "Météo-France", STATIONS, "Licence Ouverte 2.0", edition, consulte])
         w.writerow(["Service altimétrique, RGE ALTI", "IGN (Géoplateforme)", ALTI, "Licence Ouverte 2.0", consulte, consulte])
