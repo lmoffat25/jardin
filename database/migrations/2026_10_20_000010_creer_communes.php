@@ -15,9 +15,9 @@ return new class extends Migration
         Schema::create('communes', function (Blueprint $table) {
             $table->char('code_insee', 5)->primary();
             $table->string('nom', 120);
-            // Sans accents ni casse, mots séparés d'une espace (D-85).
+            // Sans accents ni casse, mots séparés d'une espace (D-86).
             $table->string('nom_recherche', 120);
-            // Séparés d'une espace ; Paris en a 21 (D-85).
+            // Séparés d'une espace ; Paris en a 21 (D-86).
             $table->string('codes_postaux', 255);
             $table->integer('altitude_m');
             $table->string('station', 80);

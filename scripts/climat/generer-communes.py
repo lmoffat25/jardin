@@ -1,4 +1,4 @@
-"""Produit le référentiel climatique des communes (RG-52, D-66, D-85), hors CI.
+"""Produit le référentiel climatique des communes (RG-52, D-66, D-86), hors CI.
 
     python3 -I scripts/climat/generer-communes.py [dossier de sortie] [--cache <dossier>]
 
@@ -16,7 +16,7 @@ Ouverte, et écrit dans le dossier de sortie (par défaut `bibliotheque/climat/`
 Le calcul de RG-52 (station, écart, décalage, profil) n'est pas ici : il a lieu
 à l'import (`php artisan jardin:importer-communes`), avec `parametres.yaml`, et
 il est testé. La France métropolitaine seule, Corse comprise : les profils sont
-calés sur Trappes, et n'ont pas de sens outre-mer (D-85).
+calés sur Trappes, et n'ont pas de sens outre-mer (D-86).
 
 Le cache (par défaut `$TMPDIR/climat-cache`) garde chaque téléchargement :
 relancer le script ne refait que ce qui manque.

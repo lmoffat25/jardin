@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use LogicException;
 
 /**
- * Une commune du référentiel climatique (RG-52, D-66, D-85) : référence
+ * Une commune du référentiel climatique (RG-52, D-66, D-86) : référence
  * partagée par tous les jardins, écrite par le seul import
  * (`jardin:importer-communes`, par `upsert`). Le modèle refuse toute autre
  * écriture.

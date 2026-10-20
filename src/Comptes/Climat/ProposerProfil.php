@@ -11,7 +11,7 @@ use Symfony\Component\Yaml\Yaml;
  * « Montagne » au-dessus du seuil d'altitude ; sinon le profil dont le
  * décalage est le plus proche du décalage calculé, Montagne exclue (le CDC
  * §5.4 la réserve au-dessus de 600 m) ; à égalité, le plus près de zéro, qui
- * déplace le moins les dates (D-85).
+ * déplace le moins les dates (D-86).
  *
  * Les seuils viennent de `bibliotheque/climat/parametres.yaml` (D-66).
  */

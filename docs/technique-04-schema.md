@@ -141,7 +141,7 @@ CREATE TABLE communes (                     -- référence, importée (RG-52, D-
     code_insee            char(5)  PRIMARY KEY,
     nom                   varchar(120) NOT NULL,
     nom_recherche         varchar(120) NOT NULL,  -- sans accents ni casse
-    codes_postaux         varchar(255) NOT NULL,  -- séparés d'une espace ; Paris en a 21 (D-85)
+    codes_postaux         varchar(255) NOT NULL,  -- séparés d'une espace ; Paris en a 21 (D-86)
     altitude_m            integer  NOT NULL,
     station               varchar(80)  NOT NULL,
     ecart_c               numeric(4,1) NOT NULL,

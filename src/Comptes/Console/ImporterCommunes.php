@@ -13,7 +13,7 @@ use Symfony\Component\Yaml\Exception\ParseException;
 use Symfony\Component\Yaml\Yaml;
 
 /**
- * Importe le référentiel des communes (RG-52, §8.6, D-66, D-85) depuis un
+ * Importe le référentiel des communes (RG-52, §8.6, D-66, D-86) depuis un
  * dossier au format de `bibliotheque/climat/` : `communes.csv`, `stations.csv`
  * et `parametres.yaml`, produits hors CI par `scripts/climat/generer-communes.py`.
  * Aucun appel réseau : tout est dans les fichiers.

@@ -94,7 +94,9 @@ def carte_bureau(nom, fond="aérienne", outil="Sélectionner", selection=None, b
                     rayon=8)
         d.texte(b, 0, 11, 94, lib, 13, gras=True, couleur=BLANC if sel else TEXTE, align="center")
         choix_fond[lib] = b
-    if bandeau:
+    if bandeau and vague1.INTERFACE:
+        d.bandeau(f, NAV + 16, 80, MW - 32, 48, "attention", bandeau)
+    elif bandeau:
         bd = d.cadre("Bandeau · fond", f, NAV + 16, 80, MW - 32, 48, fond=FOND, rayon=10,
                      trait=FORT)
         d.texte(bd, 16, 14, MW - 64, bandeau, 14, gras=True)
@@ -203,6 +205,13 @@ def tournee(f, y, lignes, faits: dict):
     modifier = d.bouton(f, W - M - 160, y - 12, 160, 40, "Modifier l'ordre")
     for k, (n, nom, geste) in enumerate(lignes):
         yy = y + 36 + k * 64
+        if vague1.INTERFACE:   # la ligne d'échéance, avec son rang dans la tournée
+            ligne = d.instance("Échéance/Ligne", f, 0, yy, W, 64, {
+                "etat": "en-retard" if "urgent" in geste else "a-faire", "plante": nom,
+                "detail": geste, "avecNumero": True, "rang": str(n)},
+                calque=f"Tournée · {nom}", props={"padding": [8, M, 8, M]})
+            faits[nom] = d.partie(ligne, "Échéance/Ligne", "fait")
+            continue
         p = d.cadre("Numéro", f, M, yy + 14, 28, 28, fond=FORT, rayon=14)
         d.texte(p, 0, 5, 28, str(n), 13, gras=True, couleur=BLANC, align="center")
         d.texte(f, M + 40, yy + 6, 220, nom, 16, gras=True)
@@ -262,9 +271,13 @@ t7c_ok = d.bouton(t7c, M, 740, W - 2 * M, 56, "Terminé", principal=True)
 t7d = vague1.ecran("T7 · 04 · Carte — fond indisponible")
 entete_carte(t7d)
 fond_carte(t7d, 0, 108, W, H_CARTE, "neutre")
-bd = d.cadre("Bandeau · fond", t7d, M, 120, W - 2 * M, 56, fond=FOND, rayon=10, trait=FORT)
-d.texte(bd, 12, 8, W - 2 * M - 24, "Photo aérienne indisponible. Le reste fonctionne.", 14,
-        gras=True)
+if vague1.INTERFACE:
+    d.bandeau(t7d, M, 120, W - 2 * M, 56, "attention",
+              "Photo aérienne indisponible. Le reste fonctionne.")
+else:
+    bd = d.cadre("Bandeau · fond", t7d, M, 120, W - 2 * M, 56, fond=FOND, rayon=10, trait=FORT)
+    d.texte(bd, 12, 8, W - 2 * M - 24, "Photo aérienne indisponible. Le reste fonctionne.", 14,
+            gras=True)
 tournee(t7d, 108 + H_CARTE + 20, TOURNEE, {})
 
 # --- T6 · Une étiquette scannée --------------------------------------------------

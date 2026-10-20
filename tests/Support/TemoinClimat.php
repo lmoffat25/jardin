@@ -5,7 +5,7 @@ namespace Tests\Support;
 /**
  * Un référentiel climatique témoin (V135, V136) : douze communes et quatre
  * stations, toutes inventées (RG-28), écrites dans un dossier temporaire au
- * format de `bibliotheque/climat/` (D-85). La station 99000003 a une période
+ * format de `bibliotheque/climat/` (D-86). La station 99000003 a une période
  * incomplète, et sa température absurde la trahirait si elle était retenue.
  *
  * Les valeurs attendues se calculent à la main : référence 8,0 °C en

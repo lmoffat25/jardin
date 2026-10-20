@@ -18,7 +18,7 @@ const MODELES_REFERENTIEL = [
     'Src\Comptes\Domaine\Utilisateur',
     // Référence, partagée par tous les jardins.
     'Src\Comptes\Domaine\ProfilClimatique',
-    'Src\Comptes\Domaine\Commune', // 2f : référentiel importé (D-85)
+    'Src\Comptes\Domaine\Commune', // 2f : référentiel importé (D-86)
     'Src\Bibliotheque\Domaine\FamilleBotanique',
     'Src\Bibliotheque\Domaine\Espece',
     'Src\Bibliotheque\Domaine\RegleReference',

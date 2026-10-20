@@ -1,6 +1,6 @@
 <?php
 
-// V135 (RG-52, §8.6, D-66, D-85) : importé deux fois depuis le même témoin, le
+// V135 (RG-52, §8.6, D-66, D-86) : importé deux fois depuis le même témoin, le
 // référentiel donne les mêmes lignes ; chaque commune porte son altitude, sa
 // station, son écart, son décalage et son profil proposé. Une station à période
 // incomplète n'est jamais retenue. Aucun appel réseau.
