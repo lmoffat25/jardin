@@ -2,6 +2,7 @@
 
 namespace Src\Jardin\Plantes;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -20,11 +21,13 @@ use Src\Echeances\TableauDeBord\RegrouperEcheances;
 use Src\Jardin\Domaine\Plante;
 use Src\Jardin\Domaine\Zone;
 use Src\Jardin\Zones\ZoneDuJardin;
+use Src\Journal\Domaine\Photo;
 use Src\Support\Jardin\JardinCourant;
 
 /**
  * La liste des plantes (B5, V89) : 50 par page, cherchée et filtrée (RG-19).
- * La fiche d'une plante (B6 au bureau, T5 au terrain) : la plante, les
+ * La fiche d'une plante (B6 au bureau, T5 au terrain) : la plante et sa
+ * couverture (V119), les
  * échéances à venir de ses règles et ses manquées (RG-07, critère 6, V78).
  * Son historique se charge à part (`HistoriqueController`). Et la création
  * d'une plante (B7, T3, V83, V84, située par le téléphone en V111), sa modification (V132) et son archivage
@@ -58,8 +61,8 @@ final class PlanteController
     /**
      * Recherche dans le nom (sans tenir compte de la casse, `%` et `_` pris à
      * la lettre) ou par code court exact ; filtres par zone et par état, les
-     * plantes actives par défaut (D-103). La miniature reste nulle jusqu'aux
-     * photos (11b).
+     * plantes actives par défaut (D-103). La miniature est celle de la photo
+     * de couverture, ou son original tant que les dérivées manquent (V119).
      */
     public function lister(Request $request): Response
     {
@@ -83,9 +86,14 @@ final class PlanteController
             ->when($etat !== 'toutes', fn ($r) => $r->where('etat', $etat))
             ->orderBy('nom')
             ->orderBy('id')
-            ->paginate(self::PAR_PAGE, ['id', 'nom', 'code_court', 'repere', 'etat', 'zone_id'], 'page', (int) ($filtres['page'] ?? 1));
+            ->paginate(self::PAR_PAGE, ['id', 'nom', 'code_court', 'repere', 'etat', 'zone_id', 'photo_couverture_id'], 'page', (int) ($filtres['page'] ?? 1));
 
-        $plantes = collect($page->items())->map(function (Plante $p): array {
+        $couvertures = Photo::query()
+            ->whereIn('id', collect($page->items())->map(fn (Plante $p) => $p->getAttribute('photo_couverture_id'))->filter()->values()->all())
+            ->get(['id', 'derivees_pretes'])
+            ->keyBy('id');
+
+        $plantes = collect($page->items())->map(function (Plante $p) use ($couvertures): array {
             $zone = $p->zone ?? throw new LogicException("Plante {$p->id} sans zone.");
 
             return [
@@ -95,7 +103,7 @@ final class PlanteController
                 'repere' => $p->getAttribute('repere'),
                 'etat' => $p->getAttribute('etat'),
                 'zone' => ['id' => $zone->id, 'nom' => $zone->nom],
-                'miniature' => null,
+                'miniature' => CouvertureController::adresses(self::couverture($p, $couvertures))['miniature'] ?? null,
             ];
         });
 
@@ -228,6 +236,7 @@ final class PlanteController
                 'nom' => $plante->nom,
                 'code_court' => $plante->code_court,
                 'zone' => ['id' => $zone->id, 'nom' => $zone->nom],
+                'couverture' => CouvertureController::adresses(self::couverture($plante)),
             ],
             'echeances' => $echeances,
             'manquees' => $manquees,
@@ -293,6 +302,22 @@ final class PlanteController
     private function trouver(string $id): Plante
     {
         return Str::isUuid($id) ? Plante::query()->with('zone')->findOrFail($id) : abort(404);
+    }
+
+    /**
+     * La photo de couverture d'une plante, prise dans celles déjà chargées,
+     * ou lue sous le filtre.
+     *
+     * @param  Collection<string, Photo>|null  $chargees
+     */
+    private static function couverture(Plante $plante, ?Collection $chargees = null): ?Photo
+    {
+        $id = $plante->getAttribute('photo_couverture_id');
+        if (! is_string($id)) {
+            return null;
+        }
+
+        return $chargees === null ? Photo::query()->find($id) : $chargees->get($id);
     }
 
     private static function jour(mixed $date): ?string

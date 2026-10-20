@@ -1806,12 +1806,12 @@ public function executer(SaisieIntervention $saisie, Utilisateur $auteur): Colle
 **Classes de test :** `tests/Routes/CouvertureTest.php`, `tests/Routes/FondDePlanTest.php`, `tests/Persistance/NettoyageTest.php`
 **Fin :** le critère 14 est vrai côté serveur ; le critère 16 l'est pour le stockage du fond et de son calage.
 
-- [ ] Implémenter `src/Jardin/Plantes/CouvertureController.php` : photo par le scope, rattachée à la plante ou à l'une de ses interventions, sinon `422` ; modifier `PlanteController` (`lister`, `afficher` : URL de la miniature, ou de l'original tant que `derivees_pretes` est faux).
-- [ ] Implémenter `src/Jardin/Domaine/FondDePlan.php` (trait de jardin), `src/Jardin/Plan/ImporterFondDePlan.php` (quota ; 2 ou 3 points, bornes ; transaction : ancien `actif = false` puis nouveau `actif = true` — l'index partiel l'exige ; le calage est stocké tel quel, la transformation affine est en partie B), `src/Jardin/Plan/FondDePlanController.php` (`importer`, `actif`, `image`). Ajouter `database/factories/FondDePlanFactory.php` (hors compte).
-- [ ] Implémenter `src/Journal/Console/NettoyerOrphelines.php` (commande `photos:nettoyer`, découverte par D-46 ; jardin en argument obligatoire, positionne `JardinCourant` ; fichiers de `photos/{jardin}/` sans ligne, de plus de 7 jours ; sans `--supprimer`, elle liste et ne supprime rien, D-60) ; modifier `src/Comptes/Quotas/CalculerOccupation.php` (ajoute les fonds `image`) et `src/Jardin/routes.php` ; inscrire au registre.
-- [ ] `tests/Routes/CouvertureTest.php` : V119, quatre cas. Groupe `critere-14`.
-- [ ] `tests/Routes/FondDePlanTest.php` : V120, quatre cas, l'image servie par le filtre, le fond compté au quota. Groupe `critere-16`.
-- [ ] `tests/Persistance/NettoyageTest.php` : V121.
+- [x] Implémenter `src/Jardin/Plantes/CouvertureController.php` : photo par le scope, rattachée à la plante ou à l'une de ses interventions, sinon `422` ; modifier `PlanteController` (`lister`, `afficher` : URL de la miniature, ou de l'original tant que `derivees_pretes` est faux).
+- [x] Implémenter `src/Jardin/Domaine/FondDePlan.php` (trait de jardin), `src/Jardin/Plan/ImporterFondDePlan.php` (quota ; 2 ou 3 points, bornes ; transaction : ancien `actif = false` puis nouveau `actif = true` — l'index partiel l'exige ; le calage est stocké tel quel, la transformation affine est en partie B), `src/Jardin/Plan/FondDePlanController.php` (`importer`, `actif`, `image`). Ajouter `database/factories/FondDePlanFactory.php` (hors compte).
+- [x] Implémenter `src/Journal/Console/NettoyerOrphelines.php` (commande `photos:nettoyer`, découverte par D-46 ; jardin en argument obligatoire, positionne `JardinCourant` ; fichiers de `photos/{jardin}/` sans ligne, de plus de 7 jours ; sans `--supprimer`, elle liste et ne supprime rien, D-60) ; modifier `src/Comptes/Quotas/CalculerOccupation.php` (ajoute les fonds `image`) et `src/Jardin/routes.php` ; inscrire au registre.
+- [x] `tests/Routes/CouvertureTest.php` : V119, quatre cas. Groupe `critere-14`.
+- [x] `tests/Routes/FondDePlanTest.php` : V120, quatre cas, l'image servie par le filtre, le fond compté au quota. Groupe `critere-16`.
+- [x] `tests/Persistance/NettoyageTest.php` : V121.
 
 ---
 

@@ -69,6 +69,7 @@ it('rend la plante, ses échéances à venir et sa taille manquée', function (s
                 'nom' => 'Pommier du fond',
                 'code_court' => 'FRU-001',
                 'zone' => ['id' => $this->pommier->zone_id, 'nom' => 'Verger'],
+                'couverture' => null,
             ])
             ->count('echeances', 2)
             ->where('echeances.0.type.libelle', 'Tonte')
