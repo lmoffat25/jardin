@@ -1713,17 +1713,17 @@ public function executer(SaisieIntervention $saisie, Utilisateur $auteur): Colle
 
 ### 10b.1 Essai d'abord
 
-- [ ] Ajouter `chillerlan/php-qrcode` (encodage SVG) et, en développement, un décodeur (`khanamiryan/qrcode-detector-decoder` sur un rendu PNG du même encodeur) ; un test jetable encode puis décode une URL. Si le décodage n'est pas fiable, comparer la matrice produite à celle d'un second encodeur et l'écrire (D-27).
+- [x] Ajouter `chillerlan/php-qrcode` (encodage SVG) et, en développement, un décodeur (`khanamiryan/qrcode-detector-decoder` sur un rendu PNG du même encodeur) ; un test jetable encode puis décode une URL. Si le décodage n'est pas fiable, comparer la matrice produite à celle d'un second encodeur et l'écrire (D-27).
 
 ### 10b.2 Routes
 
-- [ ] Implémenter `src/Jardin/Identification/ResoudreCodeCourt.php` (par le scope, `upper()`), `src/Jardin/Identification/CodeCourtController.php`, `src/Jardin/Identification/EncodeurQR.php`, `src/Jardin/Identification/EtiquettesController.php` (zone par le scope, plantes actives triées par code) ; modifier `src/Jardin/routes.php` et `composer.json` ; inscrire au registre.
+- [x] Implémenter `src/Jardin/Identification/ResoudreCodeCourt.php` (par le scope, `upper()`), `src/Jardin/Identification/CodeCourtController.php`, `src/Jardin/Identification/EncodeurQR.php`, `src/Jardin/Identification/EtiquettesController.php` (zone par le scope, plantes actives triées par code) ; modifier `src/Jardin/routes.php` et `composer.json` ; inscrire au registre.
 
 ### 10b.3 Tests
 
-- [ ] `tests/Routes/CodeCourtTest.php` : V112 (casse ; `FRU-001` dans A et B mène à A ; code de B seul → `404` identique à inexistant). Groupe `critere-22`.
-- [ ] `tests/Routes/EtiquettesTest.php` : V113. Groupe `critere-10`.
-- [ ] `tests/Routes/QrTest.php` : V114. Groupe `critere-22`.
+- [x] `tests/Routes/CodeCourtTest.php` : V112 (casse ; `FRU-001` dans A et B mène à A ; code de B seul → `404` identique à inexistant). Groupe `critere-22`.
+- [x] `tests/Routes/EtiquettesTest.php` : V113. Groupe `critere-10`.
+- [x] `tests/Routes/QrTest.php` : V114. Groupe `critere-22`.
 
 ---
 

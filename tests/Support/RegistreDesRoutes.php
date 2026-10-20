@@ -63,6 +63,16 @@ final class RegistreDesRoutes
             // rend 404 (TableauDeBordTest).
             'GET /echeances/groupe' => ['nature' => 'liste', 'role' => 'membre'],
             'GET /zones' => ['nature' => 'liste', 'role' => 'membre'],
+            // Depuis A, la zone de B est introuvable : 404 (EtiquettesTest).
+            'GET /zones/{zone}/etiquettes' => ['nature' => 'lit', 'role' => 'membre', 'parametres' => fn (string $id): array => ['zone' => $zone($id)]],
+            // Le code court d'une plante du jardin ; les codes des jardins
+            // témoins sont tous distincts. Depuis A, un code de B seul rend le
+            // même 404 qu'un code inexistant (CodeCourtTest).
+            'GET /p/{code}' => [
+                'nature' => 'lit',
+                'role' => 'membre',
+                'parametres' => fn (string $id): array => ['code' => (string) Plante::query()->withoutGlobalScopes()->where('jardin_id', $id)->orderBy('nom')->value('code_court')],
+            ],
             'POST /zones' => ['nature' => 'ecrit', 'role' => 'proprietaire', 'charge' => fn (string $id): array => ['nom' => 'Zone créée']],
             'PUT /zones/{zone}' => [
                 'nature' => 'ecrit',
