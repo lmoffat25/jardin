@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Src\Comptes\Climat\CommuneController;
+use Src\Comptes\Export\ExportController;
 use Src\Comptes\Http\ConnexionController;
 use Src\Comptes\Jardins\JardinController;
 
@@ -24,6 +25,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/communes', [CommuneController::class, 'chercher']);
     Route::get('/communes/{code_insee}/profil', [CommuneController::class, 'profil']);
 });
+
+// L'export du jardin courant (critère 8) : une lecture, ouverte au membre (D-49).
+Route::get('/export', [ExportController::class, 'exporter'])->middleware('metier');
 
 // Réservée au propriétaire (D-49) ; la policy `modifier` reste.
 Route::put('/jardin', [JardinController::class, 'modifier'])->middleware(['metier', 'role:proprietaire']);
