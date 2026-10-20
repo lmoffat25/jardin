@@ -977,8 +977,8 @@ Liste proposée au MVP — une question, un menu déroulant, aucune dépendance 
 >    donne un décalage ; l'outil propose le profil dont le décalage est le plus
 >    proche.
 >
-> L'écran dit pourquoi (« station de Bordeaux, 1,4 °C de plus qu'en plaine
-> tempérée : dates avancées d'environ 8 jours »), et le profil reste
+> L'écran dit pourquoi (« station de Lyon-Bron, 1,0 °C de plus qu'en plaine
+> tempérée : dates avancées d'environ 6 jours »), et le profil reste
 > modifiable (RG-26). La proposition est marquée **indicative** tant que le
 > coefficient n'est pas mesuré sur des plantes de jardin (Q24).
 >
@@ -1690,7 +1690,7 @@ sont aussi :
 | Q21 | Framboisier remontant et non remontant | Deux tailles différentes ; B-T7 interdit deux règles du même type sur une espèce | **Tranchée le 20/10/2026** — une espèce, deux variantes de conduite choisies à la création de la plante (RG-51) |
 | Q22 | Périodicité de la haie caduque | Une haie taillée de jardin se reprend chaque année (non sourcé), une haie bocagère tous les 2 à 3 ans (sourcé) | **Tranchée le 20/10/2026 par le sourçage** — 1 an : deux sources de jardin indépendantes (Quimperlé Communauté, CAUE 76) taillent la haie au moins une fois par an ; le « 2 à 3 ans » ne vaut que pour le bocage |
 | Q23 | Traitements fruitiers | Écrits en R3 (hors MVP) et non sourcés, alors que le plan les attend dans la bibliothèque du sprint 4b | **Tranchée le 20/10/2026** — retirés de la liste de départ |
-| Q24 | Coefficient du décalage climatique | RG-52 multiplie un écart de température par un coefficient en jours par degré. La seule valeur trouvée (5,7 j/°C, Vitasse et al. 2010) est mesurée sur des arbres forestiers. Station de référence et seuils sont aussi à fixer. Lyon sort à +2 j alors que la liste le range à −7 j : c'est peut-être le profil « Sud-Ouest, vallée du Rhône », jamais sourcé, qui est faux | **En cours de sourçage** — coefficient mesuré sur des fruitiers, gradient d'altitude de Météo-France, station de référence ; d'ici là la proposition est indicative |
+| Q24 | Paramètres du décalage climatique | **Sourcé (20/10/2026)** : gradient de 0,65 °C par 100 m (Météo-France, qui signale l'exception des inversions de vallée) ; coefficient de 5,7 à 7 j/°C (arbres forestiers, Vitasse 2010 ; pommier d'une année à l'autre, Weil et al. 2018, −6 ; herbacées de jardins botaniques, d'un lieu à l'autre, −7) ; **aucun coefficient d'un lieu à l'autre trouvé sur des fruitiers**. Station de référence proposée : Trappes (fiche 1991-2020 complète, février-avril 7,8 °C ; Paris-Montsouris est un îlot de chaleur). Avec 6 j/°C : Perpignan, Nice, Bordeaux → −15 ; Lyon, Rennes, Brest → −7 ; Clermont-Ferrand, Strasbourg → 0 ; aucun profil ne change entre 5,7 et 7. **Reste à trancher** : (a) la fenêtre — février-avril range Brest et Rennes en avance par leur hiver doux, alors que leur avril est plus frais qu'à Trappes ; mars-avril les rapprocherait de 0 (non calculé) ; (b) les libellés des profils, qui ne correspondent plus aux villes qu'ils reçoivent (Bordeaux en « Midi », Rennes en « Sud-Ouest ») | **Paramètres retenus d'ici là** : Trappes, 6 j/°C, février-avril, dans `bibliotheque/climat/parametres.yaml` ; proposition indicative |
 
 ---
 

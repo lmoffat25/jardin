@@ -694,7 +694,7 @@ Chaque sprint, en plus de sa propre porte :
 **Porte :** `make verifier`, puis la CI de la demande de fusion.
 **Vérification en marche :** sans objet
 **Question UX possible :** aucune — B2 · 01 à B2 · 05 sont dessinés
-**En attente :** Q24 pour les valeurs (coefficient, station de référence) ; le code et les tests n'en dépendent pas, ils lisent ces valeurs dans `bibliotheque/climat/parametres.yaml`
+**En attente :** Q24 pour la fenêtre de température et les libellés des profils ; valeurs de départ : Trappes, 6 j/°C, février-avril ; le code et les tests n'en dépendent pas, ils lisent ces valeurs dans `bibliotheque/climat/parametres.yaml`
 **Assertions :** V135, V136
 **Fichiers :** `scripts/climat/generer-communes.py`, `bibliotheque/climat/parametres.yaml`, `src/Comptes/Climat/ImporterCommunes.php`, `src/Comptes/Climat/ProposerProfil.php`, `src/Comptes/Climat/CommuneController.php`, `src/Comptes/routes.php`, `database/migrations/…_creer_communes.php`
 **Classes de test :** `tests/Persistance/ImportCommunesTest.php`, `tests/Routes/ProfilCommuneTest.php`

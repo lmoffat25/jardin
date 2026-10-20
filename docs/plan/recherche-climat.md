@@ -150,3 +150,74 @@ Variante sans stations : normale 1991-2020 de `T` sur SIM2 (8 km, LO 2.0), maill
 **Limites :** coefficients tirés d'arbres forestiers (5,3 à 8,4 j/°C selon espèce) ; FMA arbitraire comme fenêtre ; la chaleur hivernale joue en sens inverse (Asse 2018) ; stations urbaines/littorales ; profils discrets (Lyon tombe à 0).
 
 **Reste à vérifier :** nombre de stations à période complète ; altitude des mailles SIM ; un coefficient sur plantes fruitières ou potagères (Legave, INRAE, non lu : HAL bloque le téléchargement des PDF par curl) ; une source Météo-France pour le gradient vertical ; les conditions propres du portail DRIAS ; le choix de la référence et des seuils entre profils, à faire valider par Léon.
+
+## Coefficient jours/°C, gradient d'altitude, station de référence
+
+Consultations du 20/10/2026. Fait suite à `recherche-climat-normales.md`. « Vérifié » : page ou fichier ouvert et lu ; « supposé » : déduit, non lu. Téléchargements : `scratchpad/dl-coef-ScD0/` (fiches dans `fiches/`). `~/jardin` non modifié.
+
+## 1. Coefficient sur fruitiers ou plantes de jardin
+
+**Trouvé et lu :**
+
+1. **Pommier, Allemagne : −6 j/°C, mais d'une année à l'autre** (vérifié, texte intégral ouvert dans Chrome). Weil, Ullmann, Camberlin, *Climatologie* 15 (2018), DOI 10.4267/climatologie.1314, https://climatology.edpsciences.org/articles/climat/full_html/2018/01/climat201815p1/climat201815p1.html. Résumé français : « la floraison des pommiers est très étroitement liée à la variabilité des températures moyennes de mars à mai (R2 = 0,82; -6 jours/°C) ». Section 2.2 : « A change of 1°C in the mean temperature from mid-March to mid-May equals an advancement of bloom onset of approximately 6 days. » La pente est calculée sur les **moyennes nationales annuelles 1951-2014** (fig. 7 : « The points represent the years 1951 to 2014 »), donc un gradient **temporel**. L'analyse spatiale du même article régresse la date sur latitude, longitude et altitude (R² ajusté 83 %), pas sur la température. Fenêtre 10 mars-10 mai, pas février-avril.
+   - Le même article cite (non lu à la source) Chmielewski et Rötzer 2001 : « 7 days advance in leaf unfolding for a change of 1°C (February – April) » (arbres, temporel). C'est la seule mention trouvée d'une fenêtre **février-avril** identique à celle du SaaS.
+2. **Plantes herbacées de jardins botaniques : −7 j/°C, dans l'espace comme dans le temps** (vérifié, résumé de communication). iDiv Annual Conference 2025, « Space-for-Time substitution to study phenological shifts in herbaceous species is most reliable for early-flowering species », https://conference.idiv.de/event/3/contributions/70/ : 17 espèces herbacées, jardins botaniques de Vienne sur 150 ans et 11 jardins botaniques le long d'un gradient spatial ; « We showed that the space-time equivalence is fulfilled for the present species and spatial gradient and found that for both approaches, flowering was advanced by 7 days when the temperature increased by 1°C. » Résumé de congrès, pas un article relu par des pairs ; fenêtre de température non précisée dans le résumé.
+3. **Pommier, Europe de l'Ouest (Legave et al. 2013, *Int. J. Biometeorol.* 57:317-331)** : le résumé donne des avances en jours (10 j continental, 6-7 j océanique) mais **aucune pente par °C** (lu via recherche, page non ouverte). Non retenu.
+
+**Non trouvé :** aucun coefficient spatial publié en j/°C pour pommier, poirier, cerisier, abricotier ou vigne. Vigne (IFV, BSV) : seulement des sommes de degrés-jours et des avances de campagne. Les PDF HAL INRAE (Legave 2008, `hal-02757466/document`, `hal-02737778/file/...`) et la HU Berlin (Chmielewski) renvoient une page anti-robot Anubis par curl ; non lus.
+
+**Bilan des pentes disponibles :** 5,7 j/°C (arbres forestiers, spatial, Vitasse 2010) ; 6 j/°C (pommier, temporel) ; 7 j/°C (herbacées, spatial = temporel). Fourchette 5,7-7 ; **6 j/°C est une valeur centrale raisonnable (choix, supposé)**.
+
+## 2. Gradient de température avec l'altitude (Météo-France)
+
+Vérifié, page ouverte : Météo-France, « Pourquoi les températures peuvent être très différentes d'une région à l'autre ? », https://meteofrance.com/actualites-et-dossiers/comprendre-la-meteo/pourquoi-les-temperatures-peuvent-etre-tres-differentes : « Dans l'atmosphère standard, la température décroît avec l'altitude. On perd environ 0,65 °C en s'élevant de 100 mètres, ce qui explique qu'il fait généralement plus froid en montagne que dans la vallée. » La page poursuit sur les exceptions anticycloniques hivernales.
+
+Réserve, même source institutionnelle (https://meteofrance.com/actualites-et-dossiers/actualites/climat/relief-des-temperatures-minimales-plus-froides-dans-les-vallees) : « En montagne, la température baisse généralement avec l'altitude, mais ce n'est pas toujours le cas. » (inversion de température en fond de vallée).
+
+Pour mémoire (vérifié, vignette du paquet R `pep725`, https://cran.r-project.org/web/packages/pep725/vignettes/spatial-patterns.html) : « phenological phases are delayed by 2-4 days per 100 meters of elevation gain ». Cohérent avec 0,65 °C/100 m × 6 j/°C ≈ 3,9 j/100 m (calcul).
+
+## 3. Station de référence « plaine tempérée, Bassin parisien »
+
+Fiches lues : `https://meteofrance.s3.sbg.io.cloud.ovh.net/data/synchro_ftp/REF_STATION/FICHECLIM_<num>.data`, toutes en en-tête « Statistiques  1991-2020  et  records ». Sous « Température moyenne », aucune ligne « Statistiques établies sur la période » pour les 22 stations téléchargées (vérifié). Mais des séries courtes existent sur d'**autres** paramètres (rayonnement, insolation) : Orléans (rayonnement 2010-2020), Melun (2009-2020), Chartres, Châteaudun, Beauvais, Troyes, Orly, Roissy, Le Bourget, Évreux.
+
+**Recommandation : Trappes (78621001, alt. 167 m, 48°46'27"N 2°00'35"E)**, seule station du Bassin parisien testée dont la fiche n'a **aucune** série courte (vérifié : 0 ligne « Statistiques établies »). Station de plateau, hors agglomération dense (supposé, d'après sa position). Températures moyennes lues dans la fiche :
+
+| Mois | Trappes | Orléans (45055001, 123 m) | Paris-Montsouris |
+|---|---|---|---|
+| Février | 4,9 °C | 4,9 | 6,0 |
+| Mars | 7,9 °C | 7,9 | 9,2 |
+| Avril | 10,7 °C | 10,6 | 12,2 |
+| **FMA** | **7,83** | 7,80 | 9,13 |
+
+Contrôle (calcul) : FMA de 10 stations hors agglomération parisienne (Trappes 7,83, Orléans 7,80, Melun 7,87, Chartres 7,63, Châteaudun 7,67, Évreux 7,43, Beauvais 7,20, Troyes 7,30, Bourges 8,20, Tours 8,40) : médiane **7,74**. Trappes est à +0,1 °C de cette médiane ; Montsouris (+1,3 °C) est un îlot de chaleur urbain, Orly/Roissy/Le Bourget à 8,27-8,33. Orléans est une alternative équivalente pour la température.
+
+## 4. Recalcul des huit villes
+
+Formule : décalage = (FMA_référence − FMA_station) × k, avec FMA_réf = (4,9 + 7,9 + 10,7) / 3 = 7,83 °C (Trappes) et k = 6 j/°C (valeur centrale ; entre parenthèses k = 5,7 et 7). Négatif = en avance. Profil = le plus proche parmi −15/−7/0/+7/+21 (bornes implicites −11, −3,5, +3,5, +14 ; supposé). FMA lues dans les fiches 1991-2020 (février ; mars ; avril).
+
+| Station (alt.) | Fév ; mars ; avr | FMA | Écart | Calcul (k = 6) | Fourchette 5,7-7 | Profil |
+|---|---|---|---|---|---|---|
+| Perpignan (42 m) | 9,2 ; 12,0 ; 14,2 | 11,80 | +3,97 | −3,97 × 6 = **−23,8 j** | −22,6 à −27,8 | −15 |
+| Nice (2 m) | 9,8 ; 11,8 ; 14,1 | 11,90 | +4,07 | **−24,4 j** | −23,2 à −28,5 | −15 |
+| Bordeaux-Mérignac (47 m) | 7,8 ; 10,7 ; 13,0 | 10,50 | +2,67 | **−16,0 j** | −15,2 à −18,7 | −15 |
+| Lyon-Bron (202 m) | 5,2 ; 9,0 ; 12,3 | 8,83 | +1,00 | **−6,0 j** | −5,7 à −7,0 | −7 |
+| Rennes-St Jacques (36 m) | 6,6 ; 8,8 ; 11,0 | 8,80 | +0,97 | **−5,8 j** | −5,5 à −6,8 | −7 |
+| Brest-Guipavas (92 m) | 7,1 ; 8,6 ; 10,1 | 8,60 | +0,77 | **−4,6 j** | −4,4 à −5,4 | −7 |
+| Clermont-Fd (331 m) | 5,1 ; 8,3 ; 10,9 | 8,10 | +0,27 | **−1,6 j** | −1,5 à −1,9 | 0 |
+| Strasbourg-Entzheim (150 m) | 3,6 ; 7,4 ; 11,3 | 7,43 | −0,40 | **+2,4 j** | +2,3 à +2,8 | 0 |
+
+Aucun profil ne change dans la fourchette 5,7-7 j/°C.
+
+Changements par rapport à la recherche précédente (référence Montsouris) : Lyon passe de 0 à **−7** ; Bordeaux de −7 à **−15** ; Strasbourg de +7 à **0**. Perpignan et Nice dépassent nettement −15 (≈ −24 j) : le profil −15 est un plafond.
+
+Points à faire trancher (supposé, non vérifié sur des observations phénologiques) :
+- **Brest et Rennes en −7** : la FMA y est élevée par l'hiver doux (février 7,1 et 6,6 °C) alors qu'avril est frais (10,1 à Brest, < Trappes 10,7). Une fenêtre mars-avril, ou avril seul, rapprocherait Brest de 0. Asse et al. 2018 (recherche précédente) montrent qu'un hiver doux peut retarder le débourrement.
+- **Strasbourg à 0** : son avril (11,3) est plus chaud que Trappes ; seul février (3,6) le refroidit. Cohérent avec l'idée que la FMA mélange froid hivernal et chaleur printanière.
+- Clermont-Ferrand (331 m) reste en plaine (0) : pas de correction d'altitude à faire puisque la station est la mesure elle-même ; la correction 0,65 °C/100 m ne s'applique qu'entre station et commune.
+
+## Synthèse
+
+- Coefficient fruitier spatial : **pas trouvé**. Meilleures sources : pommier −6 j/°C (temporel, Allemagne, vérifié) ; herbacées −7 j/°C (spatial = temporel, résumé de congrès, vérifié) ; arbres −5,7 j/°C (spatial). Retenir 6 j/°C, fourchette affichable 5,7-7.
+- Gradient vertical : Météo-France, « environ 0,65 °C en s'élevant de 100 mètres » (vérifié).
+- Référence : **Trappes, FMA 7,83 °C** (fiche sans aucune série courte ; médiane Bassin parisien 7,74).
+- Profils obtenus : Perpignan, Nice, Bordeaux −15 ; Lyon, Rennes, Brest −7 ; Clermont-Ferrand, Strasbourg 0.

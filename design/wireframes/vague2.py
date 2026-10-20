@@ -64,9 +64,9 @@ def champ(parent, x, y, w, libelle, valeur=None, indication=None, erreur=None, h
 # --- B2 · Le jardin et son climat ---------------------------------------------
 PROFILS = [  # libellé, ce que ça change, exemples (CDC §5.4, essai de RG-52)
     ("Midi, littoral méditerranéen", "15 jours plus tôt", "Perpignan, Nice"),
-    ("Sud-Ouest, vallée du Rhône", "7 jours plus tôt", "Bordeaux"),
-    ("Plaine tempérée", "dates de référence", "Bassin parisien, centre"),
-    ("Nord, Est, océanique frais", "7 jours plus tard", "Strasbourg"),
+    ("Sud-Ouest, vallée du Rhône", "7 jours plus tôt", "Lyon"),
+    ("Plaine tempérée", "dates de référence", "Bassin parisien, Strasbourg"),
+    ("Nord, Est, océanique frais", "7 jours plus tard", "Plus frais qu'à Paris"),
     ("Montagne, plus de 600 m", "21 jours plus tard", "Au-dessus de 600 m"),
 ]
 
@@ -120,9 +120,9 @@ def b2_vide():
 
 
 def b2_avec_commune():
-    f = b2_tete("B2 · 02 · Votre jardin — climat proposé", "Le Clos", "Bordeaux (33000)")
-    y = b2_propose(f, 420, 1, "Station de Bordeaux-Mérignac : 1,4 °C de plus qu'en plaine "
-                   "tempérée de février à avril, soit des dates avancées d'environ 8 jours. "
+    f = b2_tete("B2 · 02 · Votre jardin — climat proposé", "Le Clos", "Lyon (69003)")
+    y = b2_propose(f, 420, 1, "Station de Lyon-Bron : 1,0 °C de plus qu'en plaine tempérée "
+                   "de février à avril, soit des dates avancées d'environ 6 jours. "
                    "Indicatif : vous pourrez le changer à tout moment.")
     autre = b2_autre(f, y + 16)
     return f, autre, b2_suite(f)
