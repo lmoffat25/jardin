@@ -14,6 +14,7 @@ echec = @if [ "$(ECHEC)" = "$(1)" ]; then echo "échec forcé : $(1)"; exit 1; f
 
 setup:
 ifeq ($(X),ddev exec)
+	bash scripts/ddev/nommer-worktree.sh
 	ddev start
 endif
 	$(MAKE) installer
@@ -58,6 +59,8 @@ test:
 	$(X) vendor/bin/pest
 	$(X) bash scripts/tests/test-statique.sh
 	$(X) bash scripts/hooks/tests/test-crochets.sh
+	$(X) bash scripts/plan/tests/test-enchainer.sh
+	$(X) bash scripts/ddev/tests/test-nommer-worktree.sh
 
 balayage:
 	$(call echec,balayage)
