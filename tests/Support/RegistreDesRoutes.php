@@ -222,6 +222,9 @@ final class RegistreDesRoutes
             // Les types fournis et ceux du jardin courant (TypesVisibles, D-55).
             'GET /types-intervention' => ['nature' => 'liste', 'role' => 'membre'],
             'POST /types-intervention' => ['nature' => 'ecrit', 'role' => 'proprietaire', 'charge' => fn (string $id): array => ['libelle' => 'Type créé', 'famille' => 'entretien']],
+            // L'archive est compressée et envoyée en flux : le corps lu ici est
+            // vide ; ExportCloisonneTest l'ouvre et n'y trouve rien de B (V123).
+            'GET /export' => ['nature' => 'liste', 'role' => 'membre'],
             'GET /jardins/nouveau' => ['nature' => 'liste', 'role' => 'membre'],
             // Crée un jardin neuf, dont le créateur est propriétaire : aucun
             // rôle n'est exigé dans le jardin courant.

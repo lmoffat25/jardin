@@ -1,0 +1,245 @@
+EXPORT DU JARDIN
+================
+
+Cette archive contient toutes les données de votre jardin, telles qu'elles
+étaient le jour de l'export. Elle se lit sans l'outil : les fichiers .csv
+s'ouvrent dans un tableur (LibreOffice Calc, Excel, Numbers), donnees.json
+dans n'importe quel éditeur de texte.
+
+Comment lire les fichiers
+-------------------------
+
+- Les fichiers .csv sont en UTF-8, avec un point-virgule entre les colonnes.
+  La première ligne donne le nom de chaque colonne.
+- Chaque ligne porte un identifiant (colonne id). Une colonne qui finit par
+  _id renvoie à la ligne d'un autre fichier : plante_id renvoie à la colonne
+  id de plantes.csv. Pour vous éviter la recherche, les noms lisibles sont
+  recopiés à côté (plante, zone, espece, type_intervention).
+- Une case vide veut dire « non renseigné ».
+- oui / non : une case cochée ou non.
+- Les dates s'écrivent AAAA-MM-JJ ; les dates avec une heure sont en temps
+  universel (+00), une heure de moins que Paris en hiver, deux en été.
+- Une position est en degrés de longitude et de latitude (WGS 84, celles d'un
+  GPS ou d'une carte en ligne).
+- Quelques colonnes sont prévues pour plus tard et restent vides pour
+  l'instant ; elles sont signalées.
+
+Les fichiers
+------------
+
+LISEZMOI.txt — ce fichier.
+
+donnees.json — tout le jardin en un seul fichier, pour un programme : les mêmes
+lignes et les mêmes colonnes que les fichiers .csv, rangées par table. Les
+positions et les points de calage y sont des objets, pas du texte.
+  jardin : le jardin lui-même, décrit ci-dessous
+  zones : les lignes de zones.csv
+  plantes : les lignes de plantes.csv
+  geometries : les lignes de geometries.csv
+  regles : les lignes de regles.csv
+  fenetres : les lignes de fenetres.csv
+  intervalles_saisonniers : les lignes de intervalles_saisonniers.csv
+  interventions : les lignes de interventions.csv
+  echeances : les lignes de echeances.csv
+  photos : les lignes de photos.csv
+  types_intervention : les lignes de types_intervention.csv
+  fonds_de_plan : les lignes de fonds_de_plan.csv
+
+Le jardin, dans donnees.json :
+  id : identifiant du jardin
+  proprietaire_id : identifiant du compte propriétaire
+  nom : nom du jardin
+  profil_climatique_id : identifiant du profil climatique
+  profil_climatique : nom du profil climatique, qui décale les périodes de travaux
+  commune_insee : code INSEE de la commune du jardin
+  latitude : prévue pour plus tard, vide pour l'instant
+  longitude : prévue pour plus tard, vide pour l'instant
+  altitude_m : prévue pour plus tard, vide pour l'instant
+  surface_m2 : surface du jardin, en mètres carrés
+  quota_photos_mo : place réservée aux photos, en mégaoctets
+  cree_le : date de création du jardin
+
+zones.csv — les zones du jardin (potager, verger, massif…).
+  id : identifiant de la zone
+  jardin_id : identifiant du jardin
+  zone_parente_id : la zone qui contient celle-ci, si elle en a une
+  nom : nom de la zone
+  archivee_le : date d'archivage ; vide pour une zone en service
+  cree_le : date de création
+  zone_parente : nom de la zone parente
+
+plantes.csv — les plantes, une ligne chacune, archivées comprises.
+  id : identifiant de la plante
+  jardin_id : identifiant du jardin
+  zone_id : identifiant de sa zone
+  code_court : le code de l'étiquette (par exemple FRU-001)
+  nom : nom de la plante
+  repere : repère pour la retrouver sur le terrain
+  espece_id : identifiant de l'espèce dans la bibliothèque
+  variete : variété
+  variante : variante de l'espèce qui change l'entretien
+  plantee_le : date de plantation
+  age_estime_ans : âge estimé, en années, quand la date de plantation est inconnue
+  cycle : perenne (vit plusieurs années) ou annuelle
+  fin_le : fin de culture d'une annuelle
+  plante_origine_id : la plante dont celle-ci est issue (division, bouture)
+  photo_couverture_id : identifiant de sa photo de couverture, dans photos.csv
+  sante : bonne, surveiller ou degradee
+  etat : active ou archivee
+  archivee_le : date d'archivage
+  motif_archivage : pourquoi elle a été archivée
+  notes : notes libres
+  cree_le : date de création
+  zone : nom de sa zone
+  espece : nom commun de l'espèce
+  espece_nom_latin : nom latin de l'espèce
+
+geometries.csv — la place de chaque plante sur la carte.
+  id : identifiant
+  jardin_id : identifiant du jardin
+  plante_id : identifiant de la plante
+  forme : point, ligne (une haie) ou polygone (une pelouse)
+  coordonnees : la forme en GeoJSON, longitude puis latitude
+  precision_m : précision de la position, en mètres
+  source : gps, manuel ou plan (placée sur le plan importé)
+  relevee_le : date du relevé
+  plante : nom de la plante
+  plante_code_court : code court de la plante
+
+regles.csv — les règles d'entretien de chaque plante, avec toutes leurs
+versions : une règle corrigée garde son ancienne version, inactive.
+  id : identifiant de la version
+  jardin_id : identifiant du jardin
+  plante_id : identifiant de la plante
+  type_intervention_id : identifiant du type d'intervention
+  regle_reference_id : la règle de la bibliothèque dont elle vient
+  type_regle : R1 (tous les N jours) ou R2 (une fois par période, tous les N ans)
+  intervalle_jours : pour R1, le nombre de jours entre deux interventions
+  periodicite_annees : pour R2, tous les combien d'années
+  confiance : verifiee (sourcée) ou indicative
+  origine : bibliotheque, ajustee (modifiée par vous) ou libre (créée par vous)
+  est_active : oui pour la version en vigueur
+  version : numéro de version
+  remplacee_le : date à laquelle une version plus récente l'a remplacée
+  creee_le : date de création
+  plante : nom de la plante
+  plante_code_court : code court de la plante
+  type_intervention : nom du type d'intervention
+
+fenetres.csv — les périodes de l'année où une règle R2 se fait (jour et mois),
+avant le décalage de votre profil climatique.
+  id : identifiant
+  jardin_id : identifiant du jardin
+  regle_id : identifiant de la règle, dans regles.csv
+  debut_jour : jour de début de la période
+  debut_mois : mois de début de la période
+  fin_jour : jour de fin de la période
+  fin_mois : mois de fin de la période
+  optimal_debut_jour : jour de début du meilleur moment
+  optimal_debut_mois : mois de début du meilleur moment
+  optimal_fin_jour : jour de fin du meilleur moment
+  optimal_fin_mois : mois de fin du meilleur moment
+  butoir_debut_jour : jour avant lequel il ne faut jamais intervenir
+  butoir_debut_mois : mois avant lequel il ne faut jamais intervenir
+  butoir_fin_jour : jour après lequel il ne faut jamais intervenir
+  butoir_fin_mois : mois après lequel il ne faut jamais intervenir
+  libelle : nom de la période
+  ordre : ordre de la période dans l'année
+  plante : nom de la plante
+  plante_code_court : code court de la plante
+  type_intervention : nom du type d'intervention
+
+intervalles_saisonniers.csv — pour une règle R1, l'intervalle selon les mois
+(la tonte plus serrée au printemps qu'à l'automne).
+  id : identifiant
+  jardin_id : identifiant du jardin
+  regle_id : identifiant de la règle, dans regles.csv
+  mois_debut : premier mois de la saison
+  mois_fin : dernier mois de la saison
+  intervalle_jours : jours entre deux interventions ; 0 : rien pendant ces mois
+  plante : nom de la plante
+  plante_code_court : code court de la plante
+  type_intervention : nom du type d'intervention
+
+interventions.csv — l'historique : tout ce qui a été fait, sur quelle plante,
+quand et par qui.
+  id : identifiant
+  jardin_id : identifiant du jardin
+  plante_id : identifiant de la plante
+  type_intervention_id : identifiant du type d'intervention
+  auteur_id : identifiant du compte qui l'a saisie
+  faite_le : date de l'intervention
+  duree_min : durée, en minutes
+  note : note libre
+  lot_saisie_id : identifiant commun aux interventions saisies ensemble
+  position_capturee : position du téléphone au moment de la saisie
+  quantite : quantité (récolte, produit)
+  unite : unité de la quantité
+  saisie_le : date de la saisie
+  synchronisee_le : prévue pour plus tard, vide pour l'instant
+  plante : nom de la plante
+  plante_code_court : code court de la plante
+  type_intervention : nom du type d'intervention
+  auteur : nom affiché de l'auteur
+
+echeances.csv — les échéances passées que l'outil a retenues : faites
+(soldee), manquées (manquee) ou sautées (suspendue). Les échéances à venir
+ne sont pas stockées : elles se recalculent depuis les règles.
+  id : identifiant
+  jardin_id : identifiant du jardin
+  regle_id : identifiant de la règle, dans regles.csv
+  plante_id : identifiant de la plante
+  due_le : date de l'échéance
+  fenetre_debut : début de la période où elle pouvait se faire
+  fenetre_fin : fin de cette période
+  optimal_debut : début du meilleur moment
+  optimal_fin : fin du meilleur moment
+  decalage_climatique_applique_j : jours de décalage dus au profil climatique
+  etat : soldee, manquee ou suspendue
+  intervention_id : l'intervention qui l'a soldée, dans interventions.csv
+  explication : la phrase qui explique la date
+  motif_suspension : pourquoi elle a été sautée
+  materialisee_le : date à laquelle elle a été retenue
+  plante : nom de la plante
+  plante_code_court : code court de la plante
+  type_intervention : nom du type d'intervention
+
+photos.csv — la description des photos (les fichiers des photos ne sont pas
+encore dans cette archive).
+  id : identifiant
+  jardin_id : identifiant du jardin
+  plante_id : identifiant de la plante photographiée
+  intervention_id : identifiant de l'intervention qu'elle illustre
+  empreinte : empreinte du fichier (SHA-256), qui l'identifie
+  chemin_original : emplacement du fichier d'origine dans le stockage de l'outil
+  derivees_pretes : oui quand les vignettes sont prêtes
+  taille_ko : taille du fichier d'origine, en kilo-octets
+  largeur_px : largeur, en pixels
+  hauteur_px : hauteur, en pixels
+  prise_le : date de la prise de vue
+  televersee_le : date de l'envoi
+  plante : nom de la plante
+  plante_code_court : code court de la plante
+
+types_intervention.csv — les types d'intervention que vous avez créés, et ceux
+fournis par l'outil que vos règles ou vos interventions utilisent.
+  id : identifiant
+  jardin_id : identifiant du jardin ; vide pour un type fourni par l'outil
+  libelle : nom du type
+  famille : taille, traitement, sol, eau, entretien, cycle ou recolte
+  demande_quantite : prévue pour plus tard, non pour l'instant
+  demande_produit : prévue pour plus tard, non pour l'instant
+  fourni : oui pour un type fourni par l'outil
+
+fonds_de_plan.csv — les plans importés pour servir de fond à la carte.
+  id : identifiant
+  jardin_id : identifiant du jardin
+  nature : image (un plan importé) ou orthophoto (la photo aérienne)
+  fichier : emplacement de l'image dans le stockage de l'outil
+  calage : les points qui relient l'image à la carte : pixel (x, y), longitude, latitude
+  actif : oui pour le fond affiché
+  cree_le : date de l'import
+  image : l'image du plan dans cette archive, sous plans/
+
+plans/ — les images des fonds de plan, nommées comme dans la colonne image
+du fichier des fonds de plan.

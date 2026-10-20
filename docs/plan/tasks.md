@@ -1835,11 +1835,11 @@ public function executer(SaisieIntervention $saisie, Utilisateur $auteur): Colle
 **Fin :** le critère 8 est vrai côté serveur.
 **Coût :** jeu de 10 000 interventions et mesure de mémoire, boucle lente → **accepter**, test de volume lancé une fois (groupe `volume`).
 
-- [ ] Ajouter `maennchen/zipstream-php` ; implémenter `src/Comptes/Export/ExporterJardin.php` (lit par `lazy()` sous filtre, écrit chaque fichier en flux ; noms lisibles des zones, espèces, types joints), `src/Comptes/Export/EcrireCsv.php`, `src/Comptes/Export/ExportController.php` (`StreamedResponse`), `resources/export/LISEZMOI.txt` (description de chaque fichier et de chaque colonne) ; modifier `src/Comptes/routes.php` et `composer.json` ; inscrire au registre.
-- [ ] `tests/Routes/ExportTest.php` : V122 (archive ouverte ; chaque table de D-61 relue en base se retrouve ligne à ligne et colonne à colonne). Groupe `critere-8`.
-- [ ] `tests/Routes/InventaireIncompletTest.php` : V130 (jardin vide ; plante sans espèce, sans géométrie, sans règle : tableau de bord, liste, fiche et export répondent `200`).
-- [ ] `tests/Routes/ExportCloisonneTest.php` : V123 (même utilisateur, deux jardins). Groupe `critere-12`.
-- [ ] `tests/Routes/ExportVolumeTest.php` : V124 (`memory_get_peak_usage`). Groupe `volume`.
+- [x] Ajouter `maennchen/zipstream-php` ; implémenter `src/Comptes/Export/ExporterJardin.php` (lit par `lazy()` sous filtre, écrit chaque fichier en flux ; noms lisibles des zones, espèces, types joints), `src/Comptes/Export/EcrireCsv.php`, `src/Comptes/Export/ExportController.php` (`StreamedResponse`), `resources/export/LISEZMOI.txt` (description de chaque fichier et de chaque colonne) ; modifier `src/Comptes/routes.php` et `composer.json` ; inscrire au registre.
+- [x] `tests/Routes/ExportTest.php` : V122 (archive ouverte ; chaque table de D-61 relue en base se retrouve ligne à ligne et colonne à colonne). Groupe `critere-8`.
+- [x] `tests/Routes/InventaireIncompletTest.php` : V130 (jardin vide ; plante sans espèce, sans géométrie, sans règle : tableau de bord, liste, fiche et export répondent `200`).
+- [x] `tests/Routes/ExportCloisonneTest.php` : V123 (même utilisateur, deux jardins). Groupe `critere-12`.
+- [x] `tests/Routes/ExportVolumeTest.php` : V124 (`memory_get_peak_usage`). Groupe `volume`.
 
 ---
 
