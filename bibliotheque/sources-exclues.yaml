@@ -1,8 +1,15 @@
 # Domaines refusés comme sources de la bibliothèque (B3, D-52) : sites qui
 # vendent ce dont ils parlent, contenus sans auteur ni date. Un domaine
 # couvre ses sous-domaines. Chaque entrée dit pourquoi, après avoir consulté
-# le site pendant la session (B4). Rempli au sprint 4c.
-#
-#   domaines:
-#     - {domaine: marchand.example, raison: "jardinerie : vend les plants dont elle parle"}
-domaines: []
+# le site pendant la session (B4) : le 20/10/2026, sprint 4c (D-95).
+domaines:
+  - domaine: pepinsetcie.fr
+    raison: "Pépinière : « Pépinière bio en ligne - Pépins & Cie », vente sur place et en ligne des arbres fruitiers dont parlent ses articles"
+  - domaine: gerbeaud.com
+    raison: "Vend ce dont il parle : boutique.gerbeaud.com (arbres, arbustes, bulbes), « Découvrez notre rayon Arbustes ! » sur les fiches de taille mêmes"
+  - domaine: jardiner-malin.fr
+    raison: "Vend ce dont il parle : boutique plantes et graines (SARL) ; la fiche de tonte affiche une semence de gazon à 42,00 €"
+  - domaine: salondujardin.fr
+    raison: "Contenu sans auteur compétent identifiable : articles signés « webzqsd », sujets sans rapport (électroménager), vraisemblablement générés"
+  - domaine: guide-jardins-paysage.fr
+    raison: "Contenu sans auteur : la page de l'auteur « admin3765 » renvoie à l'accueil ; site de référencement à liens partenaires"

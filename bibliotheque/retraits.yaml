@@ -1,0 +1,14 @@
+# Les espèces et règles écartées de la bibliothèque faute de source (B4, B5,
+# D-52, D-63). Chaque raison est recopiée dans docs/plan/decisions-agents.md (D-95).
+# Le chargeur ne lit pas ce fichier ; le test de complétude (4d, V67) le lit.
+retraits:
+  - retiree: traitements-fruitiers
+    raison: "Cuivre et huile blanche : non sourcés, écrits en R3 alors que le MVP n'a que R1 et R2 ; hors de la liste de départ (CDC §5.1, Q23, décision de Léon)"
+  - retiree: groseillier-a-maquereau
+    raison: "Une seule source trouvée au sourçage du 19/10/2026 (Gerbeaud), domaine désormais exclu (B3) : aucune source retenue"
+  - retiree: rosier-rabattage-automne
+    raison: "Le rabattage d'automne existe (SNHF, Au Jardin) mais aucune source ne lui donne de mois : la fenêtre « jusqu'en novembre » de l'annexe A n'est pas écrite"
+  - retiree: haie-persistante-taille-printemps
+    raison: "La taille de printemps des sources (avril à juin) tombe dans la nidification du 16/03 au 15/08 : une seule fenêtre, de fin d'été"
+  - retiree: noyaux-reprise-severe
+    raison: "« Reprise sévère étalée sur 3 ans » de l'annexe A : aucune source ouverte ne la donne"

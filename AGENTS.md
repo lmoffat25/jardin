@@ -33,6 +33,7 @@ Toutes passent par `make` (chapitre 6 §4), sur le poste comme en CI.
 | `make e2e` | Parcours Playwright |
 | `make mutation` | Mutation du moteur |
 | `make criteres` | Critères du CDC sans test ; `LIVRAISON=1` le rend bloquant |
+| `make sources` | Les sources de la bibliothèque interrogées, à la main ; jamais en CI |
 | `make verifier` | Tout, dans l'ordre : **c'est la définition de « terminé »** (C5) |
 
 ## Les règles de travail

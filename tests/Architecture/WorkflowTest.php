@@ -3,9 +3,18 @@
 // V6, V14, V15 : le workflow lu comme une donnée. Les jobs du chapitre 6 §8, une
 // limite de temps sur chacun (C18), une concurrence par branche (C19), aucun
 // déclencheur planifié (C20), des jobs conditionnels qui démarrent toujours, et
-// des commandes qui passent toutes par `make` (V6).
+// des commandes qui passent toutes par `make` (V6). V66 : les sources de la
+// bibliothèque s'interrogent par `make sources`, que rien dans la CI n'appelle.
 
+use Database\Seeders\ReferenceSeeder;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Client\Request;
+use Illuminate\Support\Facades\Http;
+use Symfony\Component\Process\Process;
 use Symfony\Component\Yaml\Yaml;
+use Tests\Support\TemoinBibliotheque;
+
+uses(RefreshDatabase::class);
 
 function workflow(): array
 {
@@ -68,4 +77,58 @@ it('ne lance que des cibles make', function () {
             }
         }
     }
+});
+
+/** @return list<string> les cibles make que lancent les étapes du workflow */
+function ciblesDeLaCi(): array
+{
+    $cibles = [];
+    foreach (workflow()['jobs'] as $job) {
+        foreach ($job['steps'] ?? [] as $etape) {
+            if (isset($etape['run']) && preg_match('/^make (\S+)/', $etape['run'], $m)) {
+                $cibles[] = $m[1];
+            }
+        }
+    }
+
+    return array_values(array_unique($cibles));
+}
+
+/** Ce que `make -n <cible>` lancerait, sous-make compris. */
+function commandesDe(string $cible): string
+{
+    $process = new Process(['make', '--no-print-directory', '-n', $cible], base_path());
+    $process->run();
+
+    return $process->getOutput();
+}
+
+it('interroge les sources par make sources', function () {
+    expect(commandesDe('sources'))->toContain('php artisan bibliotheque:verifier-sources');
+});
+
+it('n\'interroge jamais les sources depuis la CI (V66)', function () {
+    $cibles = ciblesDeLaCi();
+
+    expect($cibles)->not->toContain('sources')->toContain('test');
+    foreach ([...$cibles, 'verifier'] as $cible) {
+        expect(str_contains(commandesDe($cible), 'verifier-sources'))->toBeFalse("make {$cible} interroge les sources");
+    }
+});
+
+it('liste les sources qui ne répondent pas, après un HEAD puis un GET', function () {
+    $this->seed(ReferenceSeeder::class);
+    $this->artisan('bibliotheque:charger', ['dossier' => TemoinBibliotheque::complet()])->assertSuccessful();
+    Http::fake([
+        'institut.exemple.test/*' => Http::response(),
+        'conservatoire.exemple.test/*' => fn (Request $r) => Http::response(status: $r->method() === 'HEAD' ? 405 : 200),
+        'vulgarisation.exemple.test/*' => Http::response(status: 404),
+    ]);
+
+    $this->artisan('bibliotheque:verifier-sources')
+        ->expectsOutput('échec : https://vulgarisation.exemple.test/tonte (HTTP 404)')
+        ->doesntExpectOutputToContain('conservatoire')
+        ->expectsOutput('sources : 3 interrogées, 1 en échec')
+        ->assertFailed();
+    Http::assertSentCount(5);
 });

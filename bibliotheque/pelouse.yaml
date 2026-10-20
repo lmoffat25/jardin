@@ -1,0 +1,31 @@
+# Pelouse (CDC §5.1). Intervalles chiffrés par la vulgarisation seule : la règle
+# reste indicative (B2). Pages rouvertes le 20/10/2026 (B4).
+especes:
+  - cle: pelouse
+    nom_commun: Pelouse
+    famille: Poaceae
+    categorie: gazon
+    regles:
+      - cle: pelouse-tonte
+        type_intervention: Tonte
+        type_regle: R1
+        confiance: indicative
+        sources:
+          - url: https://www.semae.fr/uploads/semae-fr_publication_202305_D1763_PETIT-GUIDE-DU-TAPIS-VERT.pdf
+            libelle: "SEMAE, « Petit guide du tapis vert » (2023) : « Au printemps et en automne, périodes de pousse active, tondez 1 à 2 fois par semaine »"
+            consultee_le: 2026-10-20
+          - url: https://www.aujardin.info/fiches/pelouse-faq-1.php
+            libelle: "Au Jardin, FAQ pelouse (2011) : « D'avril à octobre, il faut tondre en moyenne une fois par semaine » ; en été « tous les 10 à 15 jours »"
+            consultee_le: 2026-10-20
+          - url: https://www.aujardin.info/actualites/tondre-hiver-bonne-mauvaise-idee-simple-reflexe-peut-sauver-ruiner-votre-pelouse-printemps.php
+            libelle: "Au Jardin, tondre en hiver (2025) : « on évite toute tonte en plein cœur de l'hiver, entre décembre et février. »"
+            consultee_le: 2026-10-20
+          - url: https://www.snhf.org/fiche-plante/ray-grass/
+            libelle: "SNHF, fiche ray-grass : « Diminuez leur fréquence en été et augmentez-la au printemps et en automne »"
+            consultee_le: 2026-10-20
+        intervalles:
+          - {mois_debut: 1, mois_fin: 2, jours: 0}
+          - {mois_debut: 3, mois_fin: 5, jours: 7}
+          - {mois_debut: 6, mois_fin: 8, jours: 14}
+          - {mois_debut: 9, mois_fin: 10, jours: 7}
+          - {mois_debut: 11, mois_fin: 12, jours: 0}

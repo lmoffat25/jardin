@@ -1,0 +1,56 @@
+# Haies (CDC §5.1). Toute fenêtre porte les butoirs 16/08 et 15/03 : la
+# nidification va du 16/03 au 15/08 (RG-44, B-T12 ; textes PAC 2023-2027 en
+# vigueur en 2026). Pour une haie de jardin c'est une recommandation, pas une
+# interdiction légale (préfecture de l'Yonne). Pages rouvertes le 20/10/2026 (B4).
+especes:
+  - cle: haie-persistante
+    nom_commun: Haie persistante
+    categorie: haie
+    description: "Haie taillée d'arbustes à feuillage persistant : if, thuya, pyracantha, laurier-cerise."
+    regles:
+      - cle: haie-persistante-taille
+        type_intervention: Taille de haie
+        type_regle: R2
+        confiance: verifiee
+        sources:
+          - url: https://www.snhf.org/fiche-plante/ifs/
+            libelle: "SNHF, fiche Ifs (2020) : « La taille annuelle densifie les ramures et le feuillage. Elle est généralement pratiquée au cours de l'été (août). »"
+            consultee_le: 2026-10-20
+          - url: https://www.aujardin.info/fiches/tailler-thuya.php
+            libelle: "Au Jardin, tailler le thuya (2015) : « Le thuya doit être taillé en début de printemps puis en août »"
+            consultee_le: 2026-10-20
+          - url: https://www.snhf.org/fiche-plante/pyracantha/
+            libelle: "SNHF, fiche Pyracantha (2020) : « Pour la forme haie, tailler en juin et fin août. »"
+            consultee_le: 2026-10-20
+          - url: https://agriculture.gouv.fr/telecharger/135138
+            libelle: "Ministère de l'Agriculture, PAC 2023-2027, BCAE 8 (2026) : « période de nidification et de reproduction des oiseaux entre le 16 mars et le 15 août »"
+            consultee_le: 2026-10-20
+        fenetres:
+          - {debut: 16/08, fin: 30/09, optimal: [16/08, 30/09], butoirs: [16/08, 15/03], libelle: "Fin d'été, après la nidification"}
+        periodicite_annees: 1
+
+  - cle: haie-caduque
+    nom_commun: Haie caduque
+    categorie: haie
+    description: "Haie d'arbustes à feuillage caduc : charme, hêtre, haie champêtre."
+    regles:
+      - cle: haie-caduque-taille
+        type_intervention: Taille de haie
+        type_regle: R2
+        confiance: indicative
+        sources:
+          - url: https://cotesdarmor.fr/sites/default/files/2021-04/entretien_bocage_0.pdf
+            libelle: "Conseil général des Côtes-d'Armor, entretien du bocage (2010) : « Intervenir en période de repos végétatif de fin octobre au 15 mars »"
+            consultee_le: 2026-10-20
+          - url: https://tarn.lpo.fr/wp-content/uploads/2024/02/Lpo-Taille-hivernale.pdf
+            libelle: "LPO Tarn, taille hivernale (2024) : « La bonne saison pour les arbres à feuilles caduques se situe en novembre, décembre et janvier. »"
+            consultee_le: 2026-10-20
+          - url: https://www.quimperle-communaute.bzh/wp-content/uploads/2026/01/PDF_PLAQUETTE_HAIE_JARDIN_2025.pdf
+            libelle: "Quimperlé Communauté, haies de jardin (2025) : « Il est préconisé de tailler sa haie une à deux fois par an, à la fin de l'hiver et/ou à la fin de l'été. »"
+            consultee_le: 2026-10-20
+          - url: https://agriculture.gouv.fr/telecharger/135138
+            libelle: "Ministère de l'Agriculture, PAC 2023-2027, BCAE 8 (2026) : « période de nidification et de reproduction des oiseaux entre le 16 mars et le 15 août »"
+            consultee_le: 2026-10-20
+        fenetres:
+          - {debut: 01/11, fin: 15/03, optimal: [01/11, 15/03], butoirs: [16/08, 15/03], libelle: "Repos végétatif"}
+        periodicite_annees: 1

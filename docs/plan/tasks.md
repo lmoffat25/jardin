@@ -1125,18 +1125,18 @@ especes:
 
 ### 4c.1 Contenu
 
-- [ ] Pour chaque espèce, consulter les sources (B1–B4) pendant la session ; écrire **deux sources par règle** (`url`, `libelle`, `consultee_le`). Rosier et arbuste à floraison estivale : `verifiee` si deux sources indépendantes concordent, sinon `indicative` avec les sources trouvées (D-52). Chaque site consulté est jugé : un site qui vend ce dont il parle (pépiniériste, jardinerie — Pépins & Cie compris s'il en est un) est une source commerciale, refusée (B3), et son domaine va dans `bibliotheque/sources-exclues.yaml` avec la raison. Une valeur sans source vérifiable n'est pas écrite : la règle ou l'espèce reste absente, inscrite dans `bibliotheque/retraits.yaml` avec sa raison, recopiée dans `decisions-agents.md`. **Aucune valeur de mémoire, aucune valeur reprise d'un test.** Un écart entre les sources et l'annexe A du CDC s'écrit dans `decisions-agents.md` ; l'annexe A est relue par Léon, l'agent n'y touche pas. Toute haie porte les butoirs `16/08` et `15/03` (B7, RG-44).
-- [ ] Créer les cinq fichiers YAML ; lancer `bibliotheque:charger` sur une base vide.
+- [x] Pour chaque espèce, consulter les sources (B1–B4) pendant la session ; écrire **deux sources par règle** (`url`, `libelle`, `consultee_le`). Rosier et arbuste à floraison estivale : `verifiee` si deux sources indépendantes concordent, sinon `indicative` avec les sources trouvées (D-52). Chaque site consulté est jugé : un site qui vend ce dont il parle (pépiniériste, jardinerie — Pépins & Cie compris s'il en est un) est une source commerciale, refusée (B3), et son domaine va dans `bibliotheque/sources-exclues.yaml` avec la raison. Une valeur sans source vérifiable n'est pas écrite : la règle ou l'espèce reste absente, inscrite dans `bibliotheque/retraits.yaml` avec sa raison, recopiée dans `decisions-agents.md`. **Aucune valeur de mémoire, aucune valeur reprise d'un test.** Un écart entre les sources et l'annexe A du CDC s'écrit dans `decisions-agents.md` ; l'annexe A est relue par Léon, l'agent n'y touche pas. Toute haie porte les butoirs `16/08` et `15/03` (B7, RG-44).
+- [x] Créer les cinq fichiers YAML ; lancer `bibliotheque:charger` sur une base vide.
 
 ### 4c.2 Sources
 
-- [ ] Implémenter `src/Bibliotheque/Console/VerifierSources.php` : `HEAD` puis `GET` sur chaque URL de `sources_regle`, délai 10 s, liste des URL en échec ; cible `make sources`. Modifier `tests/Architecture/WorkflowTest.php` : aucune étape de la CI n'appelle `make sources` (V66).
+- [x] Implémenter `src/Bibliotheque/Console/VerifierSources.php` : `HEAD` puis `GET` sur chaque URL de `sources_regle`, délai 10 s, liste des URL en échec ; cible `make sources`. Modifier `tests/Architecture/WorkflowTest.php` : aucune étape de la CI n'appelle `make sources` (V66).
 
 ### 4c.3 Tests
 
-- [ ] `tests/Persistance/CoherenceBibliothequeTest.php` : B-T1, B-T2, B-T3 (V68).
-- [ ] `tests/Persistance/ClimatsBibliothequeTest.php` : B-T12, B-T13, B-T14, par `Fenetre::projeter` (V69).
-- [ ] `tests/Persistance/NidificationBoutEnBoutTest.php` : V70 — chargée, copiée sur une plante de cinq jardins témoins, calcul complet chaque jour du 16/03 au 15/08 (nécessite le pont et la matérialisation : **ce test est écrit ici en `todo()` et activé au sprint 5b**, case à cocher là-bas). Groupe `critere-4`.
+- [x] `tests/Persistance/CoherenceBibliothequeTest.php` : B-T1, B-T2, B-T3 (V68).
+- [x] `tests/Persistance/ClimatsBibliothequeTest.php` : B-T12, B-T13, B-T14, par `Fenetre::projeter` (V69).
+- [x] `tests/Persistance/NidificationBoutEnBoutTest.php` : V70 — chargée, copiée sur une plante de cinq jardins témoins, calcul complet chaque jour du 16/03 au 15/08 (nécessite le pont et la matérialisation : **ce test est écrit ici en `todo()` et activé au sprint 5b**, case à cocher là-bas). Groupe `critere-4`.
 
 ---
 

@@ -7,7 +7,7 @@ le protocole est `docs/protocole-bibliotheque.md` (B1 à B8).
 - `<categorie>.yaml` : les espèces de la catégorie et leurs règles ; le schéma
   est dans `docs/plan/tasks.md`, sprint 4a, et dans `docs/plan/decisions-agents.md` (D-93).
 - `sources-exclues.yaml` : les domaines refusés comme sources (B3, D-52).
-- `retraits.yaml` (4c) : les espèces et règles écartées faute de source, avec leur raison.
+- `retraits.yaml` : les espèces et règles écartées faute de source, avec leur raison (D-63, D-95).
 - `climat/` : le référentiel des communes (D-86), lu par `jardin:importer-communes`.
 
 `php artisan bibliotheque:charger` lit le dossier, refuse tout fichier qui
@@ -15,3 +15,6 @@ le protocole est `docs/protocole-bibliotheque.md` (B1 à B8).
 reste en base, versionné : recharger sans changement ne modifie rien, une
 règle corrigée reçoit une version suivante, et aucun jardin n'est touché
 (RG-24).
+
+`make sources` interroge chaque source chargée en base et liste celles qui ne
+répondent plus (V66). À la main seulement : la CI ne l'appelle jamais.
