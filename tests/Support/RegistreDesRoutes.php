@@ -38,6 +38,8 @@ final class RegistreDesRoutes
         'POST /deconnexion' => 'déconnexion : ferme la session, n\'écrit dans aucun jardin',
         'GET /storage/{path}' => 'disque local du framework : URL signée seulement, aucun fichier de jardin n\'y est encore',
         'PUT /storage/{path}' => 'disque local du framework : URL signée seulement, aucun fichier de jardin n\'y est encore',
+        'GET /especes' => 'bibliothèque : référence partagée en lecture seule, aucune ligne de jardin (V65)',
+        'GET /especes/{espece}/regles-proposees' => 'bibliothèque : référence partagée en lecture seule ; du jardin courant, seul son profil décale les périodes (V65)',
         'GET /_inertia/devtools/entries' => 'outil de développement d\'Inertia, hors production',
         'GET /_inertia/devtools/entries/{id}' => 'outil de développement d\'Inertia, hors production',
     ];

@@ -1093,13 +1093,13 @@ especes:
 
 ### 4b.1 Lecture
 
-- [ ] Créer `database/migrations/2026_10_20_000009_extension_unaccent.php` (`CREATE EXTENSION IF NOT EXISTS unaccent`) ; si l'extension manque dans DDEV ou dans la CI, `ILIKE` seul, écrit dans `decisions-agents.md`.
-- [ ] Implémenter `src/Bibliotheque/Especes/RechercheEspece.php` (nom commun ou latin, insensible à la casse et aux accents), `src/Bibliotheque/Especes/EspeceController.php` (`rechercher` ; `reglesProposees` : règles en vigueur — communes, plus celles de la variante demandée ; `variante` absente pour une espèce qui en a → `422` (RG-51) — avec les périodes projetées par `Fenetre::projeter` pour le profil du jardin courant et l'année courante, la confiance et les sources) et `src/Bibliotheque/routes.php`. Ajouter les deux routes à `EXCEPTIONS` du test de cloisonnement, avec la raison.
+- [x] Créer `database/migrations/2026_10_20_000009_extension_unaccent.php` (`CREATE EXTENSION IF NOT EXISTS unaccent`) ; si l'extension manque dans DDEV ou dans la CI, `ILIKE` seul, écrit dans `decisions-agents.md`.
+- [x] Implémenter `src/Bibliotheque/Especes/RechercheEspece.php` (nom commun ou latin, insensible à la casse et aux accents), `src/Bibliotheque/Especes/EspeceController.php` (`rechercher` ; `reglesProposees` : règles en vigueur — communes, plus celles de la variante demandée ; `variante` absente pour une espèce qui en a → `422` (RG-51) — avec les périodes projetées par `Fenetre::projeter` pour le profil du jardin courant et l'année courante, la confiance et les sources) et `src/Bibliotheque/routes.php`. Ajouter les deux routes à `EXCEPTIONS` du test de cloisonnement, avec la raison.
 
 ### 4b.2 Tests
 
-- [ ] `tests/Routes/RechercheEspeceTest.php` : casse, accents, nom latin, 20 résultats au plus, `q` vide → `422` (V65).
-- [ ] `tests/Routes/ReglesProposeesTest.php` : V65 (deux jardins de profils différents, périodes décalées ; aucune route en écriture sous `/especes` ; une espèce témoin à deux variantes rend ses règles communes plus celles de la variante demandée, et `422` sans variante).
+- [x] `tests/Routes/RechercheEspeceTest.php` : casse, accents, nom latin, 20 résultats au plus, `q` vide → `422` (V65).
+- [x] `tests/Routes/ReglesProposeesTest.php` : V65 (deux jardins de profils différents, périodes décalées ; aucune route en écriture sous `/especes` ; une espèce témoin à deux variantes rend ses règles communes plus celles de la variante demandée, et `422` sans variante).
 
 ---
 
