@@ -21,14 +21,13 @@ def connexion(nom, erreur=None):
     d.cadre("Fond", f, 0, 0, BW, BH, fond=SURFACE)
     c = d.cadre("Carte · connexion", f, (BW - 440) // 2, 160, 440, 530 if erreur else 470,
                 fond=FOND, rayon=16)
-    logo = d.cadre("Marque/Logo (provisoire)", c, 40, 40, 112, 32, rayon=6, trait=TRAIT,
-                   pointille=True)
-    d.texte(logo, 0, 7, 112, "Logo", 13, couleur=SECOND, align="center")
+    d.logo(c, 40, 40)
     d.texte(c, 40, 96, 360, "Se connecter", 26, gras=True)
     y = 148
     if erreur:
-        e = d.cadre("Erreur", c, 40, y, 360, 44, fond=SURFACE, rayon=8, trait=FORT)
-        d.texte(e, 14, 12, 332, "⚠ " + erreur, 14, gras=True)
+        with d.etat("erreur"):
+            e = d.cadre("Erreur", c, 40, y, 360, 44, fond=FOND, rayon=8, trait=FORT)
+            d.texte(e, 14, 12, 332, "⚠ " + erreur, 14, gras=True)
         y += 60
     champ(c, 40, y, 360, "Adresse électronique", "leon@exemple.fr")
     champ(c, 40, y + 100, 360, "Mot de passe", "••••••••••" if not erreur else "•••••••")
@@ -123,8 +122,9 @@ def catalogue(nom, ajout=False):
         champ(a, 456, 12, 300, "Famille", "Traitement  ↓")
         d.bouton(a, CW - 20 - 140, 46, 140, 48, "Ajouter", principal=True)
         d.bouton(a, CW - 20 - 140 - 12 - 120, 46, 120, 48, "Annuler")
-        d.texte(f, CX0, y + 128, CW, "Un type proche existe déjà : « Badigeon » (Traitement, "
-                "fourni). Ajoutez quand même si c'est un geste différent.", 14, gras=True)
+        with d.etat("attention"):
+            d.texte(f, CX0, y + 128, CW, "⚠ Un type proche existe déjà : « Badigeon » (Traitement, "
+                    "fourni). Ajoutez quand même si c'est un geste différent.", 14, gras=True)
         y += 168
     for fam, types in FAMILLES:
         d.texte(f, CX0, y, 400, fam.upper(), 13, gras=True, couleur=SECOND)

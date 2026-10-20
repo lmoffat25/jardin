@@ -65,8 +65,9 @@ def a_faire(f, periode: str, groupe: bool, cochees=0):
             d.texte(f, CX0, y + 8, CW, f"{zone.upper()} · {n}", 13, gras=True, couleur=SECOND)
             y += 36
             zone_prec = zone
-        r = d.cadre(f"Échéance · {plante}", f, CX0, y, CW, 80, fond=SURFACE if i < cochees else FOND,
-                    rayon=8, trait=FORT if fort else TRAIT)
+        with d.etat("en-retard", fond=False) if fort else d.surcharge({}):
+            r = d.cadre(f"Échéance · {plante}", f, CX0, y, CW, 80,
+                        fond=SURFACE if i < cochees else FOND, rayon=8, trait=FORT if fort else TRAIT)
         case(r, 12, 30, i < cochees)
         d.texte(r, 44, 16, 320, plante, 16, gras=True)
         d.texte(r, 44, 42, 600, expl, 13, couleur=SECOND)

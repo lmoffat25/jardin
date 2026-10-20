@@ -230,7 +230,7 @@ t7_modifier = tournee(t7, 108 + H_CARTE + 20, TOURNEE[:4], faits7)
 t7b = vague1.ecran("T7 · 02 · Carte — plante touchée")
 entete_carte(t7b)
 c7b, _ = fond_carte(t7b, 0, 108, W, H_CARTE, "aérienne")
-d.cadre("Voile", t7b, 0, 0, W, 844, fond="#00000044")
+d.cadre("Voile", t7b, 0, 0, W, 844, fond="#00000066")
 feuille = d.cadre("Feuille · Poirier 'Conférence'", t7b, 0, 844 - 300, W, 300, fond=FOND,
                   rayon=16)
 d.texte(feuille, M, 24, W - 2 * M, "2 · Poirier 'Conférence'", 20, gras=True)
@@ -247,13 +247,13 @@ d.texte(t7c, M, 60, W - 2 * M, "Ordre de la tournée", 22, gras=True)
 d.texte(t7c, M, 94, W - 2 * M, "Proposé du plus proche au plus loin, depuis votre position. "
         "C'est une suggestion.", 14, couleur=SECOND)
 for k, (n, nom, geste) in enumerate([TOURNEE[0], TOURNEE[2], TOURNEE[1], TOURNEE[3]]):
-    r = d.cadre(f"Ligne · {nom}", t7c, M, 160 + k * 76, W - 2 * M, 68, fond=FOND, rayon=10,
+    r = d.cadre(f"Ligne · {nom}", t7c, M, 160 + k * 92, W - 2 * M, 84, fond=FOND, rayon=10,
                 trait=FORT if k == 1 else TRAIT)
     d.texte(r, 14, 12, 220, f"{k + 1} · {nom}", 15, gras=True)
-    d.texte(r, 14, 38, 220, geste.split(" · ")[0], 13, couleur=SECOND)
-    d.bouton(r, W - 2 * M - 112, 10, 48, 48, "↑", inactif=k == 0)
-    d.bouton(r, W - 2 * M - 58, 10, 48, 48, "↓", inactif=k == 3)
-d.texte(t7c, M, 476, W - 2 * M, "La pelouse est passée avant le poirier.", 14, couleur=SECOND)
+    d.texte(r, 14, 56, 220, geste.split(" · ")[0], 13, couleur=SECOND)
+    d.bouton(r, W - 2 * M - 112, 18, 48, 48, "↑", inactif=k == 0)
+    d.bouton(r, W - 2 * M - 58, 18, 48, 48, "↓", inactif=k == 3)
+d.texte(t7c, M, 540, W - 2 * M, "La pelouse est passée avant le poirier.", 14, couleur=SECOND)
 d.bouton(t7c, M, 680, W - 2 * M, 48, "Revenir à l'ordre proposé")
 t7c_ok = d.bouton(t7c, M, 740, W - 2 * M, 56, "Terminé", principal=True)
 
@@ -268,7 +268,8 @@ tournee(t7d, 108 + H_CARTE + 20, TOURNEE, {})
 
 # --- T6 · Une étiquette scannée --------------------------------------------------
 t6 = vague1.ecran("T6 · 01 · Étiquette scannée (appareil photo)")
-d.cadre("Viseur", t6, 0, 44, W, 800, fond=FORT)
+with d.surcharge({("fill", FORT): "fond/appareil-photo"}):
+    d.cadre("Viseur", t6, 0, 44, W, 800, fond=FORT)
 cadre_qr = d.cadre("Étiquette visée", t6, (W - 200) // 2, 260, 200, 120, fond=FOND, rayon=6)
 d.cadre("QR", cadre_qr, 12, 12, 96, 96, fond=FOND, trait=FORT)
 d.texte(cadre_qr, 116, 40, 80, "FRU-014", 16, gras=True)

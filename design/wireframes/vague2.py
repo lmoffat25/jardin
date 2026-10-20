@@ -19,7 +19,9 @@ d.cmd("page.select", id=ids_pages["4 · Wireframes bureau"])
 
 
 def ecran(nom: str, hauteur: int = BH) -> int:
-    f = d.cadre(nom, None, X[0], 120, BW, hauteur, fond=FOND)
+    with d.surcharge({("fill", FOND): "fond/page"}):
+        f = d.cadre(nom, None, X[0], 120, BW, hauteur, fond=FOND)
+    d.densite(f, "Bureau")
     X[0] += BW + 120
     ECRANS[nom] = f
     return f
@@ -32,8 +34,7 @@ def entete(f, etape: int, jardin: str | None = None):
     """Bandeau de mise en route : marque provisoire, étapes, jardin courant (RG-43)."""
     b = d.cadre("En-tête · mise en route", f, 0, 0, BW, 64, fond=FOND)
     d.cadre("Séparateur", b, 0, 63, BW, 1, fond=SURFACE)
-    logo = d.cadre("Marque/Logo (provisoire)", b, 32, 16, 112, 32, rayon=6, trait=TRAIT, pointille=True)
-    d.texte(logo, 0, 7, 112, "Logo", 13, couleur=SECOND, align="center")
+    d.logo(b, 32, 16)
     x = 520
     for i, nom in enumerate(ETAPES):
         marque = "✓" if i < etape else str(i + 1)
@@ -49,12 +50,14 @@ def entete(f, etape: int, jardin: str | None = None):
 
 def champ(parent, x, y, w, libelle, valeur=None, indication=None, erreur=None, h=48):
     d.texte(parent, x, y, w, libelle, 15, gras=True)
-    c = d.cadre(f"Champ · {libelle}", parent, x, y + 26, w, h, fond=FOND, rayon=8,
-                trait=FORT if erreur else TRAIT)
+    with d.etat("erreur", fond=False):
+        c = d.cadre(f"Champ · {libelle}", parent, x, y + 26, w, h, fond=FOND, rayon=8,
+                    trait=FORT if erreur else TRAIT)
     d.texte(c, 14, (h - 20) / 2, w - 28, valeur or indication or "", 16,
             couleur=TEXTE if valeur else TRAIT)
     if erreur:
-        d.texte(parent, x, y + 26 + h + 8, w, f"⚠ {erreur}", 14, gras=True)
+        with d.etat("erreur"):
+            d.texte(parent, x, y + 26 + h + 8, w, f"⚠ {erreur}", 14, gras=True)
     return c
 
 
@@ -91,8 +94,9 @@ def b2(nom, choisi: int | None, valeur_nom=None, erreur=False):
         cartes.append(c)
     y = 396 + 5 * 62 + 4
     if erreur:
-        d.texte(f, CX, y, COL, "⚠ Choisissez un climat : sans lui, les dates proposées seraient "
-                "fausses dès le premier jour.", 15, gras=True)
+        with d.etat("erreur"):
+            d.texte(f, CX, y, COL, "⚠ Choisissez un climat : sans lui, les dates proposées "
+                    "seraient fausses dès le premier jour.", 15, gras=True)
     else:
         d.texte(f, CX, y, COL, "Vous pourrez le changer. Commune, altitude et surface se "
                 "renseignent plus tard, si besoin.", 14, couleur=SECOND)
@@ -249,9 +253,10 @@ VERDICTS = [("✓ 9 lignes prêtes", None, False),
             ("⚠ Ligne 4 : la zone « Fond du jardin » n'existe pas", "Créer la zone", True),
             ("⚠ Ligne 6 : « Néflier » n'est pas dans la bibliothèque — importé sans règle", None, True)]
 for i, (v, action, fort) in enumerate(VERDICTS):
-    r = d.cadre("Verdict", col, 608, 248 + i * 64, 784, 56, fond=FOND, rayon=8,
-                trait=FORT if fort else TRAIT)
-    d.texte(r, 14, 17, 560 if action else 760, v, 15, gras=fort)
+    with d.etat("attention" if fort else "fait", fond=fort):
+        r = d.cadre("Verdict", col, 608, 248 + i * 64, 784, 56, fond=FOND, rayon=8,
+                    trait=FORT if fort else TRAIT)
+        d.texte(r, 14, 17, 560 if action else 760, v, 15, gras=fort)
     if action:
         d.bouton(r, 784 - 170, 6, 160, 44, action)
 col_annuler = d.bouton(col, BW - 48 - 440, 760 - 96, 200, 56, "Annuler")

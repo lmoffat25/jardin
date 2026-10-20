@@ -18,6 +18,7 @@ import json
 import os
 import subprocess
 import sys
+from contextlib import contextmanager
 from pathlib import Path
 
 RACINE = Path(__file__).resolve().parents[1]
@@ -28,14 +29,116 @@ FOND, SURFACE, TRAIT, TEXTE, SECOND, FORT, BLANC = (
     "#FFFFFF", "#F0F0F0", "#BDBDBD", "#1A1A1A", "#616161", "#333333", "#FFFFFF")
 W, H, M = 390, 844, 16
 
+# Deux passes (conception-ecrans.md §1) : la première dessine les wireframes en
+# gris sur les pages 3 et 4 ; la seconde (JARDIN_PASSE=interface) rejoue les
+# mêmes écrans sur les pages 7 et 8, chaque gris lié à un rôle sémantique (M4),
+# chaque texte à un style, chaque bouton instance du composant. La mise en page
+# n'est écrite qu'une fois.
+INTERFACE = os.environ.get("JARDIN_PASSE") == "interface"
+
+# Le rôle de chaque gris, selon ce qu'il colore. Un gris absent de la table
+# arrête la construction : une valeur en dur ne passe pas (M6).
+ROLES = {
+    "text": {TEXTE: "texte/principal", FORT: "texte/principal", SECOND: "texte/secondaire",
+             TRAIT: "texte/desactive", BLANC: "texte/inverse"},
+    "fill": {FOND: "fond/surface", SURFACE: "fond/sourdine", TRAIT: "bordure/defaut",
+             "#DEDEDE": "fond/carte", "#00000066": "fond/voile", FORT: "action/principale", TEXTE: "texte/principal",
+             SECOND: "texte/secondaire"},
+    "stroke": {TRAIT: "bordure/defaut", FORT: "bordure/forte", TEXTE: "bordure/forte",
+               SECOND: "bordure/forte", SURFACE: "bordure/discrete", FOND: "fond/surface"},
+}
+
+
+def style_texte(taille: float, gras: bool) -> str:
+    """Le style de texte le plus proche d'une taille de wireframe (fondations.STYLES)."""
+    if taille <= 12:
+        return "Légende forte" if gras else "Légende"
+    if taille <= 14:
+        return "Petit fort" if gras else "Petit"
+    if taille <= 17:
+        return "Corps fort" if gras else "Corps"
+    if taille <= 20:
+        return "Titre 3" if gras else "Corps grand"
+    if taille <= 26:
+        return "Titre 2"
+    return "Titre 1" if taille <= 34 else "Chiffre"
+
 
 class Doc:
     def __init__(self) -> None:
         self.cmds: list[dict] = []
-        self.suivant = 2          # la page 1 existe déjà
+        self.suivant = int(os.environ.get("JARDIN_DEPART", 2))   # la page 1 existe déjà
+        self.surcharges: list[dict] = []
+        self.composants: dict[str, dict] = {}   # posés par fondations.poser (passe interface)
 
     def cmd(self, command: str, **params) -> None:
+        if INTERFACE and command == "proto.flow.add":
+            params["name"] = "Interface · " + params["name"]
         self.cmds.append({"command": command, "params": params})
+
+    # --- Passe interface -------------------------------------------------------
+    @contextmanager
+    def surcharge(self, roles: dict):
+        """Change le rôle de certains gris le temps d'un bloc : {(sorte, gris): rôle}."""
+        self.surcharges.append(roles)
+        try:
+            yield
+        finally:
+            self.surcharges.pop()
+
+    def etat(self, nom: str, fond: bool = True):
+        """Ce bloc dit un état (« en-retard », « a-faire »…) : FORT et TEXTE en prennent la
+        couleur, FOND sa teinte claire. L'état reste aussi écrit en toutes lettres (charte §5)."""
+        r = {("fill", FORT): f"etat/{nom}", ("stroke", FORT): f"etat/{nom}",
+             ("text", FORT): f"etat/{nom}", ("text", TEXTE): f"etat/{nom}"}
+        if fond:
+            r[("fill", FOND)] = f"etat/{nom}-fond"
+        return self.surcharge(r)
+
+    def role(self, sorte: str, gris: str) -> str:
+        for s in reversed(self.surcharges):
+            if (sorte, gris) in s:
+                return s[(sorte, gris)]
+        try:
+            return ROLES[sorte][gris]
+        except KeyError:
+            raise SystemExit(f"ECHOUE gris sans rôle sémantique : {sorte} {gris} (M6)")
+
+    def lier(self, i: int, champ: str, variable: str) -> None:
+        self.cmd("variable.bind", ids=[i], field=champ, variable=variable)
+
+    def _habiller(self, i: int, type_: str, props: dict, roles: dict) -> None:
+        if type_ == "text":
+            self.cmd("style.apply", ids=[i], style=roles.get("style") or style_texte(
+                props.get("fontSize", 16), props.get("fontStyle") == "Bold"))
+        sorte = "text" if type_ == "text" else "fill"
+        fills = props.get("fills") or []
+        if "fill" in roles:
+            self.lier(i, "fill", roles["fill"])
+        elif fills:
+            if len(fills) != 1 or not isinstance(fills[0], str):
+                raise SystemExit(f"ECHOUE remplissage composé, à lier à la main : {fills}")
+            self.lier(i, "fill", self.role(sorte, fills[0]))
+        if "stroke" in roles:
+            self.lier(i, "stroke", roles["stroke"])
+        elif props.get("stroke"):
+            self.lier(i, "stroke", self.role("stroke", props["stroke"]))
+
+    def instance(self, nom: str, parent, x=0, y=0, w=None, h=None, proprietes=None) -> int:
+        c = self.composants[nom]
+        kw = {"parent": parent} if parent else {}
+        self.cmd("instance.create", component=c["id"], x=x, y=y, **kw)
+        i = self._id()
+        self.suivant += c["calques"]          # chaque calque de l'instance prend un identifiant
+        if proprietes:
+            self.cmd("instance.setProperties", ids=[i], properties=proprietes)
+        if w is not None:
+            self.cmd("node.set", ids=[i], width=w, height=h, name=f"{nom} · {proprietes}")
+        return i
+
+    def densite(self, f: int, mode: str) -> None:
+        if INTERFACE:
+            self.cmd("variable.setMode", ids=[f], collection="Densité", mode=mode)
 
     def _id(self) -> int:
         i = self.suivant
@@ -46,9 +149,12 @@ class Doc:
         self.cmd("page.add", name=nom)
         return self._id()
 
-    def noeud(self, type_: str, **params) -> int:
+    def noeud(self, type_: str, roles: dict | None = None, **params) -> int:
         self.cmd("node.create", type=type_, select=False, **params)
-        return self._id()
+        i = self._id()
+        if INTERFACE:
+            self._habiller(i, type_, params.get("props", {}), roles or {})
+        return i
 
     def cadre(self, nom, parent, x, y, w, h, fond=None, rayon=0, trait=None, pointille=False):
         props = {"fills": [fond] if fond else [], "clip": True}
@@ -68,12 +174,25 @@ class Doc:
             "fills": [couleur], "textAlign": align})
 
     def bouton(self, parent, x, y, w, h, libelle, principal=False, inactif=False):
+        if INTERFACE:
+            variante = "inactif" if inactif else ("principale" if principal else "secondaire")
+            return self.instance("Bouton", parent, x, y, w, h,
+                                 {"variante": variante, "libelle": libelle})
         fond = FORT if principal and not inactif else (SURFACE if inactif else FOND)
         b = self.cadre(f"Bouton · {libelle}", parent, x, y, w, h, fond=fond, rayon=10,
                        trait=None if principal else TRAIT)
         couleur = BLANC if principal and not inactif else (TRAIT if inactif else TEXTE)
         self.texte(b, 8, (h - 22) / 2, w - 16, libelle, 17, gras=True, couleur=couleur, align="center")
         return b
+
+    def logo(self, parent, x, y):
+        """Une seule marque (§2) : le composant Marque/Logo à l'interface."""
+        if INTERFACE:
+            return self.instance("Marque/Logo", parent, x, y)
+        logo = self.cadre("Marque/Logo (provisoire)", parent, x, y, 112, 32, rayon=6, trait=TRAIT,
+                          pointille=True)
+        self.texte(logo, 0, 7, 112, "Logo", 13, couleur=SECOND, align="center")
+        return logo
 
     def lien(self, source, dest, transition="push"):
         self.cmd("proto.interaction.add", id=source, trigger={"type": "onClick"},
@@ -98,16 +217,26 @@ class Doc:
 d = Doc()
 
 # --- Pages (conception-ecrans.md §3) -------------------------------------------
-d.cmd("page.rename", name="0 · Mode d'emploi")
 PAGES = ["1 · Charte", "2 · Parcours", "3 · Wireframes terrain", "4 · Wireframes bureau",
          "5 · Fondations", "6 · Composants", "7 · Écrans terrain", "8 · Écrans bureau", "Archive"]
-ids_pages = {nom: d.page(nom) for nom in PAGES}
+if not INTERFACE:
+    d.cmd("page.rename", name="0 · Mode d'emploi")
+    ids_pages = {nom: d.page(nom) for nom in PAGES}
 
-# Variables du prototype : l'état du réseau, pour essayer les deux suites de RG-50.
-d.cmd("variable.createCollection", name="Prototype")
-d.cmd("variable.create", collection="Prototype", name="reseau", type="boolean", value=True)
-d.cmd("variable.create", collection="Prototype", name="etat_reseau", type="string",
-      value="Essai : réseau ✓")
+    # Variables du prototype : l'état du réseau, pour essayer les deux suites de RG-50.
+    d.cmd("variable.createCollection", name="Prototype")
+    d.cmd("variable.create", collection="Prototype", name="reseau", type="boolean", value=True)
+    d.cmd("variable.create", collection="Prototype", name="etat_reseau", type="string",
+          value="Essai : réseau ✓")
+else:
+    # Les pages existent depuis la première passe ; les vagues qui visent les pages
+    # de wireframes dessinent ici sur celles de l'interface.
+    ids_pages = {nom: 2 + k for k, nom in enumerate(PAGES)}
+    ids_pages["3 · Wireframes terrain"] = ids_pages["7 · Écrans terrain"]
+    ids_pages["4 · Wireframes bureau"] = ids_pages["8 · Écrans bureau"]
+    sys.path.insert(0, str(RACINE / "interface"))
+    import fondations  # noqa: E402
+    fondations.poser(d, ids_pages)
 
 # Le contenu de la page 0 se pose à la fin : `node.create` sans parent vise la
 # page courante, et `page.add` vient d'en changer. On revient sur la page 3.
@@ -118,7 +247,9 @@ X = [0]
 
 
 def ecran(nom: str, hauteur: int = H) -> int:
-    f = d.cadre(nom, None, X[0], 120, W, hauteur, fond=FOND)
+    with d.surcharge({("fill", FOND): "fond/page"}):
+        f = d.cadre(nom, None, X[0], 120, W, hauteur, fond=FOND)
+    d.densite(f, "Terrain")
     X[0] += W + 80
     ECRANS[nom] = f
     d.cadre("Barre d'état", f, 0, 0, W, 44, fond=SURFACE)
@@ -196,8 +327,9 @@ def liste_du_jour(f, y, lignes, boutons_fait: dict):
         col = boite("Texte", ligne, "vertical", gap=2)
         texte_flux(col, plante, 17, gras=True)
         marque = "⚠ " if retard else ""
-        texte_flux(col, f"{inter} · {marque}{etat}", 15, gras=retard,
-                   couleur=TEXTE if retard else SECOND)
+        with d.etat("en-retard"):
+            texte_flux(col, f"{inter} · {marque}{etat}", 15, gras=retard,
+                       couleur=TEXTE if retard else SECOND)
         boutons_fait[plante] = d.bouton(ligne, 0, 0, 88, 48, "Fait")
         RANGS_ECHEANCE.append(ligne)
     return liste
@@ -286,13 +418,16 @@ t3c, t3c_retour, t3c_rangs, t3c_valider = choisir_plantes("T3 · 03 · Choisir l
 t4 = ecran("T4 · 01 · Aujourd'hui — non envoyé")
 entete_aujourdhui(t4, "mar. 21 oct. · 4 à faire")
 pastille_essai(t4)
-alerte = d.cadre("Bandeau · non envoyé", t4, M, 128, W - 2 * M, 112, fond=FOND, rayon=10, trait=FORT)
-d.texte(alerte, 14, 12, 300, "⚠ Pas envoyé — pas de réseau", 16, gras=True)
-d.texte(alerte, 14, 36, 300, "Taille · Pommier 'Reine des reinettes' · 14:32", 13, couleur=SECOND)
-d.texte(alerte, 14, 56, 200, "Gardé sur ce téléphone.", 13, couleur=SECOND)
-renvoyer = d.bouton(alerte, W - 2 * M - 126, 54, 116, 48, "Renvoyer", principal=True)
+with d.etat("non-envoye"):
+    alerte = d.cadre("Bandeau · non envoyé", t4, M, 128, W - 2 * M, 140, fond=FOND, rayon=10,
+                     trait=FORT)
+    d.texte(alerte, 14, 12, W - 2 * M - 28, "⚠ Pas envoyé — pas de réseau", 16, gras=True)
+d.texte(alerte, 14, 38, W - 2 * M - 28, "Taille · Pommier 'Reine des reinettes'", 13,
+        couleur=SECOND)
+d.texte(alerte, 14, 62, W - 2 * M - 28, "14:32 · gardé sur ce téléphone.", 13, couleur=SECOND)
+renvoyer = d.bouton(alerte, W - 2 * M - 126, 80, 116, 48, "Renvoyer", principal=True)
 fait_t4: dict = {}
-liste_du_jour(t4, 252, LIGNES[:3], fait_t4)
+liste_du_jour(t4, 284, LIGNES[:3], fait_t4)
 tiroir_je_viens_de_faire(t4)
 
 # --- T2 · Tous les types ------------------------------------------------------
@@ -388,30 +523,37 @@ note = d.noeud("text", x=-560, y=120, text=(
         "width": 480, "textAutoResize": "height", "fontFamily": "Inter", "fontSize": 16,
         "fills": [TEXTE]})
 
-d.cmd("page.select", id=1)
-d.noeud("text", x=0, y=0, text=(
-    "MAQUETTE — SERVICE DE GESTION DE JARDIN\n\n"
-    "Méthode : docs/conception-ecrans.md. Ce fichier est généré par "
-    "design/wireframes/*.py : ne pas le modifier à la main tant que les wireframes ne sont pas "
-    "validés.\n\n"
-    "Statuts : le nom de la section porte [à valider] ou [validé JJ/MM].\n"
-    "Cadres : <écran> · <rang> · <nom> — <état>.\n"
-    "Wireframes : gris, sans couleur ni police définitive (M1)."), name="Mode d'emploi",
-    props={"width": 640, "textAutoResize": "height", "fontFamily": "Inter", "fontSize": 18,
-           "fills": [TEXTE]})
+if not INTERFACE:   # le mode d'emploi n'est posé qu'une fois
+    d.cmd("page.select", id=1)
+    d.noeud("text", x=0, y=0, text=(
+        "MAQUETTE — SERVICE DE GESTION DE JARDIN\n\n"
+        "Méthode : docs/conception-ecrans.md. Ce fichier est généré par "
+        "design/wireframes/*.py : ne pas le modifier à la main tant que les wireframes ne sont pas "
+        "validés.\n\n"
+        "Statuts : le nom de la section porte [à valider] ou [validé JJ/MM].\n"
+        "Cadres : <écran> · <rang> · <nom> — <état>.\n"
+        "Wireframes : gris, sans couleur ni police définitive (M1)."), name="Mode d'emploi",
+        props={"width": 640, "textAutoResize": "height", "fontFamily": "Inter", "fontSize": 18,
+               "fills": [TEXTE]})
 
 
 def main() -> int:
     script = SORTIE.with_suffix(".jsonl")
     script.write_text("\n".join(json.dumps(c, ensure_ascii=False) for c in d.cmds) + "\n")
     env = dict(os.environ, FIGCRAFT_NO_SYSTEM_FONTS="1")
-    r = subprocess.run(["figcraft-cli", "run", str(script), "--out", str(SORTIE)],
+    entree = ["--in", str(SORTIE)] if INTERFACE else []
+    r = subprocess.run(["figcraft-cli", "run", str(script), *entree, "--out", str(SORTIE)],
                        capture_output=True, text=True, env=env)
     script.unlink()
     erreurs = [l for l in r.stdout.splitlines() if '"ok":false' in l]
     if r.returncode or erreurs:
         print("ECHOUE", *(erreurs or [r.stderr.strip()]), sep="\n")
         return 1
-    print(f"CONFIRME {SORTIE} ({len(d.cmds)} commandes, {len(ECRANS)} écrans)")
+    passe = "interface" if INTERFACE else "wireframes"
+    print(f"CONFIRME {SORTIE} · {passe} ({len(d.cmds)} commandes, {len(ECRANS)} écrans)",
+          flush=True)
+    if INTERFACE:   # M6 : aucune valeur en dur dans ce que la passe a posé
+        return subprocess.run([sys.executable, "-I", str(RACINE / "interface" / "controle.py"),
+                               str(SORTIE), os.environ["JARDIN_DEPART"], str(d.suivant)]).returncode
     return 0
 

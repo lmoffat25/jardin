@@ -20,9 +20,7 @@ LIENS_NAV: list[tuple[int, str]] = []       # (bouton, destination) à relier en
 def coquille(f, actif: str):
     """Navigation du bureau. Le jardin courant est en tête, toujours (RG-43)."""
     nav = d.cadre("Navigation", f, 0, 0, NAV, 1400, fond=SURFACE)   # rognée par l'écran
-    logo = d.cadre("Marque/Logo (provisoire)", nav, 24, 20, 112, 32, rayon=6, trait=TRAIT,
-                   pointille=True)
-    d.texte(logo, 0, 7, 112, "Logo", 13, couleur=SECOND, align="center")
+    d.logo(nav, 24, 20)
     d.texte(nav, 24, 76, 200, "JARDIN", 12, gras=True, couleur=SECOND)
     choix = d.cadre("Jardin courant", nav, 24, 96, NAV - 48, 44, fond=FOND, rayon=8, trait=TRAIT)
     d.texte(choix, 12, 12, NAV - 72, "Le Clos  ↓", 16, gras=True)
@@ -35,11 +33,19 @@ def coquille(f, actif: str):
         LIENS_NAV.append((b, nom))
 
 
+# Le mot d'une pastille est l'état qu'elle dit : il en choisit la couleur (passe interface).
+ETATS = {"urgent": "en-retard", "urgente": "en-retard", "en retard": "en-retard",
+         "manquée": "en-retard", "ouverte": "a-faire", "à faire": "a-faire", "soldée": "fait",
+         "fait": "fait", "faite": "fait", "hors saison": "hors-saison", "non envoyé": "non-envoye"}
+
+
 def pastille(parent, x, y, texte, fort=False):
     w = 14 + 8 * len(texte)
-    p = d.cadre(f"État · {texte}", parent, x, y, w, 26, fond=FORT if fort else FOND, rayon=13,
-                trait=FORT)
-    d.texte(p, 0, 4, w, texte, 13, gras=True, couleur=BLANC if fort else TEXTE, align="center")
+    nom = ETATS.get(texte.lower())
+    with d.etat(nom) if nom else d.surcharge({}):
+        p = d.cadre(f"État · {texte}", parent, x, y, w, 26, fond=FORT if fort else FOND, rayon=13,
+                    trait=FORT)
+        d.texte(p, 0, 4, w, texte, 13, gras=True, couleur=BLANC if fort else TEXTE, align="center")
     return w
 
 
@@ -51,6 +57,8 @@ def photo(parent, x, y, w, h, legende="Photo"):
 
 
 def case(parent, x, y, cochee=False):
+    if vague1.INTERFACE:
+        return d.instance("Case", parent, x, y, proprietes={"etat": "cochee" if cochee else "vide"})
     c = d.cadre("Case", parent, x, y, 20, 20, fond=FORT if cochee else FOND, rayon=4, trait=FORT)
     if cochee:
         d.texte(c, 0, 1, 20, "✓", 14, gras=True, couleur=BLANC, align="center")
@@ -127,8 +135,9 @@ def liste_plantes(nom, cochees=0, recherche=None, vide=False):
             elif j == 1:
                 photo(c, 8, 6, 56, 48, "")
             else:
-                d.texte(c, 12, 20, w - 24, val, 15, gras=j == 2 or (j == 6 and alerte),
-                        couleur=SECOND if j in (3, 4) else TEXTE)
+                with d.etat("en-retard") if j == 6 and alerte else d.surcharge({}):
+                    d.texte(c, 12, 20, w - 24, val, 15, gras=j == 2 or (j == 6 and alerte),
+                            couleur=SECOND if j in (3, 4) else TEXTE)
         rangs.append(r)
     d.texte(f, CX0, 752, 600, "1 à 8 sur 142 · triées par zone, puis par nom",
             14, couleur=SECOND)
