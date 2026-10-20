@@ -18,7 +18,8 @@ final class ChoixDeFenetre
      * Chaque fenêtre repart de celle de ses occurrences commencée à la dernière
      * intervention ou juste avant, plus `n` ans (D-88) ; sans intervention, de
      * celle commencée à la date d'effet ou juste avant. Une occurrence close
-     * (suspendue, manquée, soldée : D-05) n'est jamais rendue. Une manquée est
+     * (suspendue, manquée, soldée : D-05) n'est jamais rendue, même close sous un
+     * autre profil (D-99). Une manquée est
      * finie avant aujourd'hui et commence au plus tôt à la date d'effet (V47).
      *
      * @return non-empty-list<array{0: Fenetre, 1: Periode}>
@@ -44,8 +45,8 @@ final class ChoixDeFenetre
         $occurrences = [];
         while (true) {
             [$i, $periode] = self::plusProche($fenetres, $annees, $decalage);
+            $close = $historique->occurrenceClose($regle->id, $fenetres[$i], $annees[$i], $decalage);
             $annees[$i]++;
-            $close = $historique->estClose($regle->id, $periode->debut);
             if (! $close && $aujourdhui <= $periode->fin) {
                 $occurrences[] = [$fenetres[$i], $periode];
 

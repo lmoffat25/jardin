@@ -20,6 +20,7 @@ use Src\Support\Jardin\AppartientAuJardin;
  * @property string $regle_id
  * @property string $plante_id
  * @property CarbonImmutable $due_le
+ * @property int $decalage_climatique_applique_j
  * @property string $etat
  * @property string $explication
  */

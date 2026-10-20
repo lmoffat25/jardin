@@ -843,7 +843,9 @@ butoirs** (RG-45, A25) : c'est la seule limite au mécanisme.
 
 La valeur appliquée est reportée sur l'échéance matérialisée
 (`decalage_climatique_applique_j`), pour pouvoir expliquer après coup une date
-même si le profil a changé depuis (RG-06).
+même si le profil a changé depuis (RG-06). Elle sert aussi à la reconnaître :
+la date due d'une occurrence bouge avec le profil, et une occurrence close
+l'est sous le décalage du jour ou sous celui qu'elle porte (D-99).
 
 ---
 

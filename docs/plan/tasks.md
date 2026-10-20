@@ -1210,7 +1210,7 @@ Fichier `src/Echeances/Calcul/CalculEcheances.php` (nom de la classe, PSR-4). `S
 ---
 
 ## Sprint 5b — Manquées matérialisées et changement de profil
-<!-- taille : 3 assertions, 1 fichier, 3 classes de test -->
+<!-- taille : 3 assertions, 5 fichiers, 4 classes de test -->
 
 **Objectif :** une manquée s'écrit une seule fois, au calcul, et changer de profil change les dates sans toucher aux règles.
 **Constructeur :** back
@@ -1224,19 +1224,19 @@ Fichier `src/Echeances/Calcul/CalculEcheances.php` (nom de la classe, PSR-4). `S
 **Vérification en marche :** sans objet
 **Question UX possible :** aucune
 **Assertions :** V70, V73, V75
-**Fichiers :** `src/Echeances/Calcul/MaterialiserManquees.php`
-**Classes de test :** `tests/Persistance/ManqueesTest.php`, `tests/Persistance/ChangementDeProfilTest.php`, `tests/Persistance/NidificationBoutEnBoutTest.php`
+**Fichiers :** `src/Echeances/Calcul/MaterialiserManquees.php`, `src/Echeances/Calcul/CalculEcheances.php`, `src/Echeances/Domaine/EcheanceMaterialisee.php`, `src/Echeances/Moteur/Historique.php`, `src/Echeances/Moteur/ChoixDeFenetre.php` (D-99)
+**Classes de test :** `tests/Persistance/ManqueesTest.php`, `tests/Persistance/ChangementDeProfilTest.php`, `tests/Persistance/NidificationBoutEnBoutTest.php`, `tests/Moteur/OccurrencesClosesTest.php` (D-99)
 **Fin :** une manquée s'écrit une seule fois ; la haie livrée n'est jamais proposée en nidification, de bout en bout.
 
 ### 5b.1 Matérialisation
 
-- [ ] Implémenter `src/Echeances/Calcul/MaterialiserManquees.php` : pour chaque échéance `Manquee` rendue, `EcheanceMaterialisee::query()->insertOrIgnore([...])` avec `jardin_id`, `due_le`, période, `decalage_climatique_applique_j`, `etat = manquee`, `explication = enPhrase(...)` ; idempotent par `(regle_id, due_le)`.
+- [x] Implémenter `src/Echeances/Calcul/MaterialiserManquees.php` : pour chaque échéance `Manquee` rendue, `EcheanceMaterialisee::query()->insertOrIgnore([...])` avec `jardin_id`, `due_le`, période, `decalage_climatique_applique_j`, `etat = manquee`, `explication = enPhrase(...)` ; idempotent par `(regle_id, due_le)`.
 
 ### 5b.2 Tests
 
-- [ ] `tests/Persistance/ManqueesTest.php` : V73 (`travelTo` 01/04/2027 ; deux calculs, une ligne). Groupe `critere-6`.
-- [ ] `tests/Persistance/ChangementDeProfilTest.php` : V75.
-- [ ] Activer `tests/Persistance/NidificationBoutEnBoutTest.php` (`todo()` du 4c) (V70).
+- [x] `tests/Persistance/ManqueesTest.php` : V73 (`travelTo` 01/04/2027 ; deux calculs, une ligne). Groupe `critere-6`.
+- [x] `tests/Persistance/ChangementDeProfilTest.php` : V75.
+- [x] Activer `tests/Persistance/NidificationBoutEnBoutTest.php` (`todo()` du 4c) (V70).
 
 ---
 
