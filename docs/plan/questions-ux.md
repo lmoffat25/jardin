@@ -32,6 +32,7 @@ que la réponse arrive avant le sprint.
 - [Q-UX-16 — Altitude incertaine à la création du jardin](#q-ux-16--altitude-incertaine-à-la-création-du-jardin)
 - [Q-UX-17 — Trop d'essais de connexion](#q-ux-17--trop-dessais-de-connexion)
 - [Q-UX-20 — Ce que « cette semaine » et « ce mois » veulent dire](#q-ux-20--ce-que--cette-semaine--et--ce-mois--veulent-dire)
+- [Q-UX-21 — La période optimale d'une fenêtre ajustée à la création](#q-ux-21--la-période-optimale-dune-fenêtre-ajustée-à-la-création)
 
 ---
 
@@ -370,4 +371,26 @@ dans cinq jours, un samedi, est-elle « cette semaine » ?
 **Ce qui attend :** rien ne bloque. Appliquée : la recommandation (sprint 6,
 D-100), le 20/10/2026. Une autre réponse ne change que
 `RegrouperEcheances::periode`.
+**Réponse :**
+
+## Q-UX-21 — La période optimale d'une fenêtre ajustée à la création
+
+**Question :** à la création d'une plante, l'utilisateur déplace les bornes
+d'une fenêtre proposée (taille du 01/12 au 28/02 ramenée au 10/12–15/02). La
+période optimale de la bibliothèque (15/12–31/01) valait pour les bornes
+d'origine : la garde-t-on ?
+**Concerne :** B7 et T3 (ajuster une règle proposée), V84 ; l'état
+« optimale » du tableau de bord pour cette règle.
+**Options :**
+1. **Recommandé — la fenêtre aux bornes déplacées perd son optimale** :
+   l'échéance passe d'« ouverte » à « urgente » sans état « optimale ». On ne
+   prête pas à la bibliothèque une période qu'elle n'a pas donnée pour ces
+   bornes ; les butoirs, eux, restent.
+2. Garder l'optimale quand elle tient encore dans les nouvelles bornes, la
+   rogner sinon.
+3. Laisser l'écran ajuster aussi l'optimale (deux champs de plus par fenêtre).
+
+**Ce qui attend :** rien ne bloque. Appliquée : la recommandation (sprint 7a,
+D-101), le 20/10/2026. Une autre réponse ne change que
+`AppliquerReglesTypes::fenetres`.
 **Réponse :**
