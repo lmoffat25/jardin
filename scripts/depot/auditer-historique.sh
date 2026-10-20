@@ -21,9 +21,14 @@ CONFIG=()
 gitleaks git "$DEPOT" --log-opts="--all" ${CONFIG[@]+"${CONFIG[@]}"} --redact --no-banner --exit-code 0 \
   --report-format csv --report-path "$T/gitleaks.csv" > /dev/null 2>&1 \
   || { echo "ECHOUE gitleaks n'a pas pu lire $DEPOT"; exit 1; }
-# Colonnes du rapport CSV de gitleaks : RuleID,Commit,File,… ; on n'en garde que trois.
-awk -F, 'NR > 1 { print "secret     " substr($2, 1, 10) "  " $3 "  " $1 }' "$T/gitleaks.csv" \
-  > "$T/resultats"
+# Rapport CSV de gitleaks : des champs entre guillemets peuvent courir sur plusieurs
+# lignes (message du commit). Lu par le module csv ; on ne garde que règle, commit, fichier.
+champs() {  # champs <rapport.csv> <préfixe à retirer des fichiers>
+  python3 -I -c 'import csv,sys
+for r in csv.DictReader(open(sys.argv[1], newline="")):
+    print("secret     " + " ".join(x for x in (r.get("Commit", "")[:10], r["File"].replace(sys.argv[2], "", 1), r["RuleID"]) if x))' "$1" "$2"
+}
+champs "$T/gitleaks.csv" "" > "$T/resultats"
 
 # 2. Coordonnées, adresses et lieux réels, dans les lignes ajoutées de tous les commits.
 git -C "$DEPOT" log -p --all --no-color --format='commit %H' \
@@ -51,7 +56,7 @@ git -C "$DEPOT" log --all --format='%H' --name-only --diff-filter=AM -- '*.figcr
 if [ -d "$T/fig" ]; then
   gitleaks dir "$T/fig" --redact --no-banner --exit-code 0 --report-format csv \
     --report-path "$T/fig.csv" > /dev/null 2>&1
-  awk -F, 'NR > 1 { print "secret     " $3 "  " $1 }' "$T/fig.csv" | sed "s#$T/fig/##" >> "$T/resultats"
+  champs "$T/fig.csv" "$T/fig/" >> "$T/resultats"
   # Seules les chaînes JSON portent du texte saisi ; les nombres (positions, matrices,
   # couleurs) ressembleraient à des coordonnées sans en être.
   find "$T/fig" -type f ! -name '*.png' | while read -r g; do

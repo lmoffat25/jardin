@@ -2,6 +2,8 @@
 # Test de scripts/depot/auditer-historique.sh (V1) sur des dépôts jetables.
 #   bash scripts/depot/tests/test-auditer-historique.sh
 set -u
+# Les valeurs factices sont coupées en deux chaînes accolées : assemblées à
+# l'exécution, elles n'apparaissent jamais d'un tenant dans le dépôt.
 ICI=$(cd "$(dirname "$0")/.." && pwd)
 AUDIT="$ICI/auditer-historique.sh"
 [ -x "$AUDIT" ] || { echo "ECHOUE script absent : $AUDIT"; exit 1; }
