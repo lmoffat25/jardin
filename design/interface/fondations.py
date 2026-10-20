@@ -59,7 +59,7 @@ CONTRASTES_7 = [("texte/principal", "fond/page"), ("texte/secondaire", "fond/pag
 CONTRASTES_3 = [("bordure/defaut", "fond/surface"), ("focus", "fond/surface")]
 
 # --- Densité : deux modes, Bureau et Terrain (A23) -----------------------------
-DENSITE = {   # nom: (Bureau, Terrain), en primitives taille/N ; cible/min en px
+DENSITE = {   # nom: (Bureau, Terrain), en primitives taille/N et cible/N
     "texte/legende": (12, 13), "texte/petit": (14, 15), "texte/corps": (15, 17),
     "texte/grand": (18, 20), "titre/3": (18, 20), "titre/2": (24, 24), "titre/1": (28, 28),
     "texte/chiffre": (36, 40),
@@ -108,6 +108,8 @@ def poser(d, pages: dict) -> None:
         d.cmd("variable.create", collection="Primitives", name=f"taille/{t}", type="number", value=t)
     for r in RAYONS:
         d.cmd("variable.create", collection="Primitives", name=f"rayon/{r}", type="number", value=r)
+    for c in CIBLE:
+        d.cmd("variable.create", collection="Primitives", name=f"cible/{c}", type="number", value=c)
     for nom, v in MARQUE.items():
         d.cmd("variable.create", collection="Primitives", name=nom, type="string", value=v)
 
@@ -129,6 +131,8 @@ def poser(d, pages: dict) -> None:
         d.cmd("variable.set", variable=nom, mode="Terrain", value={"alias": f"taille/{t}"})
     d.cmd("variable.create", collection="Densité", name="cible/min", type="number",
           values={"Bureau": CIBLE[0], "Terrain": CIBLE[1]})
+    for mode, c in zip(("Bureau", "Terrain"), CIBLE):
+        d.cmd("variable.set", variable="cible/min", mode=mode, value={"alias": f"cible/{c}"})
 
     for nom, (graisse, taille) in STYLES.items():
         d.cmd("style.create", type="text", name=nom,

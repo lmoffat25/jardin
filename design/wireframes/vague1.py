@@ -552,8 +552,11 @@ def main() -> int:
     passe = "interface" if INTERFACE else "wireframes"
     print(f"CONFIRME {SORTIE} · {passe} ({len(d.cmds)} commandes, {len(ECRANS)} écrans)",
           flush=True)
-    if INTERFACE:   # M6 : aucune valeur en dur dans ce que la passe a posé
-        return subprocess.run([sys.executable, "-I", str(RACINE / "interface" / "controle.py"),
-                               str(SORTIE), os.environ["JARDIN_DEPART"], str(d.suivant)]).returncode
+    if INTERFACE:   # M6 : aucune valeur en dur dans ce que la passe a posé ; M5 : export CSS
+        inter = RACINE / "interface"
+        code = subprocess.run([sys.executable, "-I", str(inter / "controle.py"), str(SORTIE),
+                               os.environ["JARDIN_DEPART"], str(d.suivant)]).returncode
+        return code or subprocess.run([sys.executable, "-I", str(inter / "exporter_css.py"),
+                                       str(SORTIE), str(inter / "variables.css")]).returncode
     return 0
 

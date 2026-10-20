@@ -104,8 +104,11 @@ dessinée à la main.
 - **Nom du produit** : une variable texte `marque/nom`, liée à chaque texte qui
   le porte.
 - **Icônes** : un seul jeu, chaque icône étant un composant `Icône/<nom>`.
-  Proposition : Lucide, qui existe aussi en composants React (`lucide-react`) ;
-  sa licence est à vérifier avant usage commercial (O25).
+  Lucide, qui existe aussi en composants React (`lucide-react`). Licence ISC
+  (et MIT pour les icônes reprises de Feather) : usage commercial permis, à
+  condition de conserver l'avis de copyright dans le code livré (O25, levé le
+  20/10/2026). Les glyphes provisoires des écrans (✓ ⚠ ↑ ↓ ‹ ↓) sont à
+  remplacer par ces composants.
 
 > **M5** — Les variables portent **les mêmes noms dans le code** (variables
 > CSS, configuration Tailwind), avec les trois mêmes couches. La marque change
@@ -116,6 +119,11 @@ dessinée à la main.
 > remplissages, contours et textes qui ne sont liés ni à une variable ni à un
 > style. Il doit rendre zéro. Une valeur en dur passée inaperçue est
 > précisément ce qui casse le jour de la marque (O22).
+>
+> **Levé le 20/10/2026.** `design/interface/controle.py` relit par
+> `node.get` chaque calque posé par la passe interface (`boundVariables`,
+> `styles.text`) et rend `CONFIRME M6` ou la liste des fautes. Il est lancé à
+> chaque construction ; il échoue aussi si un calque n'a pas pu être lu.
 
 ### Ce qui n'est pas fait maintenant, et pourquoi
 
@@ -161,6 +169,23 @@ du dépôt (C4, RG-28).
   portent **les noms des props React** (`variante = principale | secondaire |
   discrete`, `etat = a-faire | en-retard | fait`). Un agent lit ainsi le
   composant à écrire sans interpréter.
+
+**Comment le fichier se construit.** Il n'est jamais retouché à la main :
+`python3 -I design/wireframes/construire.py` le régénère en entier, en deux
+passes sur le même code de mise en page (`wireframes/vague1.py` à
+`vague6.py`).
+
+1. **Wireframes** (pages 0 à 4) : tout en gris.
+2. **Interface** (pages 5 à 8) : `interface/fondations.py` pose les variables,
+   les styles et les composants, puis les mêmes vagues sont rejouées. Chaque
+   gris y est traduit en rôle sémantique (table `ROLES` de `vague1.py`), chaque
+   texte reçoit un style, chaque bouton, case ou logo devient une instance. Un
+   gris sans rôle **arrête la construction** : M4 tient par construction.
+3. **Contrôles** : M6 (`interface/controle.py`), puis l'export des variables
+   pour le code (`interface/variables.css`, M5).
+
+Chaque étape écrit une ligne `CONFIRME` ou `ECHOUE`. Un parcours se corrige
+donc à un seul endroit, et l'interface suit.
 
 > **M7** — Le fichier vit dans le dépôt et se versionne avec le code. Une
 > maquette séparée du code finit toujours par décrire un autre produit que
@@ -223,7 +248,17 @@ d'échéance, Vignette de plante, Photo, Bandeau de message (information,
 erreur, non envoyé), Confirmation, Navigation terrain, Navigation bureau,
 Tableau (en-tête, ligne), Filtre, Icône.
 
-> **M9** — Un composant n'est créé que si **au moins deux écrans** s'en
+**Où on en est (20/10/2026).** Trois composants existent, sur la page 6 :
+`Bouton` (`variante = principale | secondaire | inactif`, propriété
+`libelle`), `Case` (`etat = vide | cochee`), `Marque/Logo`. Toutes leurs
+apparitions dans les écrans en sont des instances. Les états (en retard, à
+faire, fait, hors saison, non envoyé, erreur, attention) sont pour l'instant
+portés par des variables `etat/*` appliquées aux calques, pas par un
+composant. Restent à extraire, chacun servant à plusieurs écrans : Pastille
+d'état, Ligne d'échéance, Bandeau de message, Champ, et les `Icône/<nom>`
+Lucide à la place des glyphes.
+
+> **M9** — Un composant n'est créé que si> **M9** — Un composant n'est créé que si **au moins deux écrans** s'en
 > servent. Sinon c'est un élément de l'écran. La bibliothèque reste à la
 > taille du produit, et chaque composant créé correspond à un composant React
 > à écrire et à tester.
@@ -283,8 +318,12 @@ Tableau (en-tête, ligne), Filtre, Icône.
   (`figcraft-cli export … --node <cadre>`), avec un index
   `docs/maquette/README.md` : écran → image → parcours → critères
   d'acceptation (§10 du CDC).
-- Les variables sont transcrites dans le code sous les mêmes noms (M5). Une
-  transcription automatique est préférable à une copie à la main (O23).
+- Les variables sont transcrites dans le code sous les mêmes noms (M5), par
+  `design/interface/exporter_css.py` : une propriété CSS par variable
+  (`fond/page` → `--fond-page`), les alias conservés en `var(…)`, les tailles
+  en px, le mode Terrain sous `[data-densite="terrain"]`. Le fichier
+  `design/interface/variables.css` est régénéré à chaque construction et ne se
+  modifie jamais à la main (O23, levé le 20/10/2026).
 
 > **M11** — Un agent qui développe un écran le compare à son image validée.
 > Un écart nécessaire (une contrainte technique, un état manquant) se
@@ -322,8 +361,8 @@ posent au plus tôt après la V1.
 
 | # | Question | Quand |
 |---|---|---|
-| O22 | Le contrôle M6 se fait-il avec `figcraft-cli` (lecture des liaisons de variables du fichier) ? | Au premier composant |
-| O23 | `figcraft-cli` sait-il exporter les variables en un format lisible par un script, pour les transcrire dans le code ? | Avant le premier composant React |
+| O22 | Le contrôle M6 se fait-il avec `figcraft-cli` (lecture des liaisons de variables du fichier) ? **Levé le 20/10/2026** : oui, `node.get` rend les liaisons ; voir `design/interface/controle.py` | Au premier composant |
+| O23 | `figcraft-cli` sait-il exporter les variables en un format lisible par un script, pour les transcrire dans le code ? **Levé le 20/10/2026** : `variable.export {format: css}`, mis en forme par `design/interface/exporter_css.py` | Avant le premier composant React |
 | O24 | Construire les écrans par la ligne de commande ou par le serveur MCP de FigCraft : lequel tient le mieux ? **En partie levé le 19/10/2026** : `figcraft-cli run` construit des cadres, des textes et des liens de prototype (essai à deux écrans, lien enregistré dans le fichier). Les identifiants rendus sont des entiers attribués dans l'ordre de création ; un script ne peut pas citer le résultat d'une étape précédente, il faut donc générer les scripts | Au premier wireframe |
 | O26 | Le prototype se joue-t-il sur le téléphone par la version web de FigCraft (serveur FigCraft) ? À défaut : une page générée depuis le fichier (images exportées et zones cliquables lues dans ses liens) | Au premier essai sur le téléphone |
-| O25 | Jeu d'icônes : licence de Lucide pour un usage commercial, à vérifier | Avant l'étape 2 |
+| O25 | Jeu d'icônes : licence de Lucide pour un usage commercial, à vérifier. **Levé le 20/10/2026** : ISC (et MIT pour les icônes issues de Feather), usage commercial permis, avis de copyright à conserver | Avant l'étape 2 |

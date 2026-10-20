@@ -1,0 +1,105 @@
+/* Généré par design/interface/exporter_css.py depuis design/jardin.figcraft.
+   Ne pas modifier à la main : changer la maquette, puis reconstruire (M5). */
+/* Primitives · Mode 1 */
+:root {
+  --neutre-0: #FFFFFF;
+  --neutre-50: #F6F7F4;
+  --neutre-100: #ECEEE9;
+  --neutre-300: #C9CEC6;
+  --neutre-400: #8C948A;
+  --neutre-500: #767E74;
+  --neutre-700: #434A41;
+  --neutre-900: #1B201A;
+  --vert-100: #E3EFE5;
+  --vert-700: #1E5631;
+  --rouge-100: #FBE7E4;
+  --rouge-700: #8A1810;
+  --ambre-100: #FCEFD6;
+  --ambre-700: #663E00;
+  --orange-100: #FDEADB;
+  --orange-700: #743100;
+  --bleu-700: #1F4FA8;
+  --noir-40: rgba(0, 0, 0, 0.40);
+  --taille-12: 12px;
+  --taille-13: 13px;
+  --taille-14: 14px;
+  --taille-15: 15px;
+  --taille-17: 17px;
+  --taille-18: 18px;
+  --taille-20: 20px;
+  --taille-24: 24px;
+  --taille-28: 28px;
+  --taille-36: 36px;
+  --taille-40: 40px;
+  --rayon-4: 4px;
+  --rayon-6: 6px;
+  --rayon-10: 10px;
+  --rayon-13: 13px;
+  --cible-24: 24px;
+  --cible-48: 48px;
+  --police-base: "Inter";
+  --marque-nom: "Nom du produit";
+}
+/* Sémantique · Mode 1 */
+:root {
+  --fond-page: var(--neutre-50);
+  --fond-surface: var(--neutre-0);
+  --fond-sourdine: var(--neutre-100);
+  --fond-carte: var(--neutre-100);
+  --fond-voile: var(--noir-40);
+  --fond-appareil-photo: var(--neutre-900);
+  --texte-principal: var(--neutre-900);
+  --texte-secondaire: var(--neutre-700);
+  --texte-desactive: var(--neutre-500);
+  --texte-inverse: var(--neutre-0);
+  --action-principale: var(--vert-700);
+  --action-principale-texte: var(--neutre-0);
+  --bordure-defaut: var(--neutre-400);
+  --bordure-discrete: var(--neutre-100);
+  --bordure-forte: var(--neutre-900);
+  --focus: var(--bleu-700);
+  --etat-en-retard: var(--rouge-700);
+  --etat-en-retard-fond: var(--rouge-100);
+  --etat-a-faire: var(--ambre-700);
+  --etat-a-faire-fond: var(--ambre-100);
+  --etat-fait: var(--vert-700);
+  --etat-fait-fond: var(--vert-100);
+  --etat-hors-saison: var(--neutre-700);
+  --etat-hors-saison-fond: var(--neutre-100);
+  --etat-non-envoye: var(--orange-700);
+  --etat-non-envoye-fond: var(--orange-100);
+  --etat-erreur: var(--rouge-700);
+  --etat-erreur-fond: var(--rouge-100);
+  --etat-attention: var(--ambre-700);
+  --etat-attention-fond: var(--ambre-100);
+  --typo-famille: var(--police-base);
+  --texte-nom-produit: var(--marque-nom);
+  --forme-rayon-controle: var(--rayon-10);
+  --forme-rayon-case: var(--rayon-4);
+  --forme-rayon-marque: var(--rayon-6);
+  --forme-rayon-pastille: var(--rayon-13);
+}
+/* Densité · Bureau */
+:root {
+  --texte-legende: var(--taille-12);
+  --texte-petit: var(--taille-14);
+  --texte-corps: var(--taille-15);
+  --texte-grand: var(--taille-18);
+  --titre-3: var(--taille-18);
+  --titre-2: var(--taille-24);
+  --titre-1: var(--taille-28);
+  --texte-chiffre: var(--taille-36);
+  --cible-min: var(--cible-24);
+}
+/* Densité · Terrain */
+[data-densite="terrain"] {
+  --texte-legende: var(--taille-13);
+  --texte-petit: var(--taille-15);
+  --texte-corps: var(--taille-17);
+  --texte-grand: var(--taille-20);
+  --titre-3: var(--taille-20);
+  --titre-2: var(--taille-24);
+  --titre-1: var(--taille-28);
+  --texte-chiffre: var(--taille-40);
+  --cible-min: var(--cible-48);
+}
