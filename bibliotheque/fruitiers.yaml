@@ -182,3 +182,46 @@ especes:
         fenetres:
           - {debut: 01/11, fin: 28/02, optimal: [01/11, 28/02], libelle: "Repos végétatif, supprimer le vieux bois"}
         periodicite_annees: 1
+
+  # Deux variantes de conduite (RG-51, Q21) : une taille par variante, aucune
+  # règle commune. La taille d'après récolte (SNHF, Bruxelles Environnement)
+  # est l'autre pratique pour le non remontant : elle n'est pas écrite (D-97).
+  - cle: framboisier
+    nom_commun: Framboisier
+    nom_latin: Rubus idaeus
+    famille: Rosaceae
+    categorie: petits_fruits
+    regles:
+      - cle: framboisier-non-remontant-taille-hiver
+        variante: non-remontant
+        type_intervention: "Taille d'entretien/fructification"
+        type_regle: R2
+        confiance: verifiee
+        sources:
+          - url: https://opera-connaissances.chambres-agriculture.fr/doc_num.php?explnum_id=146758
+            libelle: "Chambre d'agriculture du Rhône, framboisier bio, C. Chevalier (2013) : non remontantes, « en fin d'hiver (février/mars) couper toutes les cannes qui ont déjà produit »"
+            consultee_le: 2026-10-20
+          - url: https://www.aujardin.info/fiches/tailler-entretenir-framboisiers.php
+            libelle: "Au Jardin, framboisiers, V. Macrelle (2025) : non remontants, « attendez plus tard, entre janvier et mars » ; « couper au ras de terre et d'enlever ces tiges mortes »"
+            consultee_le: 2026-10-20
+          - url: https://ecophytopic.fr/sites/default/files/2024-01/Poster%20Produire%20des%20fraboises%20NR.pdf
+            libelle: "Chambre d'agriculture de la Corrèze, DEPHY, K. Barrière (2018) : « Pour les variétés non remontantes, la taille s'effectue généralement en hiver. »"
+            consultee_le: 2026-10-20
+        fenetres:
+          - {debut: 01/02, fin: 31/03, optimal: [01/02, 31/03], libelle: "Couper au ras du sol les cannes qui ont fructifié"}
+        periodicite_annees: 1
+      - cle: framboisier-remontant-taille-hiver
+        variante: remontant
+        type_intervention: "Taille d'entretien/fructification"
+        type_regle: R2
+        confiance: verifiee
+        sources:
+          - url: https://opera-connaissances.chambres-agriculture.fr/doc_num.php?explnum_id=146758
+            libelle: "Chambre d'agriculture du Rhône, framboisier bio, C. Chevalier (2013) : remontantes, « la taille est simple en hiver : couper toutes les cannes au ras du sol. »"
+            consultee_le: 2026-10-20
+          - url: https://document.environnement.brussels/opac_css/elecfile/IF%20Potager%2007%20Arbustes%20petits%20fruits%20FR
+            libelle: "Bruxelles Environnement, info-fiche potager n° 7 (2012), framboisiers d'automne (remontants en France) : « En novembre, coupez tout au ras du sol. »"
+            consultee_le: 2026-10-20
+        fenetres:
+          - {debut: 01/11, fin: 28/02, optimal: [01/11, 28/02], libelle: "Conduit pour la récolte d'automne : couper toutes les cannes au ras du sol"}
+        periodicite_annees: 1
