@@ -207,7 +207,7 @@ donc à un seul endroit, et l'interface suit.
 | T6 | Lecture d'un QR | Terrain | Étiquettes scannables | 4 |
 | T7 | Carte terrain et ordre de tournée. On y entre par un **bouton « Carte »** dans l'en-tête de T1, pas par un glissé (19/10/2026) ; la tournée est un panneau fixe sous la carte, sans glissé (vague 6, Q-UX-10) | Terrain | Carte | 4 |
 | B1 | Connexion | Bureau | Socle | 0 |
-| B2 | Mise en route : jardin, profil climatique | Bureau | P0 | 0 |
+| B2 | Mise en route : jardin, commune, profil climatique proposé | Bureau | P0 | 0 |
 | B3 | Inventaire rapide : zones, puis plantes (saisie en ligne, duplication, collage) | Bureau | P0 | 0 |
 | B4 | Tableau de bord : aujourd'hui, semaine, mois, groupé par zone, avec explication | Bureau | P3 | 0 |
 | B5 | Liste des plantes : tableau, filtres, édition en masse | Bureau | Inventaire | 0 |

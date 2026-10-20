@@ -8,7 +8,7 @@ chapitres techniques 1 à 6, et la méthode du chapitre 7 (`README.md`).
 - [Lire ce contrat](#lire-ce-contrat)
 - [Chantier 0 — V1 à V22, V127](#chantier-0--v1-à-v22-v127)
 - [Schéma — V23 à V31, V129](#schéma--v23-à-v31-v129)
-- [Cloisonnement et comptes — V32 à V41, V128](#cloisonnement-et-comptes--v32-à-v41-v128)
+- [Cloisonnement et comptes — V32 à V41, V128, V135, V136](#cloisonnement-et-comptes--v32-à-v41-v128-v135-v136)
 - [Moteur d'échéances — V42 à V61](#moteur-déchéances--v42-à-v61)
 - [Bibliothèque — V62 à V70](#bibliothèque--v62-à-v70)
 - [Calcul en base et lectures — V71 à V80](#calcul-en-base-et-lectures--v71-à-v80)
@@ -271,7 +271,7 @@ plantes.
 
 ---
 
-## Cloisonnement et comptes — V32 à V41, V128
+## Cloisonnement et comptes — V32 à V41, V128, V135, V136
 
 **V32 — Le jardin courant n'est jamais nul** · API · A11
 `JardinCourant::id()` sans positionnement préalable lève une exception ; il ne
@@ -317,7 +317,9 @@ l'utilisateur, et le jardin courant (identifiant, nom, profil climatique).
 - Autre jardin : le nouveau jardin ne voit aucune donnée de l'autre jardin du
   même utilisateur (zones, plantes).
 - En base : une ligne `jardins`, une ligne `adhesions` ; changer ensuite le
-  profil ne modifie que `jardins.profil_climatique_id`.
+  profil ne modifie que `jardins.profil_climatique_id`. La commune est
+  facultative ; un code de commune inconnu → `422`, rien n'est créé ; seul
+  `jardins.commune_insee` est écrit, jamais des coordonnées (RG-28).
 
 **V40 — On ne bascule que vers un jardin dont on est membre** · API · RG-20, RG-43
 Basculer vers un jardin où l'utilisateur a une adhésion change le jardin
@@ -338,6 +340,25 @@ Chaque route du registre déclare le rôle qu'elle exige. Connecté en membre du
 jardin A, une route réservée au propriétaire rend `403` et laisse A intact ; une
 route ouverte au membre (lecture, `POST /interventions`, `POST /echeances/fait`,
 `POST /photos`, `GET /export`) rend le même code que pour le propriétaire.
+
+**V135 — Le référentiel des communes s'importe à l'identique** · base · RG-52, §8.6, décision D-66
+Importé deux fois depuis le même fichier témoin (communes, stations, altitudes
+inventées), le référentiel donne les mêmes lignes ; chaque commune porte son
+altitude, sa station, son écart de température, son décalage calculé et son
+profil proposé. Une station dont la période est incomplète n'est jamais
+retenue. Aucun appel réseau pendant l'import ni pendant les tests.
+
+**V136 — Le profil se propose depuis la commune** · API · *flux critique* · RG-23, RG-26, RG-52, décision D-66 · écran B2
+- Nominal : une commune du témoin à basse altitude rend le profil le plus
+  proche de son décalage calculé, avec la station, l'écart et le décalage
+  pour l'explication ; une commune au-dessus de 600 m rend « Montagne » ; une
+  commune entre 400 et 800 m rend en plus `demander_altitude: true`.
+- Recherche : par nom (sans accents ni casse) ou par code postal, 10
+  résultats au plus.
+- Refus : une commune inconnue → `404`, et la liste des cinq profils reste
+  proposée.
+- Rien n'est écrit : seul `POST /jardins` enregistre la commune et le profil
+  choisis.
 
 ---
 
@@ -989,6 +1010,7 @@ Chaque assertion est couverte par au moins un sprint de `tasks.md`.
 | 2c | V36, V37, V38 |
 | 2d | V39, V40 |
 | 2e | V41, V128 |
+| 2f | V135, V136 |
 | 3a | V42, V43, V44, V45 |
 | 3b | V46, V47, V48, V49, V50 |
 | 3c | V51, V52, V53, V54 |

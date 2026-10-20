@@ -282,9 +282,10 @@ Un jardin porte :
 > **RG-23** — Le **profil climatique** est saisi à la création et n'est pas
 > facultatif : sans lui, les règles de la bibliothèque ne peuvent pas être
 > calées et l'outil produit des échéances fausses dès le premier jour (§5.4).
-> Au MVP il est **choisi par l'utilisateur dans une liste courte**, pas déduit
-> d'un référentiel géographique. La localisation précise, elle, reste
-> facultative : elle ne sert qu'à la météo (lot 5).
+> Il est **proposé depuis la commune** que l'utilisateur saisit (RG-52), et
+> l'utilisateur le confirme ou en choisit un autre dans la liste des cinq
+> profils. Sans commune, il le choisit dans cette liste. La localisation
+> précise, elle, reste facultative : elle ne sert qu'à la météo (lot 5).
 
 ### 3.2 Trois niveaux, deux entités
 
@@ -920,10 +921,15 @@ Les deux moitiés se séparent proprement :
 | Champ `décalage_jours` sur le jardin | ✅ | |
 | Application du décalage aux fenêtres par le moteur | ✅ | |
 | Mention du décalage dans l'explication de l'échéance | ✅ | |
-| **Choix du profil dans une liste de 5 entrées** | ✅ | |
-| Déduction automatique depuis la commune | | ✅ |
-| Correction par altitude | | ✅ |
+| **Choix du profil dans une liste de 5 entrées** (repli) | ✅ | |
+| **Proposition depuis la commune** (RG-52) | ✅ | |
+| **Correction par altitude** (RG-52) | ✅ | |
 | Ajustement sur la météo réelle | | ✅ (lot 5) |
+
+*Décision du 20/10/2026 : la proposition depuis la commune entre dans la V1.*
+Un utilisateur qui découvre l'outil ne sait pas à quel profil il appartient, et
+les zones de rusticité ne lui disent rien ; un produit vendu ne peut pas faire
+reposer ses premières dates sur cette devinette.
 
 Liste proposée au MVP — une question, un menu déroulant, aucune dépendance :
 
@@ -955,6 +961,30 @@ Liste proposée au MVP — une question, un menu déroulant, aucune dépendance 
 > (RG-44). C'est la seule limite au mécanisme de RG-25, et elle est nécessaire :
 > sans elle, un profil climatique suffit à faire franchir une interdiction
 > saisonnière.
+
+> **RG-52** — Le profil proposé se déduit de la commune, en trois temps, tous
+> calculés **à l'import du référentiel**, jamais au moment du calcul des
+> échéances (§8.6) :
+>
+> 1. **Altitude.** Au-dessus de 600 m, l'outil propose « Montagne ». Entre 400
+>    et 800 m, il demande en plus « Votre jardin est-il à plus de 600 m ? »,
+>    parce que l'altitude d'une commune n'est pas celle de chaque jardin.
+> 2. **Température.** Sinon, il prend la station Météo-France la plus proche
+>    dont les normales 1991-2020 sont complètes, ramène sa température à
+>    l'altitude de la commune, et compare la moyenne de février à avril à celle
+>    de la station de référence de la plaine tempérée.
+> 3. **Décalage.** L'écart, multiplié par un coefficient en jours par degré,
+>    donne un décalage ; l'outil propose le profil dont le décalage est le plus
+>    proche.
+>
+> L'écran dit pourquoi (« station de Bordeaux, 1,4 °C de plus qu'en plaine
+> tempérée : dates avancées d'environ 8 jours »), et le profil reste
+> modifiable (RG-26). La proposition est marquée **indicative** tant que le
+> coefficient n'est pas mesuré sur des plantes de jardin (Q24).
+>
+> Sources, toutes sous Licence Ouverte 2.0, citées dans les mentions légales
+> avec leur date de mise à jour : base officielle des codes postaux (La Poste),
+> fiches climatologiques (Météo-France), service altimétrique (IGN).
 
 > **RG-26** — Le décalage est **visible et corrigeable par l'utilisateur**, et
 > l'explication de l'échéance (RG-06) le mentionne : « taille du pommier,
@@ -1018,9 +1048,11 @@ et laisse le reste au lot « Ouverture ».
   par défaut** (RG-21) dès la première migration. C'est la partie
   irrattrapable, et elle est quasi gratuite.
 - **Un compte propriétaire**, créé en base à l'installation. Connexion simple.
-- **Création du jardin** : nom obligatoire, **profil climatique choisi dans
-  une liste de 5 entrées** (RG-23, §5.4). Pas de géocodage, pas de référentiel
-  de communes.
+- **Création du jardin** : nom obligatoire, **profil climatique proposé depuis
+  la commune** (RG-23, RG-52), ou choisi dans une liste de 5 entrées. Le
+  référentiel des communes est importé sur le serveur ; aucun géocodage
+  d'adresse. Une page « Sources des données » cite La Poste, Météo-France et
+  l'IGN, comme la Licence Ouverte l'exige.
 - **Export intégral** des données (§8.1) — utile pour soi bien avant d'être une
   obligation légale.
 
@@ -1100,13 +1132,8 @@ parcours.
 - Mentions légales, politique de confidentialité, information sur la
   localisation du jardin (RG-28).
 - Quota de photos appliqué et signalé à l'utilisateur.
-- **Déduction du profil climatique depuis la commune**, avec correction par
-  altitude, proposée à la création du jardin et toujours modifiable (RG-26). Le
-  calcul s'appuie sur un référentiel de communes **importé sur le serveur**,
-  jamais interrogé à distance : l'échéance reste calculable sans réseau (§8.6).
-  La liste de 5 profils du MVP reste le repli. Ce lot est le bon moment parce
-  qu'un utilisateur qui découvre l'outil ne sait pas à quel profil il
-  appartient, alors que le jardin pilote le sait.
+- *La déduction du profil depuis la commune, prévue ici, est avancée au lot 0
+  (§5.4, décision du 20/10/2026).*
 
 > **RG-42** — Ce lot devient **obligatoire dès qu'un tiers a un compte**, sans
 > exception : les obligations RGPD ne dépendent pas du nombre d'utilisateurs.
@@ -1244,8 +1271,8 @@ blanche, tout le monde arrive avec un terrain déjà planté. Un utilisateur qui
 doit saisir 150 plantes dans un formulaire une par une abandonne avant la
 première échéance.
 
-Inscription → nom du jardin → **profil climatique choisi dans une liste de cinq
-entrées** (RG-23 : au MVP il est choisi, jamais déduit d'une commune) →
+Inscription → nom du jardin → **commune, et profil climatique proposé**
+(RG-23, RG-52), confirmé ou changé dans la liste des cinq →
 **création rapide de l'inventaire** :
 
 - déclarer les zones d'abord (5 à 10 lignes, rapide) ;
@@ -1351,7 +1378,8 @@ Elles constituent le **lot Ouverture** (§6) ; seule l'isolation est au MVP.
 > **RG-28** — La localisation d'un jardin est une donnée personnelle
 > sensible : elle désigne le domicile de l'utilisateur. Elle n'est jamais
 > exposée hors de son jardin, ni utilisée à d'autres fins que le calage
-> climatique et la météo (lot 5).
+> climatique et la météo (lot 5). Pour le calage, l'outil ne garde que le code
+> de la commune, jamais une adresse ni des coordonnées.
 
 ### 8.5 Accessibilité et confort
 
@@ -1662,6 +1690,7 @@ sont aussi :
 | Q21 | Framboisier remontant et non remontant | Deux tailles différentes ; B-T7 interdit deux règles du même type sur une espèce | **Tranchée le 20/10/2026** — une espèce, deux variantes de conduite choisies à la création de la plante (RG-51) |
 | Q22 | Périodicité de la haie caduque | Une haie taillée de jardin se reprend chaque année (non sourcé), une haie bocagère tous les 2 à 3 ans (sourcé) | **Tranchée le 20/10/2026 par le sourçage** — 1 an : deux sources de jardin indépendantes (Quimperlé Communauté, CAUE 76) taillent la haie au moins une fois par an ; le « 2 à 3 ans » ne vaut que pour le bocage |
 | Q23 | Traitements fruitiers | Écrits en R3 (hors MVP) et non sourcés, alors que le plan les attend dans la bibliothèque du sprint 4b | **Tranchée le 20/10/2026** — retirés de la liste de départ |
+| Q24 | Coefficient du décalage climatique | RG-52 multiplie un écart de température par un coefficient en jours par degré. La seule valeur trouvée (5,7 j/°C, Vitasse et al. 2010) est mesurée sur des arbres forestiers. Station de référence et seuils sont aussi à fixer. Lyon sort à +2 j alors que la liste le range à −7 j : c'est peut-être le profil « Sud-Ouest, vallée du Rhône », jamais sourcé, qui est faux | **En cours de sourçage** — coefficient mesuré sur des fruitiers, gradient d'altitude de Météo-France, station de référence ; d'ici là la proposition est indicative |
 
 ---
 
@@ -1723,6 +1752,7 @@ Décisions actées, pour ne pas les rouvrir sans raison nouvelle.
 | 20/10/2026 | **L'annexe A prend les valeurs du sourçage**, avec leur niveau de confiance | Les valeurs de la v0.13 venaient de sources de vulgarisation. La haie persistante passe à une seule fenêtre (la seconde tombait en nidification), le rosier perd « jusqu'en novembre », la pelouse reçoit des intervalles mensuels. Vigne, groseillier à grappes, cassissier et arbuste à floraison printanière entrent dans la liste de départ ; le groseillier à maquereau en est écarté | Annexe A, §5.1 |
 | 20/10/2026 | **Les questions que le sourçage ne tranche pas sont posées à Léon**, pas résolues : nature de la nidification, pêcher, framboisier, haie caduque, traitements | Elles engagent le comportement du produit ou une règle de test, pas seulement une valeur | Q19 à Q23 |
 | 20/10/2026 | **Une espèce peut porter des variantes de conduite** ; le framboisier en a deux, remontant et non remontant, choisies à la création de la plante | Décision de Léon (Q21). Deux espèces auraient obligé l'utilisateur à savoir que « framboisier remontant » est une espèce à part ; une variante pose la question au moment où elle compte | RG-51, §5.1, annexe A |
+| 20/10/2026 | **Le profil climatique est proposé depuis la commune dès la V1** ; la liste des cinq devient le repli | Remarque de Léon : un nouvel utilisateur ne sait pas se situer dans une liste, et l'outil ne vise que la France. La typologie climatique par commune (Joly et al., 2010) est réservée aux services publics ; les normales des stations Météo-France, la base des codes postaux et le service altimétrique de l'IGN sont sous Licence Ouverte, usage commercial permis. Le moteur ne change pas : il reçoit toujours un décalage en jours | RG-23, RG-28, RG-52, §5.4, lot 0, Q24 |
 | 20/10/2026 | **Les zones ne portent plus d'ordre de tournée** ; elles se listent par ordre alphabétique, et la tournée du jour se calcule depuis la position (lot 4) | Remarque de Léon : sur un petit terrain l'ordre n'apporte rien, sur un grand il change d'une année et d'une sortie à l'autre. Le déclarer à la mise en route coûtait une étape pour une donnée vite fausse. Le critère 21 est tenu par la tournée calculée et modifiable du jour | §3.3, critère 21, modèle de données |
 | 20/10/2026 | **La nidification reste un butoir dur ; l'explication dit « déconseillée »** | Décision de Léon (Q19) : ne rien changer au comportement. Dire « interdit » à un particulier serait inexact, mais l'outil ne propose pas ce qu'il déconseille | RG-44 |
 | 20/10/2026 | **B-T1 garde sa portée, avec une exception nominative : pêcher et nectarinier peuvent avoir une fenêtre en février, jamais en décembre ni en janvier** ; le pêcher entre dans la liste de départ, fenêtre 01/03 → 31/03 | Décision de Léon (Q20) : suivre la majorité. Sur les espèces à noyau établies par des sources de rang, quatre évitent l'hiver (cerisier, prunier, reine-claude, abricotier), deux se taillent en fin d'hiver. Décembre et janvier restent interdits à tous, ce qui continue d'attraper la confusion pépins/noyaux. Le 01/02 de l'ancienne fenêtre ne venait que de la vulgarisation ; « en mars » vient de la SNHF | B-T1, §5.1, annexe A, `docs/plan/recherche-q20-q22.md` |

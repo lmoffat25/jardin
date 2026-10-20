@@ -62,52 +62,114 @@ def champ(parent, x, y, w, libelle, valeur=None, indication=None, erreur=None, h
 
 
 # --- B2 · Le jardin et son climat ---------------------------------------------
-PROFILS = [  # libellé, ce que ça change, où (CDC §5.4)
-    ("Midi, littoral méditerranéen", "15 jours plus tôt", "Zones 9 à 10"),
-    ("Sud-Ouest, vallée du Rhône", "7 jours plus tôt", "Zones 8 à 9"),
+PROFILS = [  # libellé, ce que ça change, exemples (CDC §5.4, essai de RG-52)
+    ("Midi, littoral méditerranéen", "15 jours plus tôt", "Perpignan, Nice"),
+    ("Sud-Ouest, vallée du Rhône", "7 jours plus tôt", "Bordeaux"),
     ("Plaine tempérée", "dates de référence", "Bassin parisien, centre"),
-    ("Nord, Est, océanique frais", "7 jours plus tard", "Zones 7 à 8"),
-    ("Montagne, plus de 600 m", "21 jours plus tard", "Zones 5 à 7"),
+    ("Nord, Est, océanique frais", "7 jours plus tard", "Strasbourg"),
+    ("Montagne, plus de 600 m", "21 jours plus tard", "Au-dessus de 600 m"),
 ]
 
 
-def b2(nom, choisi: int | None, valeur_nom=None, erreur=False):
+def rond(parent, x, y, sel):
+    r = d.cadre("Choix", parent, x, y, 24, 24, fond=FORT if sel else FOND, rayon=12, trait=FORT)
+    if sel:
+        d.cadre("Point", r, 8, 8, 8, 8, fond=BLANC, rayon=4)
+
+
+def b2_tete(nom, valeur_nom=None, commune=None):
     f = ecran(nom)
     entete(f, 0)
     d.texte(f, CX, 112, COL, "Votre jardin", 32, gras=True)
     d.texte(f, CX, 160, COL, "Deux questions, puis on passe à ce qui pousse.", 17, couleur=SECOND)
     champ(f, CX, 216, COL, "Son nom", valeur_nom, "Par exemple : La maison, Chez mes parents")
-    d.texte(f, CX, 322, COL, "Son climat", 15, gras=True)
-    d.texte(f, CX, 346, COL, "Il cale les dates d'entretien : une même taille se fait environ trois "
-            "semaines plus tôt dans le Midi qu'en montagne.", 15, couleur=SECOND)
+    champ(f, CX, 316, COL, "Sa commune", commune, "Nom ou code postal")
+    return f
+
+
+def b2_suite(f):
+    return d.bouton(f, CX + COL - 220, BH - 112, 220, 56, "Continuer", principal=True)
+
+
+def b2_autre(f, y, libelle="Choisir un autre climat"):
+    a = d.cadre(f"Lien · {libelle}", f, CX, y, 320, 32)
+    d.texte(a, 0, 6, 320, f"{libelle} →", 15, gras=True)
+    return a
+
+
+def b2_propose(f, y, profil, raison):
+    lib, decal, _ = PROFILS[profil]
+    d.texte(f, CX, y, COL, "Son climat, proposé d'après la commune", 15, gras=True)
+    c = d.cadre(f"Climat proposé · {lib}", f, CX, y + 30, COL, 96, fond=SURFACE, rayon=8,
+                trait=FORT)
+    rond(c, 16, 18, True)
+    d.texte(c, 56, 19, 480, lib, 16, gras=True)
+    d.texte(c, 576, 19, 170, decal, 15, gras=True, align="right")
+    d.texte(c, 56, 50, COL - 80, raison, 14, couleur=SECOND)
+    return y + 30 + 96
+
+
+def b2_vide():
+    f = b2_tete("B2 · 01 · Votre jardin")
+    d.texte(f, CX, 420, COL, "Son climat", 15, gras=True)
+    d.texte(f, CX, 446, COL, "Il cale les dates d'entretien : une même taille se fait environ trois "
+            "semaines plus tôt dans le Midi qu'en montagne. Votre commune suffit pour le "
+            "proposer.", 15, couleur=SECOND)
+    liste = b2_autre(f, 510, "Pas de commune ? Choisir dans une liste")
+    return f, liste, b2_suite(f)
+
+
+def b2_avec_commune():
+    f = b2_tete("B2 · 02 · Votre jardin — climat proposé", "Le Clos", "Bordeaux (33000)")
+    y = b2_propose(f, 420, 1, "Station de Bordeaux-Mérignac : 1,4 °C de plus qu'en plaine "
+                   "tempérée de février à avril, soit des dates avancées d'environ 8 jours. "
+                   "Indicatif : vous pourrez le changer à tout moment.")
+    autre = b2_autre(f, y + 16)
+    return f, autre, b2_suite(f)
+
+
+def b2_altitude():
+    f = b2_tete("B2 · 03 · Votre jardin — altitude à préciser", "Le Clos", "Gap (05000)")
+    y = b2_propose(f, 420, 4, "Le centre de Gap est à 735 m. Une commune s'étend souvent sur "
+                   "plusieurs centaines de mètres de dénivelé : votre terrain peut être plus bas.")
+    d.texte(f, CX, y + 20, COL, "Votre jardin est-il à plus de 600 m ?", 15, gras=True)
+    for k, rep in enumerate(["Oui", "Non, plus bas", "Je ne sais pas"]):
+        c = d.cadre(f"Altitude · {rep}", f, CX + k * 200, y + 50, 184, 48, fond=FOND, rayon=8,
+                    trait=TRAIT)
+        rond(c, 14, 12, False)
+        d.texte(c, 50, 13, 130, rep, 15)
+    autre = b2_autre(f, y + 118)
+    return f, autre, b2_suite(f)
+
+
+def b2_liste(nom, valeur_nom=None, erreur=False):
+    f = b2_tete(nom, valeur_nom)
+    d.texte(f, CX, 420, COL, "Son climat", 15, gras=True)
     cartes = []
     for i, (lib, decal, ou) in enumerate(PROFILS):
-        sel = i == choisi
-        c = d.cadre(f"Climat · {lib}", f, CX, 396 + i * 62, COL, 54, fond=SURFACE if sel else FOND,
-                    rayon=8, trait=FORT if sel or erreur else TRAIT)
-        rond = d.cadre("Choix", c, 16, 15, 24, 24, fond=FORT if sel else FOND, rayon=12, trait=FORT)
-        if sel:
-            d.cadre("Point", rond, 8, 8, 8, 8, fond=BLANC, rayon=4)
+        c = d.cadre(f"Climat · {lib}", f, CX, 452 + i * 62, COL, 54, fond=FOND, rayon=8,
+                    trait=FORT if erreur else TRAIT)
+        rond(c, 16, 15, False)
         d.texte(c, 56, 16, 330, lib, 16, gras=True)
         d.texte(c, 390, 17, 190, ou, 14, couleur=SECOND)
-        d.texte(c, 576, 16, 170, decal, 15, gras=sel, align="right")
+        d.texte(c, 576, 16, 170, decal, 15, align="right")
         cartes.append(c)
-    y = 396 + 5 * 62 + 4
+    y = 452 + 5 * 62 + 4
     if erreur:
         with d.etat("erreur"):
-            d.texte(f, CX, y, COL, "⚠ Choisissez un climat : sans lui, les dates proposées "
-                    "seraient fausses dès le premier jour.", 15, gras=True)
+            d.texte(f, CX, y, COL, "⚠ Indiquez votre commune ou choisissez un climat : sans lui, "
+                    "les dates proposées seraient fausses dès le premier jour.", 15, gras=True)
     else:
-        d.texte(f, CX, y, COL, "Vous pourrez le changer. Commune, altitude et surface se "
-                "renseignent plus tard, si besoin.", 14, couleur=SECOND)
-    suite = d.bouton(f, CX + COL - 220, BH - 112, 220, 56, "Continuer", principal=True)
-    return f, cartes, suite
+        d.texte(f, CX, y, COL, "Vous pourrez le changer. Altitude et surface se renseignent plus "
+                "tard, si besoin.", 14, couleur=SECOND)
+    return f, cartes, b2_suite(f)
 
 
-b2a, b2a_cartes, b2a_suite = b2("B2 · 01 · Votre jardin", None)
-b2b, b2b_cartes, b2b_suite = b2("B2 · 02 · Votre jardin — rempli", 3, valeur_nom="Le Clos")
-b2c, b2c_cartes, _ = b2("B2 · 03 · Votre jardin — climat manquant", None, valeur_nom="Le Clos",
-                        erreur=True)
+b2a, b2a_liste, b2a_suite = b2_vide()
+b2b, b2b_autre, b2b_suite = b2_avec_commune()
+b2h, b2h_autre, b2h_suite = b2_altitude()
+b2l, b2l_cartes, b2l_suite = b2_liste("B2 · 04 · Votre jardin — choisir dans la liste", "Le Clos")
+b2c, b2c_cartes, _ = b2_liste("B2 · 05 · Votre jardin — climat manquant", "Le Clos", erreur=True)
 
 # --- B3 · Les zones -----------------------------------------------------------
 ZONES = ["Haies", "Massif d'entrée", "Pelouse", "Verger bas", "Verger haut"]  # alphabétique
@@ -290,12 +352,14 @@ carte = d.bouton(pause, CX + (COL - 320) // 2, 536, 320, 56, "Placer les zones s
 b4 = ecran("B4 · 01 · À faire")
 
 # --- Prototype : P0 ------------------------------------------------------------
-for c in b2a_cartes:
-    d.lien(c, b2b, "instant")
-for c in b2c_cartes:
-    d.lien(c, b2b, "instant")
+d.lien(b2a_liste, b2l, "instant")
 d.lien(b2a_suite, b2c, "instant")
-d.lien(b2b_suite, b3z)
+d.lien(b2b_autre, b2l, "instant")
+d.lien(b2h_autre, b2l, "instant")
+for c in b2l_cartes + b2c_cartes:
+    d.lien(c, b2b, "instant")
+for s in (b2b_suite, b2h_suite, b2l_suite):
+    d.lien(s, b3z)
 d.lien(b3z_suite, b3v)
 d.lien(b3v_suite, b3p)
 for bouton in (b3v_coller, b3p_coller):
@@ -314,9 +378,11 @@ d.cmd("proto.settings", device="Custom size", width=BW, height=BH)
 
 d.noeud("text", x=-680, y=120, text=(
     "VAGUE 2 — MISE EN ROUTE (P0)   [à valider]\n\n"
-    "B2 · Deux questions : le nom et le climat. Le climat n'est pas présélectionné : un choix par "
-    "défaut passerait sans être lu, et donnerait des dates fausses sans que rien ne proteste "
-    "(RG-23). Chaque climat dit ce qu'il change (« 7 jours plus tard »), pas un chiffre brut.\n\n"
+    "B2 · Deux questions : le nom et la commune. Le climat se propose depuis la commune, avec sa "
+    "raison (station, écart, décalage), et reste modifiable (RG-52, RG-26). Entre 400 et 800 m, "
+    "l'outil demande si le jardin est au-dessus de 600 m. Sans commune, la liste des cinq, sans "
+    "présélection : un choix par défaut passerait sans être lu (RG-23). Chaque climat dit ce "
+    "qu'il change (« 7 jours plus tard »), pas une zone de rusticité.\n\n"
     "B3 · Les zones d'abord (5 à 10 lignes), puis les plantes zone par zone : une pastille par "
     "zone, un tableau par zone, « Zone suivante » pour avancer (Q-UX-15). Une ligne = un "
     "nom et une espèce. La colonne « Nb » fait la duplication (12 pommiers numérotés d'un coup). "

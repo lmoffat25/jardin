@@ -28,6 +28,8 @@ que la réponse arrive avant le sprint.
 - [Q-UX-12 — Mot de passe oublié](#q-ux-12--mot-de-passe-oublié)
 - [Q-UX-13 — Supprimer un type d'intervention déjà utilisé](#q-ux-13--supprimer-un-type-dintervention-déjà-utilisé)
 - [Q-UX-14 — Choisir la variante de conduite à la création](#q-ux-14--choisir-la-variante-de-conduite-à-la-création)
+- [Q-UX-15 — Saisir les plantes zone par zone](#q-ux-15--saisir-les-plantes-zone-par-zone)
+- [Q-UX-16 — Altitude incertaine à la création du jardin](#q-ux-16--altitude-incertaine-à-la-création-du-jardin)
 
 ---
 
@@ -261,4 +263,18 @@ tableau avec une colonne « Zone », ou une zone à la fois ?
 2. Un seul tableau avec une colonne « Zone » (version précédente).
 
 **Ce qui attend :** rien ne bloque. Proposé par Léon le 20/10/2026.
+**Réponse :**
+
+## Q-UX-16 — Altitude incertaine à la création du jardin
+
+**Question :** quand la commune est entre 400 et 800 m (RG-52), que fait l'écran
+de la réponse « Je ne sais pas » ?
+**Concerne :** B2 · 03 (vague 2), V136.
+**Options :**
+1. **Recommandé, dessiné — garder le profil tiré de l'altitude du centre** de la
+   commune, avec sa raison, sans autre question : il se corrige à tout moment
+   (RG-26), et une question de plus retarde la première échéance.
+2. Ne rien proposer et ouvrir la liste des cinq.
+
+**Ce qui attend :** rien ne bloque. Tranché par la recommandation le 20/10/2026.
 **Réponse :**

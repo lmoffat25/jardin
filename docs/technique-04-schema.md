@@ -138,12 +138,25 @@ CREATE TABLE profils_climatiques (          -- référence, 5 lignes
     ordre_affichage smallint     NOT NULL
 );
 
+CREATE TABLE communes (                     -- référence, importée (RG-52, D-66)
+    code_insee            char(5)  PRIMARY KEY,
+    nom                   varchar(120) NOT NULL,
+    nom_recherche         varchar(120) NOT NULL,  -- sans accents ni casse
+    codes_postaux         varchar(60)  NOT NULL,
+    altitude_m            integer  NOT NULL,
+    station               varchar(80)  NOT NULL,
+    ecart_c               numeric(4,1) NOT NULL,
+    decalage_jours        smallint NOT NULL,
+    profil_propose_id     smallint NOT NULL REFERENCES profils_climatiques(id)
+);
+CREATE INDEX communes_recherche ON communes (nom_recherche varchar_pattern_ops);
+
 CREATE TABLE jardins (
     id                    uuid PRIMARY KEY,
     proprietaire_id       uuid     NOT NULL REFERENCES utilisateurs(id),
     nom                   varchar(120) NOT NULL,
     profil_climatique_id  smallint NOT NULL REFERENCES profils_climatiques(id),
-    commune               varchar(120),
+    commune_insee         char(5) REFERENCES communes(code_insee),
     latitude              numeric(9,6),
     longitude             numeric(9,6),
     altitude_m            integer,

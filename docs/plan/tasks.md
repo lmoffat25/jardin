@@ -21,7 +21,8 @@ et la méthode du chapitre 7 (`README.md`). Contrat : `validation-contract.md`.
   [2b](#sprint-2b--comptes-adhésions-profils-jobs-de-jardin) ·
   [2c](#sprint-2c--connexion-et-props-partagées) ·
   [2d](#sprint-2d--créer-un-jardin-choisir-son-profil-basculer) ·
-  [2e](#sprint-2e--le-test-qui-énumère-les-routes-et-les-rôles)
+  [2e](#sprint-2e--le-test-qui-énumère-les-routes-et-les-rôles) ·
+  [2f](#sprint-2f--proposer-le-climat-depuis-la-commune)
 - Moteur : [3a](#sprint-3a--projection-décalage-butoirs) ·
   [3b](#sprint-3b--règle-r2--états-manquées-pluriannuel-explication) ·
   [3c](#sprint-3c--fenêtres-multiples-et-occurrences-closes) ·
@@ -621,7 +622,7 @@ Chaque sprint, en plus de sa propre porte :
 **Constructeur :** back
 **Risque :** complet
 **Lecture :** CDC RG-20, RG-22, RG-23, RG-26, §5.4 ; chapitre 3 §2 (module Comptes) ; `conception-ecrans.md` (B2) ; décisions D-47, D-48.
-**Contrat :** `GET /jardins/nouveau` → `Bureau/Jardin` (B2) ; `POST /jardins {nom, profil_climatique_id}` → `302 /` ; `PUT /jardin {nom, profil_climatique_id}` (jardin courant, propriétaire seul ; `commune` n'est pas écrite en V1, D-48) ; `POST /jardins/{jardin}/basculer` → `302 /` ou `403`.
+**Contrat :** `GET /jardins/nouveau` → `Bureau/Jardin` (B2) ; `POST /jardins {nom, profil_climatique_id, commune_insee?}` → `302 /` ; `PUT /jardin {nom, profil_climatique_id, commune_insee?}` (jardin courant, propriétaire seul ; seul le code de commune est écrit, jamais des coordonnées, D-48, D-66) ; `POST /jardins/{jardin}/basculer` → `302 /` ou `403`.
 **Tests d'abord :** `tests/Routes/JardinTest.php` ; premier rouge attendu : « route /jardins absente ».
 **Preuve :** rouge
 **Itérer sur / lancer une fois :** les deux classes / `make verifier`.
@@ -676,6 +677,33 @@ Chaque sprint, en plus de sa propre porte :
 
 - [ ] Implémenter `tests/Routes/CloisonnementTest.php` : `Route::getRoutes()` ; toute route hors registre et hors `EXCEPTIONS` → échec nommant la route ; pour chaque entrée, connecté sur A : `lit` avec les identifiants de B → `404` ou `403`, corps sans `MARQUEUR-B` ni identifiant de B ; `liste` → corps sans `MARQUEUR-B` ni identifiant de B ; `ecrit` avec identifiants de B → empreinte de B (`md5` des lignes de chaque table de B, lues par Eloquent sans scope) identique avant et après. Groupe `critere-12`.
 - [ ] Implémenter `tests/Routes/RolesTest.php` : pour chaque entrée du registre, connecté en membre de A : `role: proprietaire` → `403` et empreinte de A inchangée ; `role: membre` → même code que pour le propriétaire (V128).
+
+---
+
+## Sprint 2f — Proposer le climat depuis la commune
+<!-- taille : 2 assertions, 7 fichiers, 2 classes de test -->
+
+**Objectif :** l'utilisateur tape sa commune, l'outil lui propose un profil climatique et lui dit pourquoi ; le référentiel est importé sur le serveur, jamais interrogé à distance.
+**Constructeur :** back
+**Risque :** complet
+**Lecture :** CDC RG-23, RG-26, RG-28, RG-52, §5.4, §8.6, Q24 ; `docs/plan/recherche-climat.md` ; `conception-ecrans.md` (B2) ; décision D-66.
+**Contrat :** table `communes` (chapitre 4) ; `php artisan jardin:importer-communes {dossier}` lit `bibliotheque/climat/communes.csv`, produit hors CI par `scripts/climat/generer-communes.py` (seul à toucher le réseau) ; `GET /communes?q=` → JSON `[≤ 10, {code_insee, nom, codes_postaux}]` ; `GET /communes/{code_insee}/profil` → JSON `{profil_climatique_id, station, ecart_c, decalage_jours, demander_altitude, confiance: "indicative"}` ou `404`.
+**Tests d'abord :** `tests/Persistance/ImportCommunesTest.php` ; premier rouge attendu : « commande jardin:importer-communes absente ».
+**Preuve :** rouge
+**Itérer sur / lancer une fois :** les deux classes / `make verifier`.
+**Porte :** `make verifier`, puis la CI de la demande de fusion.
+**Vérification en marche :** sans objet
+**Question UX possible :** aucune — B2 · 01 à B2 · 05 sont dessinés
+**En attente :** Q24 pour les valeurs (coefficient, station de référence) ; le code et les tests n'en dépendent pas, ils lisent ces valeurs dans `bibliotheque/climat/parametres.yaml`
+**Assertions :** V135, V136
+**Fichiers :** `scripts/climat/generer-communes.py`, `bibliotheque/climat/parametres.yaml`, `src/Comptes/Climat/ImporterCommunes.php`, `src/Comptes/Climat/ProposerProfil.php`, `src/Comptes/Climat/CommuneController.php`, `src/Comptes/routes.php`, `database/migrations/…_creer_communes.php`
+**Classes de test :** `tests/Persistance/ImportCommunesTest.php`, `tests/Routes/ProfilCommuneTest.php`
+**Fin :** une commune saisie rend un profil proposé, sa raison, et la liste des cinq en repli.
+
+- [ ] Écrire `scripts/climat/generer-communes.py` : base officielle des codes postaux (La Poste), COG de l'Insee, liste et fiches climatologiques Météo-France (période 1991-2020 complète seulement), altitude du chef-lieu par le service altimétrique de l'IGN ; calcul de RG-52 avec `parametres.yaml` ; écrit `communes.csv` et la date de chaque source. Le lancer une fois, hors CI, et commiter le CSV.
+- [ ] Implémenter la migration, `ImporterCommunes.php` (idempotent, transaction, aucun réseau), `ProposerProfil.php` (profil le plus proche, montagne au-dessus de 600 m, `demander_altitude` entre 400 et 800 m) et `CommuneController.php` ; modifier `routes.php` ; inscrire les routes au registre (référence partagée, comme la bibliothèque).
+- [ ] `tests/Persistance/ImportCommunesTest.php` : V135, sur un témoin de 12 communes et 4 stations inventées, dont une à période incomplète.
+- [ ] `tests/Routes/ProfilCommuneTest.php` : V136, les quatre cas.
 
 ---
 

@@ -90,7 +90,7 @@ sous-zones et cultures annuelles (lot 3), équipements (hors périmètre).
 | `proprietaire_id` | uuid · FK | oui | 0 | → Utilisateur |
 | `nom` | texte | oui | 0 | « La maison », « Chez mes parents » |
 | `profil_climatique_id` | entier · FK | **oui** | 0 | RG-23 — choisi dans une liste de cinq, jamais déduit au MVP |
-| `commune` | texte | non | 5 | Météo |
+| `commune_insee` | texte (5) | non | 0 | Proposition du profil climatique (RG-52) ; code seul, jamais une adresse (RG-28) |
 | `latitude`, `longitude` | décimal | non | 5 | Donnée personnelle sensible : c'est le domicile (RG-28) |
 | `altitude_m` | entier | non | — | Correction fine du décalage, reportée |
 | `surface_m2` | entier | non | 0 | Information, et calibrage de la mise en route |
