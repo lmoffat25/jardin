@@ -702,14 +702,14 @@ Chaque sprint, en plus de sa propre porte :
 
 ### 2e.1 Fixtures
 
-- [ ] Implémenter `tests/Support/DeuxJardins.php` à partir des factories des 2a et 2b. Toutes les coordonnées sont inventées (C4).
-- [ ] Implémenter `tests/Support/RegistreDesRoutes.php` : entrées pour les routes de 2c et 2d ; chaque entrée déclare `lit|liste|ecrit`, le rôle exigé, et pour `ecrit` la charge valide.
-- [ ] Implémenter `src/Support/Http/ExigerRole.php` (adhésion au jardin courant avec le rôle demandé, `403` sinon) ; modifier `bootstrap/app.php` (alias `role`) et `src/Comptes/routes.php` (`PUT /jardin` sous `role:proprietaire`). Un membre peut lire, `POST /interventions`, `POST /echeances/fait`, `POST /photos` et `GET /export` ; toute autre écriture exige `proprietaire` (CDC §2.1, D-49).
+- [x] Implémenter `tests/Support/DeuxJardins.php` à partir des factories des 2a et 2b. Toutes les coordonnées sont inventées (C4).
+- [x] Implémenter `tests/Support/RegistreDesRoutes.php` : entrées pour les routes de 2c et 2d ; chaque entrée déclare `lit|liste|ecrit`, le rôle exigé, et pour `ecrit` la charge valide.
+- [x] Implémenter `src/Support/Http/ExigerRole.php` (adhésion au jardin courant avec le rôle demandé, `403` sinon) ; modifier `bootstrap/app.php` (alias `role`) et `src/Comptes/routes.php` (`PUT /jardin` sous `role:proprietaire`). Un membre peut lire, `POST /interventions`, `POST /echeances/fait`, `POST /photos` et `GET /export` ; toute autre écriture exige `proprietaire` (CDC §2.1, D-49).
 
 ### 2e.2 Les tests
 
-- [ ] Implémenter `tests/Routes/CloisonnementTest.php` : `Route::getRoutes()` ; toute route hors registre et hors `EXCEPTIONS` → échec nommant la route ; pour chaque entrée, connecté sur A : `lit` avec les identifiants de B → `404` ou `403`, corps sans `MARQUEUR-B` ni identifiant de B ; `liste` → corps sans `MARQUEUR-B` ni identifiant de B ; `ecrit` avec identifiants de B → empreinte de B (`md5` des lignes de chaque table de B, lues par Eloquent sans scope) identique avant et après. Groupe `critere-12`.
-- [ ] Implémenter `tests/Routes/RolesTest.php` : pour chaque entrée du registre, connecté en membre de A : `role: proprietaire` → `403` et empreinte de A inchangée ; `role: membre` → même code que pour le propriétaire (V128).
+- [x] Implémenter `tests/Routes/CloisonnementTest.php` : `Route::getRoutes()` ; toute route hors registre et hors `EXCEPTIONS` → échec nommant la route ; pour chaque entrée, connecté sur A : `lit` avec les identifiants de B → `404` ou `403`, corps sans `MARQUEUR-B` ni identifiant de B ; `liste` → corps sans `MARQUEUR-B` ni identifiant de B ; `ecrit` avec identifiants de B → empreinte de B (`md5` des lignes de chaque table de B, lues par Eloquent sans scope) identique avant et après. Groupe `critere-12`.
+- [x] Implémenter `tests/Routes/RolesTest.php` : pour chaque entrée du registre, connecté en membre de A : `role: proprietaire` → `403` et empreinte de A inchangée ; `role: membre` → même code que pour le propriétaire (V128).
 
 ---
 
