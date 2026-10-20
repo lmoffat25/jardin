@@ -177,7 +177,8 @@ Un `Makefile` porte toutes les commandes. L'intégration continue appelle les
 |---|---|---|
 | `make setup` | Installation, base, crochets git (§7) | Une fois par poste ou par worktree |
 | `make moteur` | N1 seul — doit rester sous la seconde (TS-8) | En continu, pendant qu'on écrit le moteur |
-| `make statique` | Formatage vérifié, analyse statique, typage TS, types générés à jour, audit des dépendances | Avant tout envoi |
+| `make statique` | Formatage vérifié, analyse statique, typage TS, types générés à jour, audit des dépendances, taille des sprints (`make plan`) | Avant tout envoi |
+| `make plan` | Taille de chaque sprint du plan (`docs/plan/README.md` P5, décision D-75) | Quand le plan change |
 | `make test` | N1 à N3 et front (§6.4) | Avant tout envoi |
 | `make balayage` | Invariants calendaires sur toute l'année (§6.2) | Avant tout envoi qui touche le moteur ou la bibliothèque |
 | `make e2e` | N4 (Playwright) | Avant un envoi qui touche le terrain ou la carte |

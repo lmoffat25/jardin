@@ -24,7 +24,8 @@ qui n'est pas dans ta ligne de handoff, ta demande de fusion ou
 ## 1. Choisir le sprint
 
 Le premier `## Sprint` de `docs/plan/tasks.md` qui a une case `- [ ]` et dont
-l'en-tête (avant le premier `###`) ne porte pas `**En attente :**`. Lis tout son
+l'en-tête (avant le premier `###`) ne porte pas `**En attente :** Q-UX-n`
+(une ligne `**En attente :** rien — …` n'attend rien, D-76). Lis tout son
 en-tête : **Lecture**, **Contrat**, **Tests d'abord**, **Porte**, **Fin**, et ses
 assertions V dans `validation-contract.md` : ce sont elles qui disent « fini ».
 

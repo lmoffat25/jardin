@@ -10,7 +10,7 @@ endif
 # Échec forcé d'une cible, pour le test de l'enchaînement (V5) : ECHEC=<cible>.
 echec = @if [ "$(ECHEC)" = "$(1)" ]; then echo "échec forcé : $(1)"; exit 1; fi
 
-.PHONY: setup installer crochets formater moteur statique test balayage e2e mutation criteres verifier
+.PHONY: setup installer crochets formater moteur statique plan test balayage e2e mutation criteres verifier
 
 setup:
 ifeq ($(X),ddev exec)
@@ -53,6 +53,14 @@ statique:
 	$(X) npm run -s format:check
 	$(X) composer audit --locked --no-interaction
 	$(X) npm audit --audit-level=high
+	@# make plan, sans sous-make (make -n verifier ne doit lister que ses six cibles, V5) ;
+	@# en silence quand le plan est juste, ses erreurs seules sinon.
+	@$(X) bash scripts/plan/check-sprint-size.sh docs/plan > /dev/null \
+	  || { $(X) bash scripts/plan/check-sprint-size.sh docs/plan | grep -v ' : [0-9]* assertions'; exit 1; }
+
+# Taille de chaque sprint du plan (P5, D-29) : une ligne par sprint, 1 au-delà du budget.
+plan:
+	$(X) bash scripts/plan/check-sprint-size.sh docs/plan
 
 test:
 	$(call echec,test)
@@ -60,6 +68,8 @@ test:
 	$(X) bash scripts/tests/test-statique.sh
 	$(X) bash scripts/hooks/tests/test-crochets.sh
 	$(X) bash scripts/plan/tests/test-enchainer.sh
+	$(X) bash scripts/plan/tests/test-check-sprint-size.sh
+	$(X) bash scripts/plan/tests/test-porter-reponses.sh
 	$(X) bash scripts/ddev/tests/test-nommer-worktree.sh
 
 balayage:

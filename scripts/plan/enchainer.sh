@@ -15,7 +15,12 @@
 # Une passe qui n'ajoute aucune ligne n'a fini aucun sprint. Terminée sur un
 # paragraphe `ARRET:` (acte qui engage Léon), la boucle s'arrête, fini ou non.
 # Sans `ARRET:`, elle a été coupée : elle est relancée une fois, une seule.
-# Un sprint dont l'en-tête porte `**En attente :** Q-UX-n` est sauté (P3).
+# Un sprint dont l'en-tête porte `**En attente :** Q-UX-n` est sauté (P3) ; une
+# ligne `**En attente :**` sans `Q-UX-n` (« rien — … ») n'attend rien.
+#
+# Avant chaque `git pull --ff-only`, porter-reponses.sh porte sur main, par une
+# demande de fusion, les réponses que Léon a écrites dans questions-ux.md du
+# clone principal (D-30) ; son échec arrête la boucle en 1.
 #
 # `claude -p` tue les tâches de fond 600 s après la fin du tour principal ;
 # CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS=0 le fait attendre.
@@ -35,6 +40,7 @@
 set -uo pipefail
 
 CLAUDE="${ENCHAINER_CLAUDE:-claude}"
+PORTER="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/porter-reponses.sh"
 MAX_SPRINTS="${MAX_SPRINTS:-3}"
 
 if [ -n "${ENCHAINER_RACINE:-}" ]; then
@@ -59,14 +65,14 @@ prevenir() {
 compter() {
     awk '/^## /{s = ($0 ~ /^## Sprint /); att = 0; tete = 1}
          s && /^### /{tete = 0}
-         s && tete && /^\*\*En attente :\*\*/{att = 1}
+         s && tete && /^\*\*En attente :\*\*.*Q-UX-[0-9]/{att = 1}
          s && /^[[:space:]]*- \[ \]/{ if (att) a++; else n++ }
          END{print n+0, a+0}' "$taches"
 }
 en_attente() {
     awk '/^## /{s = ($0 ~ /^## Sprint /) ? $0 : ""; tete = 1}
          s != "" && /^### /{tete = 0}
-         s != "" && tete && /^\*\*En attente :\*\*/{sub(/^\*\*En attente :\*\*[[:space:]]*/, ""); print s " (" $0 ")"}' "$taches"
+         s != "" && tete && /^\*\*En attente :\*\*.*Q-UX-[0-9]/{sub(/^\*\*En attente :\*\*[[:space:]]*/, ""); print s " (" $0 ")"}' "$taches"
 }
 lignes() { [ -f "$handoffs" ] && grep -c . "$handoffs" || echo 0; }
 
@@ -104,6 +110,12 @@ while :; do
         echo "ECHOUE — le clone principal $racine est sur « ${branche:-détaché} », pas sur main : l'état du plan se lit sur main"
         exit 1
     fi
+    if ! porte="$(bash "$PORTER" "$racine" 2>&1)"; then
+        echo "ECHOUE — porter-reponses.sh n'a pas porté les réponses de $racine sur main, le plan n'est pas relu :"
+        printf '%s\n' "$porte" | tail -n 10 | sed 's/^/  /'
+        exit 1
+    fi
+    printf '%s\n' "$porte" | grep -q '^CONFIRME' && printf '%s\n' "$porte" | grep '^CONFIRME'
     if ! git -C "$racine" pull -q --ff-only > /dev/null 2>&1; then
         echo "ECHOUE — git pull --ff-only impossible dans $racine : main n'est pas à jour, le plan n'est pas relu"
         git -C "$racine" pull --ff-only 2>&1 | tail -n 5 | sed 's/^/  /'
