@@ -34,6 +34,7 @@ que la réponse arrive avant le sprint.
 - [Q-UX-20 — Ce que « cette semaine » et « ce mois » veulent dire](#q-ux-20--ce-que--cette-semaine--et--ce-mois--veulent-dire)
 - [Q-UX-21 — La période optimale d'une fenêtre ajustée à la création](#q-ux-21--la-période-optimale-dune-fenêtre-ajustée-à-la-création)
 - [Q-UX-22 — Sauter une tonte](#q-ux-22--sauter-une-tonte)
+- [Q-UX-23 — Saisir des coordonnées sur une plante posée sur le plan](#q-ux-23--saisir-des-coordonnées-sur-une-plante-posée-sur-le-plan)
 
 ---
 
@@ -418,4 +419,26 @@ prochain est proposée. Pour une règle à intervalle (R1, la tonte tous les
 **Ce qui attend :** rien ne bloque. Appliquée : la recommandation (sprint 9a,
 D-106), le 20/10/2026 : `POST /echeances/suspendre` rend `422` pour une R1.
 Une autre réponse change `SuspendreEcheance` et, pour l'option 2, le moteur.
+**Réponse :**
+
+## Q-UX-23 — Saisir des coordonnées sur une plante posée sur le plan
+
+**Question :** sur la fiche d'une plante (B6), tu saisis des coordonnées à la
+main ; mais la plante est déjà posée sur le plan (B13). Le plan l'emporte sur
+la saisie (RG-48) : la position ne change pas. Que voit-on ?
+**Concerne :** B6 (coordonnées saisies), B13 (plan), V107, V108, D-59.
+**Options :**
+1. **Recommandé — la saisie est refusée, avec un message** : « Cette plante
+   est posée sur le plan : déplacez-la sur le plan. » Rien ne change, et tu
+   sais pourquoi ; ce que tu viens de saisir n'est jamais perdu en silence
+   (RG-50, charte).
+2. La saisie est acceptée sans effet : la réponse rend la position du plan,
+   l'écran la montre. Plus doux, mais la saisie disparaît sans explication.
+3. La saisie remplace le plan : la dernière main gagne. Contraire à RG-48 tel
+   qu'il est écrit (`plan` > `manuel`).
+
+**Ce qui attend :** rien ne bloque. Appliquée : la recommandation (sprint 10a,
+D-107), le 20/10/2026 : `PUT /plantes/{plante}/geometrie` avec
+`source: manuel` rend `422` sur `source` quand la géométrie en place est en
+source `plan`. Une autre réponse change `GeometrieController`.
 **Réponse :**

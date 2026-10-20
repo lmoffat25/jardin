@@ -85,6 +85,17 @@ final class RegistreDesRoutes
                 'charge' => fn (string $id): array => ['motif' => 'Arrachée'],
             ],
             'GET /plantes' => ['nature' => 'liste', 'role' => 'membre'],
+            // Sans position ni zone, la liste est vide ; une zone de B ne rend
+            // rien (ProchesTest).
+            'GET /plantes/proches' => ['nature' => 'liste', 'role' => 'membre'],
+            // Depuis A, la plante de B est introuvable : 404, sa géométrie
+            // intacte (GeometrieTest).
+            'PUT /plantes/{plante}/geometrie' => [
+                'nature' => 'ecrit',
+                'role' => 'proprietaire',
+                'parametres' => $plante,
+                'charge' => fn (string $id): array => ['type' => 'Point', 'coordinates' => [4.8357, 45.764]],
+            ],
             // Depuis A, une plante de B parmi les ids est introuvable : 422,
             // rien ne change (MasseTest).
             'PUT /plantes/lot' => [

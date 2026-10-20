@@ -59,8 +59,10 @@ it('n\'écrit que dans le jardin qu\'il porte, passé par la file', function () 
     expect(zonesParJardin())->toBe([]);
 
     // Le worker (sans --once) oublie le jardin courant avant chaque job (D-80) :
-    // seul le `jardinId` du payload peut le repositionner.
-    test()->artisan('queue:work', ['--stop-when-empty' => true, '--sleep' => 0])->assertExitCode(0);
+    // seul le `jardinId` du payload peut le repositionner. Le worker mesure la
+    // mémoire de tout le processus de la suite, pas celle du job : sa limite
+    // par défaut (128 Mo) se dépasse quand la suite grandit (code 12).
+    test()->artisan('queue:work', ['--stop-when-empty' => true, '--sleep' => 0, '--memory' => 1024])->assertExitCode(0);
 
     expect(JobTemoinDeJardin::$executions)->toBe(1);
     expect(zonesParJardin())->toBe([$a->id => 1]);
