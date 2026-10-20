@@ -73,6 +73,33 @@ final class TemoinBibliotheque
     }
 
     /**
+     * Un petit fruit témoin à deux variantes de conduite (RG-51, V65) : une
+     * récolte commune, un rabattage par variante, indicatifs à une source.
+     *
+     * @return array<string, mixed>
+     */
+    public static function framboisier(): array
+    {
+        $regle = fn (string $cle, string $type, string $debut, string $fin) => [
+            'cle' => "framboisier-temoin-{$cle}", 'type_intervention' => $type, 'type_regle' => 'R2', 'confiance' => 'indicative',
+            'sources' => [['url' => "https://vulgarisation.exemple.test/{$cle}", 'libelle' => 'Fiche témoin', 'consultee_le' => '2026-10-20']],
+            'fenetres' => [['debut' => $debut, 'fin' => $fin]], 'periodicite_annees' => 1,
+        ];
+
+        return [
+            'cle' => 'framboisier-temoin',
+            'nom_commun' => 'Framboisier témoin',
+            'famille' => 'Famille témoin',
+            'categorie' => 'petits_fruits',
+            'regles' => [
+                $regle('recolte', 'Récolte', '01/07', '31/08'),
+                ['variante' => 'remontant', ...$regle('taille-remontant', 'Rabattage', '01/11', '28/02')],
+                ['variante' => 'non-remontant', ...$regle('taille-non-remontant', 'Rabattage', '01/08', '30/09')],
+            ],
+        ];
+    }
+
+    /**
      * Écrit les fichiers dans un dossier temporaire neuf, et le rend.
      *
      * @param  array<string, list<array<string, mixed>>>  $fichiers  nom sans extension => espèces
