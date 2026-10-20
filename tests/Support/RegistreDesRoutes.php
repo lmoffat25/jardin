@@ -4,11 +4,14 @@ namespace Tests\Support;
 
 use Closure;
 use Database\Factories\RegleFactory;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Route as Routes;
+use Illuminate\Support\Facades\Storage;
 use Src\Echeances\Domaine\Regle;
 use Src\Jardin\Domaine\Plante;
 use Src\Jardin\Domaine\Zone;
+use Src\Journal\Domaine\Photo;
 
 /**
  * Toutes les routes de l'application (C15, V41, V128). Une route nouvelle
@@ -127,6 +130,33 @@ final class RegistreDesRoutes
                     'type_intervention_id' => RegleFactory::typeFourni('Tonte'),
                     'faite_le' => '2026-08-30',
                     'lignes' => [['id' => '5e0c9a52-7a1d-4c3e-9f4b-000000000001', 'plante_id' => $plante($id)['plante']]],
+                ],
+            ],
+            // Depuis A, la plante de B est introuvable : 422, aucun fichier
+            // écrit (AttacherPhotoTest). Le même identifiant sert au membre
+            // puis au propriétaire : le second envoi est un renvoi. Le disque
+            // est simulé : la charge n'écrit rien dans le stockage du poste.
+            'POST /photos' => [
+                'nature' => 'ecrit',
+                'role' => 'membre',
+                'charge' => function (string $id) use ($plante): array {
+                    Storage::fake('local');
+
+                    return [
+                        'id' => '5e0c9a52-7a1d-4c3e-9f4b-000000000003',
+                        'fichier' => UploadedFile::fake()->image('photo.jpg', 20, 20),
+                        'plante_id' => $plante($id)['plante'],
+                    ];
+                },
+            ],
+            // Les jardins témoins n'ont aucune photo : la première, sinon une
+            // photo qui n'existe pas. Depuis A, une photo de B rend 404 (DeriveesTest).
+            'GET /photos/{photo}/{taille}' => [
+                'nature' => 'lit',
+                'role' => 'membre',
+                'parametres' => fn (string $id): array => [
+                    'photo' => (string) (Photo::query()->withoutGlobalScopes()->where('jardin_id', $id)->orderBy('id')->value('id') ?? '5e0c9a52-7a1d-4c3e-9f4b-0000000000ff'),
+                    'taille' => '160',
                 ],
             ],
             // Depuis A, une règle de B est introuvable : 404, rien n'est créé

@@ -1773,17 +1773,17 @@ public function executer(SaisieIntervention $saisie, Utilisateur $auteur): Colle
 
 ### 11a.1 Essai d'abord
 
-- [ ] Vérifier `imagewebp` (GD) dans DDEV et dans la CI ; à défaut, Imagick ; ajouter `intervention/image` ; écrire le pilote retenu (D-28). Limites : 20 Mo, 12 000 px de côté, types `image/jpeg|png|heic|webp` (HEIC selon le pilote, écrit).
+- [x] Vérifier `imagewebp` (GD) dans DDEV et dans la CI ; à défaut, Imagick ; ajouter `intervention/image` ; écrire le pilote retenu (D-28). Limites : 20 Mo, 12 000 px de côté, types `image/jpeg|png|heic|webp` (HEIC selon le pilote, écrit).
 
 ### 11a.2 Stockage
 
-- [ ] Implémenter `src/Journal/Domaine/Photo.php` (trait de jardin), `src/Journal/Photos/AttacherPhoto.php` (vérifie plante ou intervention par le scope ; quota par `CalculerOccupation` avant écriture ; empreinte SHA-256 ; `photos/{jardin}/{annee}/{empreinte}.{ext}` sur le disque `local` privé ; `insertOrIgnore` sur `id` ; envoie `CompresserPhoto`), `src/Journal/Photos/PhotoController.php`, `src/Journal/Photos/CompresserPhoto.php` (160 px et 1 200 px, WebP, `{empreinte}-160.webp`, `{empreinte}-1200.webp`, puis `derivees_pretes = true` ; échec → trois essais, l'original reste servi), `src/Journal/Photos/ServirPhoto.php` (route `GET /photos/{photo}/{taille}`, par le scope, original tant que les dérivées ne sont pas prêtes), `src/Comptes/Quotas/CalculerOccupation.php` (somme de `photos.taille_ko` ; les fonds de plan s'y ajoutent au 11b, D-60) ; modifier `src/Journal/routes.php` et `composer.json` ; inscrire au registre. Ajouter `database/factories/PhotoFactory.php` (hors compte).
+- [x] Implémenter `src/Journal/Domaine/Photo.php` (trait de jardin), `src/Journal/Photos/AttacherPhoto.php` (vérifie plante ou intervention par le scope ; quota par `CalculerOccupation` avant écriture ; empreinte SHA-256 ; `photos/{jardin}/{annee}/{empreinte}.{ext}` sur le disque `local` privé ; `insertOrIgnore` sur `id` ; envoie `CompresserPhoto`), `src/Journal/Photos/PhotoController.php`, `src/Journal/Photos/CompresserPhoto.php` (160 px et 1 200 px, WebP, `{empreinte}-160.webp`, `{empreinte}-1200.webp`, puis `derivees_pretes = true` ; échec → trois essais, l'original reste servi), `src/Journal/Photos/ServirPhoto.php` (route `GET /photos/{photo}/{taille}`, par le scope, original tant que les dérivées ne sont pas prêtes), `src/Comptes/Quotas/CalculerOccupation.php` (somme de `photos.taille_ko` ; les fonds de plan s'y ajoutent au 11b, D-60) ; modifier `src/Journal/routes.php` et `composer.json` ; inscrire au registre. Ajouter `database/factories/PhotoFactory.php` (hors compte).
 
 ### 11a.3 Tests
 
-- [ ] `tests/Routes/AttacherPhotoTest.php` : V115 (quatre cas, renvoi), V118 (intervention présente, envoi de photo en échec). Groupe `critere-14`.
-- [ ] `tests/Persistance/DeriveesTest.php` : V116 (`Queue::fake` pour l'envoi, puis job exécuté : fichiers et drapeau relus).
-- [ ] `tests/Routes/QuotaTest.php` : V117 (photos seules).
+- [x] `tests/Routes/AttacherPhotoTest.php` : V115 (quatre cas, renvoi), V118 (intervention présente, envoi de photo en échec). Groupe `critere-14`.
+- [x] `tests/Persistance/DeriveesTest.php` : V116 (`Queue::fake` pour l'envoi, puis job exécuté : fichiers et drapeau relus).
+- [x] `tests/Routes/QuotaTest.php` : V117 (photos seules).
 
 ---
 
