@@ -23,7 +23,8 @@ def coquille(f, actif: str):
     d.logo(nav, 24, 20)
     d.texte(nav, 24, 76, 200, "JARDIN", 12, gras=True, couleur=SECOND)
     choix = d.cadre("Jardin courant", nav, 24, 96, NAV - 48, 44, fond=FOND, rayon=8, trait=TRAIT)
-    d.texte(choix, 12, 12, NAV - 72, "Le Clos  ↓", 16, gras=True)
+    d.texte(choix, 12, 12, NAV - 88, "Le Clos", 16, gras=True)
+    d.icone(choix, "chevron-down", NAV - 48 - 36, 10, libelle="Changer de jardin")
     # Trois groupes, séparés par un filet : le travail du jour ; le jardin ; les réglages et
     # ce qui sert une fois par saison (Léon, 20/10/2026).
     y = 168
@@ -112,7 +113,8 @@ def liste_plantes(nom, cochees=0, recherche=None, vide=False):
     for filtre in ["Zone : toutes", "Catégorie : toutes", "Actives", "À faire : tout"]:
         w = 48 + 8 * len(filtre)
         b = d.cadre(f"Filtre · {filtre}", f, x, 128, w, 44, fond=FOND, rayon=8, trait=TRAIT)
-        d.texte(b, 12, 12, w - 16, f"{filtre}  ↓", 14, gras=True)
+        d.texte(b, 12, 12, w - 44, filtre, 14, gras=True)
+        d.icone(b, "chevron-down", w - 32, 10)
         x += w + 8
     rangs = []
     if vide:
@@ -358,7 +360,7 @@ creer("B7 · 05 · Nouvelle plante — espèce à variantes",
 d.cmd("page.select", id=ids_pages["3 · Wireframes terrain"])
 W = vague1.W
 t5 = vague1.ecran("T5 · 01 · Fiche plante")
-t5_retour = d.bouton(t5, 8, 52, 48, 48, "‹")
+t5_retour = d.bouton_icone(t5, 8, 52, 48, 48, "chevron-left", "Retour")
 photo(t5, 0, 108, W, 220, "Photo de couverture — pour reconnaître l'arbre")
 d.texte(t5, M, 340, W - 2 * M, "Pommier 'Reine des reinettes'", 24, gras=True)
 d.texte(t5, M, 378, W - 2 * M, "FRU-001 · Verger haut · 3e du rang, côté route", 15, couleur=SECOND)

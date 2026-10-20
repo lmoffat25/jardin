@@ -147,14 +147,14 @@ def b2_liste(nom, valeur_nom=None, erreur=False):
     d.texte(f, CX, 420, COL, "Son climat", 15, gras=True)
     cartes = []
     for i, (lib, decal, ou) in enumerate(PROFILS):
-        c = d.cadre(f"Climat · {lib}", f, CX, 452 + i * 62, COL, 54, fond=FOND, rayon=8,
+        c = d.cadre(f"Climat · {lib}", f, CX, 452 + i * 58, COL, 50, fond=FOND, rayon=8,
                     trait=FORT if erreur else TRAIT)
-        rond(c, 16, 15, False)
-        d.texte(c, 56, 16, 330, lib, 16, gras=True)
-        d.texte(c, 390, 17, 190, ou, 14, couleur=SECOND)
-        d.texte(c, 576, 16, 170, decal, 15, align="right")
+        rond(c, 16, 13, False)
+        d.texte(c, 56, 14, 330, lib, 16, gras=True)
+        d.texte(c, 390, 15, 190, ou, 14, couleur=SECOND)
+        d.texte(c, 576, 14, 170, decal, 15, align="right")
         cartes.append(c)
-    y = 452 + 5 * 62 + 4
+    y = 452 + 5 * 58 + 6
     if erreur:
         with d.etat("erreur"):
             d.texte(f, CX, y, COL, "⚠ Indiquez votre commune ou choisissez un climat : sans lui, "
@@ -183,8 +183,8 @@ for i, z in enumerate(ZONES):
     r = d.cadre(f"Zone · {z}", b3z, CX, 236 + i * 58, COL, 50, fond=FOND, rayon=8, trait=TRAIT)
     d.texte(r, 20, 13, 520, z, 17)
     # Aucun ordre à régler : la tournée du jour se calcule depuis la position (CDC §12,
-    # 20/10/2026). Icône : son nom accessible (« Retirer ») est le libellé du composant Icône/*.
-    d.bouton(r, COL - 48, 7, 36, 36, "×")
+    # 20/10/2026). Icône seule, nommée « Retirer <zone> » pour les lecteurs d'écran.
+    d.bouton_icone(r, COL - 48, 7, 36, 36, "x", f"Retirer {z}")
 nouvelle = d.cadre("Zone · nouvelle", b3z, CX, 236 + 5 * 58, COL, 50, fond=FOND, rayon=8,
                    trait=FORT)
 d.texte(nouvelle, 20, 13, 500, "Ajouter une zone, puis Entrée", 17, couleur=TRAIT)
@@ -202,7 +202,7 @@ COLONNES = [("Nb", 64), ("Nom", 320), ("Espèce", 300), ("Repère (facultatif)",
 
 LIGNES = [  # nb, nom, espèce, repère, résultat, gras ? (zone « Verger bas »)
     ("12", "Pommier", "Pommier", "",
-     "12 plantes : Pommier 1 à Pommier 12 · FRU-002 à FRU-013", True),
+     "Pommier 1 à 12 · FRU-002 à FRU-013", True),
     ("1", "Néflier", "Néflier — absent de la bibliothèque", "près du mur",
      "FRU-014 · aucune règle : rien ne sera proposé tant qu'il n'en a pas", True),
     ("1", "Pommier 'Calville blanc'", "Pommier", "au bout du rang",

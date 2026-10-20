@@ -12,6 +12,8 @@ de PRIMITIVES : `python3 -I design/interface/fondations.py`.
 """
 from __future__ import annotations
 
+from icones import ICONES
+
 # --- Primitives : la marque, et rien d'autre (M3) ------------------------------
 PRIMITIVES_COULEURS = {
     "neutre/0": "#FFFFFF", "neutre/50": "#F6F7F4", "neutre/100": "#ECEEE9",
@@ -213,6 +215,17 @@ def _composants(d) -> None:
     d.lier(nom, "characters", "texte/nom-produit")
     d.cmd("component.create", ids=[logo])
     d.composants["Marque/Logo"] = {"id": logo, "calques": 2}
+
+    # Icônes Lucide (O25) : un trait de 2 px lié à texte/principal, que l'instance relie
+    # à un autre rôle (texte/inverse sur un bouton principal, texte/desactive s'il est inactif).
+    for k, (nom, trace) in enumerate(ICONES.items()):
+        c = d.noeud("frame", roles={}, name=f"Icône/{nom}", x=600 + (k % 7) * 48,
+                    y=(k // 7) * 48, width=24, height=24, props={"fills": []})
+        d.noeud("vector", roles={"stroke": "texte/principal"}, parent=c, path=trace, name="trait",
+                props={"fills": [], "stroke": "#000000", "strokeWeight": 2, "strokeCap": "round",
+                       "strokeJoin": "round"})
+        d.cmd("component.create", ids=[c])
+        d.composants[f"Icône/{nom}"] = {"id": c, "calques": 1}
 
 
 def _planche(d) -> None:

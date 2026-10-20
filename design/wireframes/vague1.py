@@ -35,6 +35,8 @@ W, H, M = 390, 844, 16
 # chaque texte à un style, chaque bouton instance du composant. La mise en page
 # n'est écrite qu'une fois.
 INTERFACE = os.environ.get("JARDIN_PASSE") == "interface"
+sys.path.insert(0, str(RACINE / "interface"))
+from icones import ICONES  # noqa: E402  (Lucide, O25)
 
 # Le rôle de chaque gris, selon ce qu'il colore. Un gris absent de la table
 # arrête la construction : une valeur en dur ne passe pas (M6).
@@ -70,6 +72,7 @@ class Doc:
         self.suivant = int(os.environ.get("JARDIN_DEPART", 2))   # la page 1 existe déjà
         self.surcharges: list[dict] = []
         self.composants: dict[str, dict] = {}   # posés par fondations.poser (passe interface)
+        self.doublures: dict[int, int] = {}     # bouton → son icône, posée par-dessus
 
     def cmd(self, command: str, **params) -> None:
         if INTERFACE and command == "proto.flow.add":
@@ -185,6 +188,32 @@ class Doc:
         self.texte(b, 8, (h - 22) / 2, w - 16, libelle, 17, gras=True, couleur=couleur, align="center")
         return b
 
+    def icone(self, parent, nom, x, y, couleur=TEXTE, libelle=None):
+        """Une icône Lucide de 24 px. `libelle` est son nom accessible : il nomme le calque, et
+        le composant React le rend en `aria-label` (conception-ecrans.md, icônes)."""
+        nom_calque = f"Icône · {libelle or nom}"
+        if INTERFACE:
+            i = self.instance(f"Icône/{nom}", parent, x, y)
+            self.cmd("node.set", ids=[i], name=nom_calque)
+            if couleur != TEXTE:              # le trait est le seul calque de l'instance
+                self.lier(i + 1, "stroke", self.role("text", couleur))
+            return i
+        c = self.cadre(nom_calque, parent, x, y, 24, 24)
+        self.noeud("vector", parent=c, path=ICONES[nom], name="trait",
+                   props={"fills": [], "stroke": couleur, "strokeWeight": 2, "strokeCap": "round",
+                          "strokeJoin": "round"})
+        return c
+
+    def bouton_icone(self, parent, x, y, w, h, nom, libelle, principal=False, inactif=False):
+        """Un geste universel (retour, retirer, monter) : l'icône seule, `libelle` pour le nom
+        accessible. Les actions qui engagent gardent leur texte."""
+        b = self.bouton(parent, x, y, w, h, "", principal=principal, inactif=inactif)
+        self.cmd("node.set", ids=[b], name=f"Bouton · {libelle}")
+        couleur = BLANC if principal and not inactif else (TRAIT if inactif else TEXTE)
+        self.doublures[b] = self.icone(parent, nom, x + (w - 24) / 2, y + (h - 24) / 2, couleur,
+                                       libelle)
+        return b
+
     def logo(self, parent, x, y):
         """Une seule marque (§2) : le composant Marque/Logo à l'interface."""
         if INTERFACE:
@@ -195,6 +224,8 @@ class Doc:
         return logo
 
     def lien(self, source, dest, transition="push"):
+        if source in self.doublures:          # l'icône posée par-dessus le bouton mène au même écran
+            self.lien(self.doublures[source], dest, transition)
         self.cmd("proto.interaction.add", id=source, trigger={"type": "onClick"},
                  action={"type": "navigate", "dest": dest},
                  transition={"type": transition, "direction": "left"} if transition != "instant"
@@ -384,7 +415,7 @@ PROCHES = [("Pommier 'Reine des reinettes'", "8 m · Verger haut"),
 
 def choisir_plantes(nom, coches: int, titre="Taille", sous="Près de vous", liste=PROCHES):
     f = ecran(nom)
-    retour = d.bouton(f, 8, 52, 48, 48, "‹")
+    retour = d.bouton_icone(f, 8, 52, 48, 48, "chevron-left", "Retour")
     d.texte(f, 64, 56, 180, titre, 24, gras=True)
     pastille_essai(f)
     d.texte(f, 64, 88, 250, "Quelles plantes ?", 15, couleur=SECOND)
@@ -432,7 +463,7 @@ tiroir_je_viens_de_faire(t4)
 
 # --- T2 · Tous les types ------------------------------------------------------
 t2 = ecran("T2 · 01 · Autre type")
-t2_retour = d.bouton(t2, 8, 52, 48, 48, "‹")
+t2_retour = d.bouton_icone(t2, 8, 52, 48, 48, "chevron-left", "Retour")
 d.texte(t2, 64, 60, 250, "Quel type ?", 24, gras=True)
 TOUS = ["Arrosage", "Désherbage", "Engrais", "Huile blanche", "Paillage", "Plantation",
         "Récolte", "Taille", "Tonte", "Traitement cuivre", "Ajouter un type…"]

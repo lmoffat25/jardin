@@ -251,8 +251,9 @@ for k, (n, nom, geste) in enumerate([TOURNEE[0], TOURNEE[2], TOURNEE[1], TOURNEE
                 trait=FORT if k == 1 else TRAIT)
     d.texte(r, 14, 12, 220, f"{k + 1} · {nom}", 15, gras=True)
     d.texte(r, 14, 56, 220, geste.split(" · ")[0], 13, couleur=SECOND)
-    d.bouton(r, W - 2 * M - 112, 18, 48, 48, "↑", inactif=k == 0)
-    d.bouton(r, W - 2 * M - 58, 18, 48, 48, "↓", inactif=k == 3)
+    d.bouton_icone(r, W - 2 * M - 112, 18, 48, 48, "arrow-up", f"Monter {nom}", inactif=k == 0)
+    d.bouton_icone(r, W - 2 * M - 58, 18, 48, 48, "arrow-down", f"Descendre {nom}",
+                   inactif=k == 3)
 d.texte(t7c, M, 540, W - 2 * M, "La pelouse est passée avant le poirier.", 14, couleur=SECOND)
 d.bouton(t7c, M, 680, W - 2 * M, 48, "Revenir à l'ordre proposé")
 t7c_ok = d.bouton(t7c, M, 740, W - 2 * M, 56, "Terminé", principal=True)

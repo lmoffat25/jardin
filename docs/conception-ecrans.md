@@ -107,8 +107,20 @@ dessinée à la main.
   Lucide, qui existe aussi en composants React (`lucide-react`). Licence ISC
   (et MIT pour les icônes reprises de Feather) : usage commercial permis, à
   condition de conserver l'avis de copyright dans le code livré (O25, levé le
-  20/10/2026). Les glyphes provisoires des écrans (✓ ⚠ ↑ ↓ ‹ ↓) sont à
-  remplacer par ces composants.
+  20/10/2026). Les tracés sont générés depuis `lucide-static` 0.460.0 par
+  `scripts/design/importer-lucide.py` dans `design/interface/icones.py`, et
+  l'avis est dans `design/interface/LICENSE-lucide`. Une icône a un trait de
+  2 px lié à `texte/principal`, que l'instance relie à un autre rôle
+  (`texte/inverse`, `texte/desactive`).
+  - **Icône seule** pour les gestes universels : retour, retirer, monter,
+    descendre, ouvrir une liste. Chacune porte un nom accessible (« Retour »,
+    « Retirer Haies »), qui nomme le calque et devient l'`aria-label` du
+    bouton.
+  - **Le texte reste** sur ce qui engage : « Fait », « Continuer », « Sauter
+    cette fois », « Ajouter une photo ». Une icône peut l'accompagner, jamais
+    le remplacer.
+  - Glyphes encore provisoires : ✓ (case, étapes, messages), ⚠ (alertes),
+    « + » des boutons d'ajout, « → » des liens, ‹ › de la pagination.
 
 > **M5** — Les variables portent **les mêmes noms dans le code** (variables
 > CSS, configuration Tailwind), avec les trois mêmes couches. La marque change
