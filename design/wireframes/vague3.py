@@ -205,7 +205,7 @@ _, b6_btn = carte_echeance(
     b6, CX0, 270, GAUCHE, "Taille d'entretien", "ouverte", False,
     "Avant le 7 avril 2027 · moment idéal du 8 février au 7 avril",
     "Règle de la bibliothèque : chaque hiver, fenêtre déc.–mars, décalée de 7 jours pour votre "
-    "climat (Nord, Est, océanique frais).",
+    "climat (Frais).",
     [("Fait", 88), ("Reporter", 116), ("Sauter cette fois", 172), ("Modifier la règle", 176)])
 carte_echeance(
     b6, CX0, 454, GAUCHE, "Ramassage des fruits tombés", "à venir", False,

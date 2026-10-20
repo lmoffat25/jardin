@@ -373,8 +373,8 @@ Fenêtre `01/12 → 31/03` : le 15/01/2027, la fenêtre courante est
 `01/12/2027 → 31/03/2028`.
 
 **V43 — Le décalage déplace les deux bornes et l'optimale** · moteur · RG-25, RG-26, **critère 13**
-Une même fenêtre projetée pour « Nord, Est, océanique frais » (+7) et pour
-« Midi » (−15) donne des débuts, fins et optimales décalés de 22 jours.
+Une même fenêtre projetée pour « Frais » (+7) et pour
+« Très doux » (−15) donne des débuts, fins et optimales décalés de 22 jours.
 
 **V44 — Un butoir rogne, il ne déplace pas** · moteur · RG-44, RG-45, A25, critère 4
 Fenêtre de haie `16/08 → 15/03` avec butoirs `16/08` et `15/03` : en montagne
@@ -547,7 +547,7 @@ plantes, zones, types, dernières interventions en une seule requête
 `DISTINCT ON` (A9), échéances matérialisées).
 
 **V72 — Deux climats, deux calendriers, depuis la base** · base · **critère 13**
-Deux jardins en base, l'un « Nord, Est, océanique frais », l'autre « Midi »,
+Deux jardins en base, l'un « Frais », l'autre « Très doux »,
 avec les mêmes espèces : les fenêtres de taille calculées sont décalées de
 22 jours, et chaque explication mentionne le décalage appliqué.
 

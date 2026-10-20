@@ -134,7 +134,6 @@ CREATE TABLE profils_climatiques (          -- référence, 5 lignes
     id              smallint PRIMARY KEY,
     libelle         varchar(80)  NOT NULL,
     decalage_jours  smallint     NOT NULL,
-    zones_usda      varchar(20),
     ordre_affichage smallint     NOT NULL
 );
 

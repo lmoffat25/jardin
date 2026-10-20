@@ -53,7 +53,7 @@ contestable) :
    est signalée **(transcription)** ; elle n'est pas une valeur citée.
 
 **Climat.** Aucune source ne précise le bassin parisien. Les mentions de région
-sont données règle par règle ; à défaut, la valeur est réputée « plaine tempérée »
+sont données règle par règle ; à défaut, la valeur est réputée du profil « Tempéré »
 au sens du CDC (décalage 0), ce qui est une hypothèse.
 
 ---

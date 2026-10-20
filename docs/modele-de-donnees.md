@@ -124,13 +124,13 @@ après coup imposerait de reprendre toute l'autorisation.
 
 Table de référence partagée, non modifiable par l'utilisateur. Cinq lignes.
 
-| id | libellé | décalage | zones USDA |
+| id | libellé | décalage |
 |---|---|---|---|
-| 1 | Midi, littoral méditerranéen | −15 j | 9–10 |
-| 2 | Sud-Ouest, vallée du Rhône | −7 j | 8–9 |
-| 3 | Plaine tempérée *(référence)* | 0 j | 8 |
-| 4 | Nord, Est, océanique frais | +7 j | 7–8 |
-| 5 | Montagne, plus de 600 m | +21 j | 5–7 |
+| 1 | Très doux | −15 j |
+| 2 | Doux | −7 j |
+| 3 | Tempéré *(référence)* | 0 j |
+| 4 | Frais | +7 j |
+| 5 | Montagne | +21 j |
 
 > **RG-25** — le décalage s'applique aux **bornes de calendrier** : les fenêtres
 > (R2) et les **bornes de saison** d'un intervalle saisonnier (R1). Jamais à la

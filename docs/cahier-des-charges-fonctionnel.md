@@ -933,13 +933,17 @@ reposer ses premières dates sur cette devinette.
 
 Liste proposée au MVP — une question, un menu déroulant, aucune dépendance :
 
-| Profil | Décalage | Correspond à |
+| Profil | Décalage | Par exemple (RG-52, Q24) |
 |---|---|---|
-| Midi, littoral méditerranéen | −15 j | Zones 9–10 |
-| Sud-Ouest, vallée du Rhône | −7 j | Zone 8–9 |
-| **Plaine tempérée (référence)** | **0 j** | Bassin parisien, centre, zone 8 |
-| Nord, Est, océanique frais | +7 j | Zones 7–8 |
-| Montagne, plus de 600 m | +21 j | Zones 5–7 |
+| Très doux | −15 j | Perpignan, Nice, Bordeaux |
+| Doux | −7 j | Lyon, Rennes, Brest |
+| **Tempéré (référence)** | **0 j** | Trappes, Clermont-Ferrand, Strasbourg |
+| Frais | +7 j | Plus frais qu'en Île-de-France, sous 600 m |
+| Montagne | +21 j | Au-dessus de 600 m |
+
+Les profils se nomment par leur effet, pas par une région : une région ne dit
+pas où tombe une ville, et le calcul de RG-52 range Bordeaux avec Nice et Rennes
+avec Lyon (décision du 20/10/2026).
 
 > **RG-29** — Ce qui doit exister dès le MVP, c'est le **champ et son
 > application par le moteur**, pas son remplissage automatique. Un moteur qui
@@ -972,13 +976,13 @@ Liste proposée au MVP — une question, un menu déroulant, aucune dépendance 
 > 2. **Température.** Sinon, il prend la station Météo-France la plus proche
 >    dont les normales 1991-2020 sont complètes, ramène sa température à
 >    l'altitude de la commune, et compare la moyenne de février à avril à celle
->    de la station de référence de la plaine tempérée.
+>    de la station de référence du profil « Tempéré » (Trappes).
 > 3. **Décalage.** L'écart, multiplié par un coefficient en jours par degré,
 >    donne un décalage ; l'outil propose le profil dont le décalage est le plus
 >    proche.
 >
-> L'écran dit pourquoi (« station de Lyon-Bron, 1,0 °C de plus qu'en plaine
-> tempérée : dates avancées d'environ 6 jours »), et le profil reste
+> L'écran dit pourquoi (« station de Lyon-Bron, 1,0 °C de plus qu'à
+> Trappes : dates avancées d'environ 6 jours »), et le profil reste
 > modifiable (RG-26). La proposition est marquée **indicative** tant que le
 > coefficient n'est pas mesuré sur des plantes de jardin (Q24).
 >
@@ -1621,8 +1625,7 @@ celles du §10.2 :
     visible, sous aucun écran, aucun filtre et aucune URL devinée. Le test
     vaut sans inscription publique — c'est le cloisonnement qui est vérifié,
     pas le parcours de compte.
-13. Deux jardins déclarés l'un en « Nord, Est, océanique frais », l'autre en
-    « Midi », créés avec les mêmes espèces, produisent des fenêtres de taille
+13. Deux jardins déclarés l'un en « Frais », l'autre en « Très doux », créés avec les mêmes espèces, produisent des fenêtres de taille
     décalées de 22 jours, et chaque échéance mentionne le décalage appliqué.
 14. Chaque plante affiche une photo de couverture dans les listes, et je peux
     joindre une photo à une intervention depuis le terrain sans quitter le
@@ -1690,7 +1693,7 @@ sont aussi :
 | Q21 | Framboisier remontant et non remontant | Deux tailles différentes ; B-T7 interdit deux règles du même type sur une espèce | **Tranchée le 20/10/2026** — une espèce, deux variantes de conduite choisies à la création de la plante (RG-51) |
 | Q22 | Périodicité de la haie caduque | Une haie taillée de jardin se reprend chaque année (non sourcé), une haie bocagère tous les 2 à 3 ans (sourcé) | **Tranchée le 20/10/2026 par le sourçage** — 1 an : deux sources de jardin indépendantes (Quimperlé Communauté, CAUE 76) taillent la haie au moins une fois par an ; le « 2 à 3 ans » ne vaut que pour le bocage |
 | Q23 | Traitements fruitiers | Écrits en R3 (hors MVP) et non sourcés, alors que le plan les attend dans la bibliothèque du sprint 4b | **Tranchée le 20/10/2026** — retirés de la liste de départ |
-| Q24 | Paramètres du décalage climatique | **Sourcé (20/10/2026)** : gradient de 0,65 °C par 100 m (Météo-France, qui signale l'exception des inversions de vallée) ; coefficient de 5,7 à 7 j/°C (arbres forestiers, Vitasse 2010 ; pommier d'une année à l'autre, Weil et al. 2018, −6 ; herbacées de jardins botaniques, d'un lieu à l'autre, −7) ; **aucun coefficient d'un lieu à l'autre trouvé sur des fruitiers**. Station de référence proposée : Trappes (fiche 1991-2020 complète, février-avril 7,8 °C ; Paris-Montsouris est un îlot de chaleur). Avec 6 j/°C : Perpignan, Nice, Bordeaux → −15 ; Lyon, Rennes, Brest → −7 ; Clermont-Ferrand, Strasbourg → 0 ; aucun profil ne change entre 5,7 et 7. **Reste à trancher** : (a) la fenêtre — février-avril range Brest et Rennes en avance par leur hiver doux, alors que leur avril est plus frais qu'à Trappes ; mars-avril les rapprocherait de 0 (non calculé) ; (b) les libellés des profils, qui ne correspondent plus aux villes qu'ils reçoivent (Bordeaux en « Midi », Rennes en « Sud-Ouest ») | **Paramètres retenus d'ici là** : Trappes, 6 j/°C, février-avril, dans `bibliotheque/climat/parametres.yaml` ; proposition indicative |
+| Q24 | Paramètres du décalage climatique | **Sourcé (20/10/2026)** : gradient de 0,65 °C par 100 m (Météo-France, qui signale l'exception des inversions de vallée) ; coefficient de 5,7 à 7 j/°C (arbres forestiers, Vitasse 2010 ; pommier d'une année à l'autre, Weil et al. 2018, −6 ; herbacées de jardins botaniques, d'un lieu à l'autre, −7) ; **aucun coefficient d'un lieu à l'autre trouvé sur des fruitiers**. Station de référence proposée : Trappes (fiche 1991-2020 complète, février-avril 7,8 °C ; Paris-Montsouris est un îlot de chaleur). Avec 6 j/°C : Perpignan, Nice, Bordeaux → −15 ; Lyon, Rennes, Brest → −7 ; Clermont-Ferrand, Strasbourg → 0 ; aucun profil ne change entre 5,7 et 7. **Reste à trancher** : (a) la fenêtre — février-avril range Brest et Rennes en avance par leur hiver doux, alors que leur avril est plus frais qu'à Trappes ; mars-avril les rapprocherait de 0 (non calculé) ; (b) les libellés des profils, qui ne correspondent plus aux villes qu'ils reçoivent (Bordeaux en « Midi », Rennes en « Sud-Ouest ») | **Tranchée le 20/10/2026** (Léon a laissé le choix) : Trappes, 6 j/°C, février-avril — la seule fenêtre employée par une source (Chmielewski et Rötzer 2001, via Weil et al.) ; Brest et Rennes restent en « Doux », à revoir sur retour d'utilisateurs. Profils renommés par leur effet (§5.4). Valeurs dans `bibliotheque/climat/parametres.yaml` ; proposition indicative tant qu'aucun coefficient n'est mesuré d'un lieu à l'autre sur des fruitiers |
 
 ---
 
@@ -1752,6 +1755,7 @@ Décisions actées, pour ne pas les rouvrir sans raison nouvelle.
 | 20/10/2026 | **L'annexe A prend les valeurs du sourçage**, avec leur niveau de confiance | Les valeurs de la v0.13 venaient de sources de vulgarisation. La haie persistante passe à une seule fenêtre (la seconde tombait en nidification), le rosier perd « jusqu'en novembre », la pelouse reçoit des intervalles mensuels. Vigne, groseillier à grappes, cassissier et arbuste à floraison printanière entrent dans la liste de départ ; le groseillier à maquereau en est écarté | Annexe A, §5.1 |
 | 20/10/2026 | **Les questions que le sourçage ne tranche pas sont posées à Léon**, pas résolues : nature de la nidification, pêcher, framboisier, haie caduque, traitements | Elles engagent le comportement du produit ou une règle de test, pas seulement une valeur | Q19 à Q23 |
 | 20/10/2026 | **Une espèce peut porter des variantes de conduite** ; le framboisier en a deux, remontant et non remontant, choisies à la création de la plante | Décision de Léon (Q21). Deux espèces auraient obligé l'utilisateur à savoir que « framboisier remontant » est une espèce à part ; une variante pose la question au moment où elle compte | RG-51, §5.1, annexe A |
+| 20/10/2026 | **Paramètres du climat et noms des profils** : Trappes en référence, 6 j/°C, février-avril ; profils « Très doux », « Doux », « Tempéré », « Frais », « Montagne » ; plus de zones de rusticité | Léon a laissé le choix. Février-avril est la seule fenêtre sourcée ; les noms de région ne correspondaient plus aux villes calculées (Bordeaux en « Midi ») | §5.4, RG-52, Q24, critère 13 |
 | 20/10/2026 | **Le profil climatique est proposé depuis la commune dès la V1** ; la liste des cinq devient le repli | Remarque de Léon : un nouvel utilisateur ne sait pas se situer dans une liste, et l'outil ne vise que la France. La typologie climatique par commune (Joly et al., 2010) est réservée aux services publics ; les normales des stations Météo-France, la base des codes postaux et le service altimétrique de l'IGN sont sous Licence Ouverte, usage commercial permis. Le moteur ne change pas : il reçoit toujours un décalage en jours | RG-23, RG-28, RG-52, §5.4, lot 0, Q24 |
 | 20/10/2026 | **Les zones ne portent plus d'ordre de tournée** ; elles se listent par ordre alphabétique, et la tournée du jour se calcule depuis la position (lot 4) | Remarque de Léon : sur un petit terrain l'ordre n'apporte rien, sur un grand il change d'une année et d'une sortie à l'autre. Le déclarer à la mise en route coûtait une étape pour une donnée vite fausse. Le critère 21 est tenu par la tournée calculée et modifiable du jour | §3.3, critère 21, modèle de données |
 | 20/10/2026 | **La nidification reste un butoir dur ; l'explication dit « déconseillée »** | Décision de Léon (Q19) : ne rien changer au comportement. Dire « interdit » à un particulier serait inexact, mais l'outil ne propose pas ce qu'il déconseille | RG-44 |
