@@ -146,25 +146,25 @@ Chaque sprint, en plus de sa propre porte :
 
 ### 0a.1 Audit
 
-- [ ] Créer le dossier `scripts/depot/` et le dossier `scripts/depot/tests/`.
-- [ ] Implémenter `scripts/depot/auditer-historique.sh` : lance `gitleaks git --log-opts="--all"` (installé par Homebrew, version écrite dans `decisions-agents.md`) sur le dépôt passé en argument, puis un `git log -p --all` filtré sur des motifs de coordonnées décimales (`-?\d{1,2}\.\d{4,}`), d'adresses (`\d+,? (rue|chemin|route|allée)`) et la liste de noms de lieux lue **hors du dépôt**, dans `$LIEUX_INTERDITS` (par défaut `~/.config/jardin/lieux-interdits.txt`), écrite par Léon et jamais versionnée ; fichier absent ou vide → code `1` et le message « liste des lieux interdits absente » (D-33). Sortie : nombre de commits lus, nombre de résultats ; code `1` au premier résultat. Ne jamais afficher la valeur d'un secret trouvé : seulement fichier, commit, règle.
-- [ ] Implémenter `scripts/depot/tests/test-auditer-historique.sh` : crée un dépôt jetable sous `mktemp -d`, un commit propre puis un commit avec une fausse clé AWS de la documentation de gitleaks, puis un commit qui la retire ; attend `1` ; sur un dépôt propre, attend `0` ; sur un dépôt propre avec `LIEUX_INTERDITS` vers un chemin absent, puis vers un fichier vide, attend `1`.
-- [ ] Créer `.gitleaks.toml` (règles par défaut, aucune exception au départ).
-- [ ] Lancer l'audit sur `~/jardin` ; écrire commande, version, nombre de commits lus et résultat dans `decisions-agents.md`. Résultat non vide → `ARRET:` avec la liste (fichier, commit, règle), rien n'est publié. Liste des lieux absente → `ARRET:` qui demande à Léon de l'écrire (chemin, une ligne par nom), rien n'est publié.
+- [x] Créer le dossier `scripts/depot/` et le dossier `scripts/depot/tests/`.
+- [x] Implémenter `scripts/depot/auditer-historique.sh` : lance `gitleaks git --log-opts="--all"` (installé par Homebrew, version écrite dans `decisions-agents.md`) sur le dépôt passé en argument, puis un `git log -p --all` filtré sur des motifs de coordonnées décimales (`-?\d{1,2}\.\d{4,}`), d'adresses (`\d+,? (rue|chemin|route|allée)`) et la liste de noms de lieux lue **hors du dépôt**, dans `$LIEUX_INTERDITS` (par défaut `~/.config/jardin/lieux-interdits.txt`), écrite par Léon et jamais versionnée ; fichier absent ou vide → code `1` et le message « liste des lieux interdits absente » (D-33). Sortie : nombre de commits lus, nombre de résultats ; code `1` au premier résultat. Ne jamais afficher la valeur d'un secret trouvé : seulement fichier, commit, règle.
+- [x] Implémenter `scripts/depot/tests/test-auditer-historique.sh` : crée un dépôt jetable sous `mktemp -d`, un commit propre puis un commit avec une fausse clé AWS de la documentation de gitleaks, puis un commit qui la retire ; attend `1` ; sur un dépôt propre, attend `0` ; sur un dépôt propre avec `LIEUX_INTERDITS` vers un chemin absent, puis vers un fichier vide, attend `1`.
+- [x] Créer `.gitleaks.toml` (règles par défaut, aucune exception au départ).
+- [x] Lancer l'audit sur `~/jardin` ; écrire commande, version, nombre de commits lus et résultat dans `decisions-agents.md`. Résultat non vide → `ARRET:` avec la liste (fichier, commit, règle), rien n'est publié. Liste des lieux absente → `ARRET:` qui demande à Léon de l'écrire (chemin, une ligne par nom), rien n'est publié.
 
 ### 0a.2 Préparer la publication
 
-- [ ] Créer `.github/ruleset-main.json` : cible `main`, interdit la suppression et la réécriture (`non_fast_forward`), exige une demande de fusion ; **sans** contrôle requis (ajoutés au 0e, quand `verifier.yml` existe).
-- [ ] Implémenter `scripts/depot/appliquer-ruleset.sh` : `gh api --method PUT repos/$1/rulesets/<id>` (ou `POST` à la première création, puis `PUT`), puis `gh api repos/$1/rulesets/<id>` et compare la relecture à la charge ; code `1` si elles diffèrent.
+- [x] Créer `.github/ruleset-main.json` : cible `main`, interdit la suppression et la réécriture (`non_fast_forward`), exige une demande de fusion ; **sans** contrôle requis (ajoutés au 0e, quand `verifier.yml` existe).
+- [x] Implémenter `scripts/depot/appliquer-ruleset.sh` : `gh api --method PUT repos/$1/rulesets/<id>` (ou `POST` à la première création, puis `PUT`), puis `gh api repos/$1/rulesets/<id>` et compare la relecture à la charge ; code `1` si elles diffèrent.
 
 ### 0a.3 ARRÊT — acte qui engage Léon (README §3)
 
-- [ ] **ARRÊT.** L'agent termine sa passe par un paragraphe `ARRET:` qui donne à Léon : le résultat de l'audit, le nom proposé du dépôt, et les commandes qu'il lancera **après l'accord explicite de Léon dans la session** : `gh repo create <nom> --public --source ~/jardin --remote origin`, activation de la détection de secrets et du blocage à l'envoi (`gh api --method PATCH repos/<nom> -f security_and_analysis[secret_scanning][status]=enabled -f security_and_analysis[secret_scanning_push_protection][status]=enabled`), `git push origin main`, puis `appliquer-ruleset.sh`. **Rien n'est créé ni envoyé avant cet accord ; il n'existe aucun contournement.**
+- [x] **ARRÊT.** L'agent termine sa passe par un paragraphe `ARRET:` qui donne à Léon : le résultat de l'audit, le nom proposé du dépôt, et les commandes qu'il lancera **après l'accord explicite de Léon dans la session** : `gh repo create <nom> --public --source ~/jardin --remote origin`, activation de la détection de secrets et du blocage à l'envoi (`gh api --method PATCH repos/<nom> -f security_and_analysis[secret_scanning][status]=enabled -f security_and_analysis[secret_scanning_push_protection][status]=enabled`), `git push origin main`, puis `appliquer-ruleset.sh`. **Rien n'est créé ni envoyé avant cet accord ; il n'existe aucun contournement.**
 
 ### 0a.4 Après l'accord
 
-- [ ] Exécuter les commandes de 0a.3, dans cet ordre : création, détection de secrets et blocage à l'envoi, premier envoi, **puis** ruleset (un ruleset qui exige une demande de fusion refuserait l'envoi initial, D-33).
-- [ ] Relire par `gh api repos/<nom>` : `private: false`, détection et blocage `enabled` ; relire le ruleset ; comparer `git rev-list --all` local et distant. Écrire la relecture dans `decisions-agents.md`. Un écart → `ARRET:`.
+- [x] Exécuter les commandes de 0a.3, dans cet ordre : création, détection de secrets et blocage à l'envoi, premier envoi, **puis** ruleset (un ruleset qui exige une demande de fusion refuserait l'envoi initial, D-33).
+- [x] Relire par `gh api repos/<nom>` : `private: false`, détection et blocage `enabled` ; relire le ruleset ; comparer `git rev-list --all` local et distant. Écrire la relecture dans `decisions-agents.md`. Un écart → `ARRET:`.
 
 ---
 
@@ -190,33 +190,33 @@ Chaque sprint, en plus de sa propre porte :
 
 ### 0b.0 Précondition
 
-- [ ] Vérifier la fin de 0a : `git -C ~/jardin remote get-url origin` répond, `gh api repos/<nom>` rend le dépôt public, `gh api repos/<nom>/rulesets` rend le ruleset ; sinon `ARRET:` qui le dit, et rien d'autre n'est fait (D-32).
+- [x] Vérifier la fin de 0a : `git -C ~/jardin remote get-url origin` répond, `gh api repos/<nom>` rend le dépôt public, `gh api repos/<nom>/rulesets` rend le ruleset ; sinon `ARRET:` qui le dit, et rien d'autre n'est fait (D-32).
 
 ### 0b.1 Essai d'abord
 
-- [ ] Démarrer OrbStack, lancer `ddev start` sur un projet vide sous le bloc-notes avec `php 8.4`, `postgres 17`, `nodejs 22` ; relever les versions réellement servies et les écrire dans `decisions-agents.md` (chapitre 6 §3 : « à vérifier au chantier 0 »). Si une version n'existe pas, prendre la plus proche et l'écrire.
+- [x] Démarrer OrbStack, lancer `ddev start` sur un projet vide sous le bloc-notes avec `php 8.4`, `postgres 17`, `nodejs 22` ; relever les versions réellement servies et les écrire dans `decisions-agents.md` (chapitre 6 §3 : « à vérifier au chantier 0 »). Si une version n'existe pas, prendre la plus proche et l'écrire.
 
 ### 0b.2 Squelette
 
-- [ ] Créer l'ossature Laravel 12 dans un dossier temporaire (`composer create-project laravel/laravel`), puis la déplacer dans `~/jardin` à côté de `docs/` et `design/` sans écraser `.gitignore` (fusionner les deux).
-- [ ] Modifier `composer.json` : autoload `"Src\\": "src/"` ; `pestphp/pest`, `pestphp/pest-plugin-laravel` et `symfony/yaml` en développement.
-- [ ] Produire `.ddev/config.yaml` par `ddev config --project-type=laravel --webserver-type=nginx-fpm --database=postgres:17` et les versions de 0b.1 (fichier produit par un générateur, hors compte, D-35).
-- [ ] Implémenter `app/Providers/ModulesServiceProvider.php` : parcourt `src/*/routes.php` (glob trié) et charge chaque fichier dans le groupe `web` ; aucun fichier n'est une erreur (A16). L'enregistrer dans `bootstrap/providers.php`.
-- [ ] Implémenter `src/Support/Http/SanteController.php` (`__invoke` → `response()->json(['etat' => 'ok'])`, après un `select 1` par Eloquent sur la connexion) et `src/Support/routes.php` (`GET /sante`, sans authentification).
+- [x] Créer l'ossature Laravel 12 dans un dossier temporaire (`composer create-project laravel/laravel`), puis la déplacer dans `~/jardin` à côté de `docs/` et `design/` sans écraser `.gitignore` (fusionner les deux).
+- [x] Modifier `composer.json` : autoload `"Src\\": "src/"` ; `pestphp/pest`, `pestphp/pest-plugin-laravel` et `symfony/yaml` en développement.
+- [x] Produire `.ddev/config.yaml` par `ddev config --project-type=laravel --webserver-type=nginx-fpm --database=postgres:17` et les versions de 0b.1 (fichier produit par un générateur, hors compte, D-35).
+- [x] Implémenter `app/Providers/ModulesServiceProvider.php` : parcourt `src/*/routes.php` (glob trié) et charge chaque fichier dans le groupe `web` ; aucun fichier n'est une erreur (A16). L'enregistrer dans `bootstrap/providers.php`.
+- [x] Implémenter `src/Support/Http/SanteController.php` (`__invoke` → `response()->json(['etat' => 'ok'])`, après un `select 1` par Eloquent sur la connexion) et `src/Support/routes.php` (`GET /sante`, sans authentification).
 
 ### 0b.3 Makefile et CI
 
-- [ ] Créer `Makefile` : toutes les cibles du chapitre 6 §4, les vides font `@echo "(vide)"` ; `verifier` enchaîne `statique test balayage e2e mutation criteres` par dépendances séquentielles (`$(MAKE)` successifs, arrêt au premier code non nul). Chaque cible marche dans DDEV (`ddev exec`) et dans la CI (variable `DANS_CI=1`, commandes directes).
-- [ ] Créer `.github/workflows/verifier.yml` : `on: pull_request`, job `tests` avec service `postgres:17`, étapes `actions/checkout`, `shivammathur/setup-php` (8.4), `make setup`, `make test` ; aucune autre commande de travail (C6).
+- [x] Créer `Makefile` : toutes les cibles du chapitre 6 §4, les vides font `@echo "(vide)"` ; `verifier` enchaîne `statique test balayage e2e mutation criteres` par dépendances séquentielles (`$(MAKE)` successifs, arrêt au premier code non nul). Chaque cible marche dans DDEV (`ddev exec`) et dans la CI (variable `DANS_CI=1`, commandes directes).
+- [x] Créer `.github/workflows/verifier.yml` : `on: pull_request`, job `tests` avec service `postgres:17`, étapes `actions/checkout`, `shivammathur/setup-php` (8.4), `make setup`, `make test` ; aucune autre commande de travail (C6).
 
 ### 0b.4 Tests
 
-- [ ] `tests/Routes/SanteTest.php` : `200`, corps exact, sans session.
-- [ ] `tests/Architecture/ChargementRoutesTest.php` : crée un module témoin `src/Temoin/routes.php` dans un dossier temporaire chargé par le fournisseur, vérifie la route ; sans fichier, l'application démarre (V4).
-- [ ] `tests/Architecture/MakefileTest.php` : `make -n verifier` liste les six cibles dans l'ordre ; une cible forcée en échec (`ECHEC=statique`) arrête l'enchaînement avec un code non nul (V5).
-- [ ] `tests/Architecture/VersionsTest.php` : lit `.ddev/config.yaml` et compare aux versions servies (`PHP_VERSION`, `select version()`, `node --version`) ; la majeure de PostgreSQL est aussi celle du service `postgres` de `verifier.yml` ; il tourne dans DDEV et dans la CI, dont le `checkout` suivi de `make setup` est le clone neuf de V3 (D-35).
-- [ ] Lancer une fois un clone neuf local (`git clone` de `~/jardin` dans le bloc-notes, `make setup`, `/sante` en HTTPS) et relever le résultat dans la demande de fusion (V3).
-- [ ] Ouvrir la première demande de fusion ; relever le run vert (V6).
+- [x] `tests/Routes/SanteTest.php` : `200`, corps exact, sans session.
+- [x] `tests/Architecture/ChargementRoutesTest.php` : crée un module témoin `src/Temoin/routes.php` dans un dossier temporaire chargé par le fournisseur, vérifie la route ; sans fichier, l'application démarre (V4).
+- [x] `tests/Architecture/MakefileTest.php` : `make -n verifier` liste les six cibles dans l'ordre ; une cible forcée en échec (`ECHEC=statique`) arrête l'enchaînement avec un code non nul (V5).
+- [x] `tests/Architecture/VersionsTest.php` : lit `.ddev/config.yaml` et compare aux versions servies (`PHP_VERSION`, `select version()`, `node --version`) ; la majeure de PostgreSQL est aussi celle du service `postgres` de `verifier.yml` ; il tourne dans DDEV et dans la CI, dont le `checkout` suivi de `make setup` est le clone neuf de V3 (D-35).
+- [x] Lancer une fois un clone neuf local (`git clone` de `~/jardin` dans le bloc-notes, `make setup`, `/sante` en HTTPS) et relever le résultat dans la demande de fusion (V3).
+- [x] Ouvrir la première demande de fusion ; relever le run vert (V6).
 
 ---
 
