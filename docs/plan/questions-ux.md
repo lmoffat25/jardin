@@ -30,6 +30,7 @@ que la réponse arrive avant le sprint.
 - [Q-UX-14 — Choisir la variante de conduite à la création](#q-ux-14--choisir-la-variante-de-conduite-à-la-création)
 - [Q-UX-15 — Saisir les plantes zone par zone](#q-ux-15--saisir-les-plantes-zone-par-zone)
 - [Q-UX-16 — Altitude incertaine à la création du jardin](#q-ux-16--altitude-incertaine-à-la-création-du-jardin)
+- [Q-UX-17 — Trop d'essais de connexion](#q-ux-17--trop-dessais-de-connexion)
 
 ---
 
@@ -277,4 +278,22 @@ de la réponse « Je ne sais pas » ?
 2. Ne rien proposer et ouvrir la liste des cinq.
 
 **Ce qui attend :** rien ne bloque. Tranché par la recommandation le 20/10/2026.
+**Réponse :**
+
+## Q-UX-17 — Trop d'essais de connexion
+
+**Question :** après cinq essais manqués en une minute, la connexion est
+bloquée jusqu'à la fin de la minute. Que dit l'écran ?
+**Concerne :** B1 (vague 5), V36.
+**Options :**
+1. **Recommandé — « Trop d'essais. Réessayez dans une minute. »**, sous le
+   champ courriel, à la place de « Identifiants incorrects. » : il dit quoi
+   faire, sans compte à rebours à tenir à jour.
+2. Le nombre exact de secondes restantes (« Réessayez dans 42 secondes. ») :
+   plus précis, mais faux dès qu'on attend sans recharger.
+3. Le même « Identifiants incorrects. » : rien ne trahit le blocage, mais un
+   mot de passe juste paraît faux pendant une minute.
+
+**Ce qui attend :** rien ne bloque. Appliquée : la recommandation (sprint 2c,
+D-82), le 20/10/2026.
 **Réponse :**
