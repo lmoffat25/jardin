@@ -89,7 +89,7 @@ final class PlantesProches
      * @param  array{lng: float, lat: float}  $a
      * @param  array{0: float, 1: float}  $b  `[lng, lat]`
      */
-    private static function distance(array $a, array $b): float
+    public static function distance(array $a, array $b): float
     {
         $phi1 = deg2rad($a['lat']);
         $phi2 = deg2rad($b[1]);

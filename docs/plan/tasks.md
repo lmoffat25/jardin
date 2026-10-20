@@ -1746,8 +1746,8 @@ public function executer(SaisieIntervention $saisie, Utilisateur $auteur): Colle
 **Classes de test :** `tests/Routes/TourneeTest.php`
 **Fin :** le critère 21 est vrai côté serveur.
 
-- [ ] Implémenter `src/Jardin/Localisation/Tournee.php` : échéances du jour rendues par le moteur ; plus proche voisin de plante en plante depuis la position (haversine au point représentatif, D-26) ; puis les plantes sans position, groupées par zone dans l'ordre alphabétique. Implémenter `TourneeController.php` ; modifier `routes.php` ; inscrire au registre.
-- [ ] `tests/Routes/TourneeTest.php` : V131, les trois cas (position, sans position, autre jardin), aucune écriture en base. Groupe `critere-21`.
+- [x] Implémenter `src/Jardin/Localisation/Tournee.php` : échéances du jour rendues par le moteur ; plus proche voisin de plante en plante depuis la position (haversine au point représentatif, D-26) ; puis les plantes sans position, groupées par zone dans l'ordre alphabétique. Implémenter `TourneeController.php` ; modifier `routes.php` ; inscrire au registre.
+- [x] `tests/Routes/TourneeTest.php` : V131, les trois cas (position, sans position, autre jardin), aucune écriture en base. Groupe `critere-21`.
 
 ---
 

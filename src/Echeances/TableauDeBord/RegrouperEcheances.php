@@ -33,7 +33,8 @@ final class RegrouperEcheances
 
     private const JOURS_MOIS = 30;
 
-    private const ETATS_DU_JOUR = [Etat::Ouverte, Etat::Optimale, Etat::Urgente];
+    /** Dues aujourd'hui : la liste du jour (T1) et la tournée (T7) en partent. */
+    public const ETATS_DU_JOUR = [Etat::Ouverte, Etat::Optimale, Etat::Urgente];
 
     public function __construct(
         private readonly CalculEcheances $calcul,
