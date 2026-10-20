@@ -1543,19 +1543,19 @@ public function executer(SaisieIntervention $saisie, Utilisateur $auteur): Colle
 
 ### 8b.1 Solde
 
-- [ ] Implémenter `src/Echeances/Solde/SolderEcheance.php` : pour chaque intervention, règle active (plante, type) ; calcule par le moteur, avec l'historique **antérieur** à l'intervention, l'échéance dont la période contient `faite_le` (R2) ou la dernière due ≤ `faite_le` (R1) ; `EcheanceMaterialisee::query()->insertOrIgnore` en `soldee` avec `intervention_id` et explication ; rien si aucune (V54, H9) ; jamais deux soldées pour une même `(regle_id, due_le)` (V100). Appelée à l'étape 4 de `EnregistrerIntervention`.
-- [ ] Implémenter `src/Echeances/Solde/FaitController.php` (D-57) : règle par le scope (`404` sinon), active (`422` sinon) ; le moteur doit rendre le couple `(regle_id, due_le)` reçu pour cette règle aujourd'hui, manquée ou à venir, sinon `422` ; fabrique une `SaisieIntervention` (une ligne, `faite_le` = `Horloge::aujourdhui()`) et appelle `EnregistrerIntervention` **sans** le solde générique, puis `SolderEcheance::couple` : une échéance à venir s'écrit `soldee`, une manquée déjà matérialisée passe de `manquee` à `soldee` avec `intervention_id` ; modifier `src/Echeances/routes.php` ; inscrire au registre.
+- [x] Implémenter `src/Echeances/Solde/SolderEcheance.php` : pour chaque intervention, règle active (plante, type) ; calcule par le moteur, avec l'historique **antérieur** à l'intervention, l'échéance dont la période contient `faite_le` (R2) ou la dernière due ≤ `faite_le` (R1) ; `EcheanceMaterialisee::query()->insertOrIgnore` en `soldee` avec `intervention_id` et explication ; rien si aucune (V54, H9) ; jamais deux soldées pour une même `(regle_id, due_le)` (V100). Appelée à l'étape 4 de `EnregistrerIntervention`.
+- [x] Implémenter `src/Echeances/Solde/FaitController.php` (D-57) : règle par le scope (`404` sinon), active (`422` sinon) ; le moteur doit rendre le couple `(regle_id, due_le)` reçu pour cette règle aujourd'hui, manquée ou à venir, sinon `422` ; fabrique une `SaisieIntervention` (une ligne, `faite_le` = `Horloge::aujourdhui()`) et appelle `EnregistrerIntervention` **sans** le solde générique, puis `SolderEcheance::couple` : une échéance à venir s'écrit `soldee`, une manquée déjà matérialisée passe de `manquee` à `soldee` avec `intervention_id` ; modifier `src/Echeances/routes.php` ; inscrire au registre.
 
 ### 8b.2 Position
 
-- [ ] Implémenter `src/Jardin/Domaine/Geometrie.php` (trait de jardin, `coordonnees` en tableau GeoJSON) et `src/Jardin/Localisation/EnregistrerPosition.php` : l'ordre de fiabilité `plan > manuel > gps` ; `gps` remplace `gps` seulement si `precision_m` est plus petite ; absente → créée en point `gps` (D-17, RG-48, S18). Modifier `EnregistrerIntervention` : `position_capturee` toujours gardée ; `EnregistrerPosition` appelée seulement pour une intervention à une seule ligne.
+- [x] Implémenter `src/Jardin/Domaine/Geometrie.php` (trait de jardin, `coordonnees` en tableau GeoJSON) et `src/Jardin/Localisation/EnregistrerPosition.php` : l'ordre de fiabilité `plan > manuel > gps` ; `gps` remplace `gps` seulement si `precision_m` est plus petite ; absente → créée en point `gps` (D-17, RG-48, S18). Modifier `EnregistrerIntervention` : `position_capturee` toujours gardée ; `EnregistrerPosition` appelée seulement pour une intervention à une seule ligne.
 
 ### 8b.3 Tests
 
-- [ ] `tests/Routes/FaitTest.php` : V98, les quatre cas, le renvoi, et le couple exact (« fait » sur une manquée solde cette manquée, pas l'occurrence en cours ; couple que le moteur ne rend pas → `422`).
-- [ ] `tests/Persistance/RetroactifTest.php` : V99 (`travelTo` lundi ; taille du samedi). Groupe `critere-7`.
-- [ ] `tests/Persistance/DeuxDansFenetreTest.php` : V100.
-- [ ] `tests/Persistance/PositionInterventionTest.php` : V101 (sources `plan`, `manuel`, `gps` plus et moins précise, absente ; intervention à six plantes). Groupe `critere-17`.
+- [x] `tests/Routes/FaitTest.php` : V98, les quatre cas, le renvoi, et le couple exact (« fait » sur une manquée solde cette manquée, pas l'occurrence en cours ; couple que le moteur ne rend pas → `422`).
+- [x] `tests/Persistance/RetroactifTest.php` : V99 (`travelTo` lundi ; taille du samedi). Groupe `critere-7`.
+- [x] `tests/Persistance/DeuxDansFenetreTest.php` : V100.
+- [x] `tests/Persistance/PositionInterventionTest.php` : V101 (sources `plan`, `manuel`, `gps` plus et moins précise, absente ; intervention à six plantes). Groupe `critere-17`.
 
 ---
 

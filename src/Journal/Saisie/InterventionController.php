@@ -64,8 +64,12 @@ final class InterventionController
         return response()->json(['interventions' => $stockees->map(self::rendu(...))->all()]);
     }
 
-    /** @return array{id: string, plante_id: string, type_intervention_id: int, faite_le: string, note: string|null, duree_min: int|null, auteur_id: string} */
-    private static function rendu(Intervention $intervention): array
+    /**
+     * Une intervention telle que la rendent `/interventions` et `/echeances/fait`.
+     *
+     * @return array{id: string, plante_id: string, type_intervention_id: int, faite_le: string, note: string|null, duree_min: int|null, auteur_id: string}
+     */
+    public static function rendu(Intervention $intervention): array
     {
         return [
             'id' => $intervention->id,
