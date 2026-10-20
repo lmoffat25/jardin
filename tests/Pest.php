@@ -63,3 +63,55 @@ function nouvelleZone(string $jardin, string $nom = 'Zone témoin'): string
 
     return $id;
 }
+
+/** Une plante fictive du jardin, dans une zone neuve ; rend son id. */
+function nouvellePlante(string $jardin): string
+{
+    $id = (string) Str::uuid();
+    DB::table('plantes')->insert([
+        'id' => $id,
+        'jardin_id' => $jardin,
+        'zone_id' => nouvelleZone($jardin, "Zone {$id}"),
+        'code_court' => 'PLA-'.substr($id, 0, 8),
+        'nom' => 'Plante témoin',
+    ]);
+
+    return $id;
+}
+
+/** Un type d'intervention propre au jardin ; rend son id. */
+function nouveauType(string $jardin): int
+{
+    return DB::table('types_intervention')->insertGetId(
+        ['jardin_id' => $jardin, 'libelle' => 'Geste '.Str::uuid(), 'famille' => 'taille'],
+    );
+}
+
+/**
+ * Une ligne de règle R2 prête à insérer : active, version 1, origine libre.
+ *
+ * @param  array<string, mixed>  $champs
+ * @return array<string, mixed>
+ */
+function regle(string $jardin, string $plante, int $type, array $champs = []): array
+{
+    return $champs + [
+        'id' => (string) Str::uuid(),
+        'jardin_id' => $jardin,
+        'plante_id' => $plante,
+        'type_intervention_id' => $type,
+        'type_regle' => 'R2',
+        'periodicite_annees' => 1,
+        'confiance' => 'indicative',
+        'origine' => 'libre',
+    ];
+}
+
+/** Une règle insérée sur une plante neuve du jardin ; rend son id. */
+function nouvelleRegle(string $jardin): string
+{
+    $ligne = regle($jardin, nouvellePlante($jardin), nouveauType($jardin));
+    DB::table('regles')->insert($ligne);
+
+    return $ligne['id'];
+}

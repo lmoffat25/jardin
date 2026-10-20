@@ -505,7 +505,7 @@ Chaque sprint, en plus de sa propre porte :
 ---
 
 ## Sprint 1b — Migrations du moteur, du journal et du plan
-<!-- taille : 5 assertions, 4 fichiers, 3 classes de test -->
+<!-- taille : 5 assertions, 5 fichiers, 3 classes de test -->
 
 **Objectif :** toutes les tables métier existent, chacune porte son jardin, et les contraintes qui protègent le moteur tiennent.
 **Constructeur :** back
@@ -519,22 +519,23 @@ Chaque sprint, en plus de sa propre porte :
 **Vérification en marche :** sans objet
 **Question UX possible :** aucune
 **Assertions :** V27, V28, V29, V30, V129
-**Fichiers :** `database/migrations/2026_10_20_000005_creer_geometries_regles_interventions.php`, `database/migrations/2026_10_20_000005b_index_regle_active.php`, `database/migrations/2026_10_20_000006_creer_fenetres_intervalles_echeances_photos_fonds.php`, `database/migrations/2026_10_20_000007_fk_photo_couverture.php`
+**Fichiers :** `database/migrations/2026_10_20_000005_creer_geometries_regles_interventions.php`, `database/migrations/2026_10_20_000005b_index_regle_active.php`, `database/migrations/2026_10_20_000006_creer_fenetres_intervalles_echeances_photos_fonds.php`, `database/migrations/2026_10_20_000007_fk_photo_couverture.php`, `tests/Pest.php`
 **Classes de test :** `tests/Persistance/CloisonnementSchemaTest.php`, `tests/Persistance/ContraintesMoteurTest.php`, `tests/Persistance/ContraintesFormeTest.php`
 **Fin :** le schéma entier du chapitre 4 est en place, avec `jardin_id` sur `fenetres` et `intervalles_saisonniers`.
 
 ### 1b.1 Migrations
 
-- [ ] Créer `database/migrations/2026_10_20_000005_creer_geometries_regles_interventions.php` : `geometries` (`plante_id UNIQUE`, `coordonnees jsonb`, CHECK forme et source), `regles` (CHECK `est_active = false OR remplacee_le IS NULL` ; **`origine varchar(12) NOT NULL` CHECK `bibliotheque|ajustee|libre`**, D-51), `interventions` (`id uuid` sans défaut : fourni par le client ; `faite_le date`).
-- [ ] Créer `database/migrations/2026_10_20_000005b_index_regle_active.php` : index unique partiel `(plante_id, type_intervention_id) WHERE est_active`.
-- [ ] Créer `database/migrations/2026_10_20_000006_creer_fenetres_intervalles_echeances_photos_fonds.php` : `fenetres` et `intervalles_saisonniers` **avec `jardin_id uuid NOT NULL REFERENCES jardins ON DELETE CASCADE`** (D-02) ; `echeances` (CHECK état `manquee|suspendue|soldee`, `explication varchar(400) NOT NULL`, UNIQUE `(regle_id, due_le)`) ; `photos` (CHECK plante ou intervention) ; `fonds_de_plan` (CHECK nature, index unique partiel `(jardin_id) WHERE actif`) ; les trois index du §4.
-- [ ] Créer `database/migrations/2026_10_20_000007_fk_photo_couverture.php` : `fk_photo_couverture … ON DELETE SET NULL`.
+- [x] Créer `database/migrations/2026_10_20_000005_creer_geometries_regles_interventions.php` : `geometries` (`plante_id UNIQUE`, `coordonnees jsonb`, CHECK forme et source), `regles` (CHECK `est_active = false OR remplacee_le IS NULL` ; **`origine varchar(12) NOT NULL` CHECK `bibliotheque|ajustee|libre`**, D-51), `interventions` (`id uuid` sans défaut : fourni par le client ; `faite_le date`).
+- [x] Créer `database/migrations/2026_10_20_000005b_index_regle_active.php` : index unique partiel `(plante_id, type_intervention_id) WHERE est_active`.
+- [x] Créer `database/migrations/2026_10_20_000006_creer_fenetres_intervalles_echeances_photos_fonds.php` : `fenetres` et `intervalles_saisonniers` **avec `jardin_id uuid NOT NULL REFERENCES jardins ON DELETE CASCADE`** (D-02) ; `echeances` (CHECK état `manquee|suspendue|soldee`, `explication varchar(400) NOT NULL`, UNIQUE `(regle_id, due_le)`) ; `photos` (CHECK plante ou intervention) ; `fonds_de_plan` (CHECK nature, index unique partiel `(jardin_id) WHERE actif`) ; les trois index du §4.
+- [x] Créer `database/migrations/2026_10_20_000007_fk_photo_couverture.php` : `fk_photo_couverture … ON DELETE SET NULL`.
 
 ### 1b.2 Tests
 
-- [ ] `tests/Persistance/CloisonnementSchemaTest.php` : lit `information_schema.columns` par Eloquent (`Schema::getColumns`) ; liste fermée d'exceptions écrite dans le test, `sources_regle` comprise (table du 4a, rattachée à `regles_reference`) ; une table hors liste sans `jardin_id NOT NULL` échoue (V27) ; aucune colonne `zone_id` sur `regles`, `interventions` ni `echeances`, et `plantes.zone_id` est `NOT NULL` (V129).
-- [ ] `tests/Persistance/ContraintesMoteurTest.php` : V28 (deux actives refusées ; active + inactive acceptées ; active avec `remplacee_le` refusée) et V29 (état calculé, explication nulle, doublon `(regle_id, due_le)` refusés).
-- [ ] `tests/Persistance/ContraintesFormeTest.php` : butoir à moitié, photo orpheline, fond `image` sans fichier, deux fonds actifs (V30).
+- [x] Compléter `tests/Pest.php` : aides `nouvellePlante()`, `nouveauType()`, `regle()`, `nouvelleRegle()`, partagées par les trois classes (D-79).
+- [x] `tests/Persistance/CloisonnementSchemaTest.php` : lit `information_schema.columns` par Eloquent (`Schema::getColumns`) ; liste fermée d'exceptions écrite dans le test, `sources_regle` comprise (table du 4a, rattachée à `regles_reference`) ; une table hors liste sans `jardin_id NOT NULL` échoue (V27) ; aucune colonne `zone_id` sur `regles`, `interventions` ni `echeances`, et `plantes.zone_id` est `NOT NULL` (V129).
+- [x] `tests/Persistance/ContraintesMoteurTest.php` : V28 (deux actives refusées ; active + inactive acceptées ; active avec `remplacee_le` refusée) et V29 (état calculé, explication nulle, doublon `(regle_id, due_le)` refusés).
+- [x] `tests/Persistance/ContraintesFormeTest.php` : butoir à moitié, photo orpheline, fond `image` sans fichier, deux fonds actifs (V30).
 
 ---
 
@@ -712,7 +713,7 @@ Chaque sprint, en plus de sa propre porte :
 ---
 
 ## Sprint 2f — Proposer le climat depuis la commune
-<!-- taille : 2 assertions, 7 fichiers, 2 classes de test -->
+<!-- taille : 2 assertions, 7 fichiers, 3 classes de test -->
 
 **Objectif :** l'utilisateur tape sa commune, l'outil lui propose un profil climatique et lui dit pourquoi ; le référentiel est importé sur le serveur, jamais interrogé à distance.
 **Constructeur :** back
@@ -728,11 +729,11 @@ Chaque sprint, en plus de sa propre porte :
 **En attente :** rien — Q24 tranchée : Trappes, 6 j/°C, février-avril ; le code et les tests n'en dépendent pas, ils lisent ces valeurs dans `bibliotheque/climat/parametres.yaml`
 **Assertions :** V135, V136
 **Fichiers :** `scripts/climat/generer-communes.py`, `bibliotheque/climat/parametres.yaml`, `src/Comptes/Climat/ImporterCommunes.php`, `src/Comptes/Climat/ProposerProfil.php`, `src/Comptes/Climat/CommuneController.php`, `src/Comptes/routes.php`, `database/migrations/…_creer_communes.php`
-**Classes de test :** `tests/Persistance/ImportCommunesTest.php`, `tests/Routes/ProfilCommuneTest.php`
+**Classes de test :** `tests/Persistance/ImportCommunesTest.php`, `tests/Routes/ProfilCommuneTest.php`, `tests/Persistance/CloisonnementSchemaTest.php`
 **Fin :** une commune saisie rend un profil proposé, sa raison, et la liste des cinq en repli.
 
 - [ ] Écrire `scripts/climat/generer-communes.py` : base officielle des codes postaux (La Poste), COG de l'Insee, liste et fiches climatologiques Météo-France (période 1991-2020 complète seulement), altitude du chef-lieu par le service altimétrique de l'IGN ; calcul de RG-52 avec `parametres.yaml` ; écrit `communes.csv` et la date de chaque source. Le lancer une fois, hors CI, et commiter le CSV.
-- [ ] Implémenter la migration (table `communes`, puis la clé `jardins.commune_insee → communes`, absente depuis le 1a, D-78), `ImporterCommunes.php` (idempotent, transaction, aucun réseau), `ProposerProfil.php` (profil le plus proche, montagne au-dessus de 600 m, `demander_altitude` entre 400 et 800 m) et `CommuneController.php` ; modifier `routes.php` ; inscrire les routes au registre (référence partagée, comme la bibliothèque).
+- [ ] Implémenter la migration (table `communes`, puis la clé `jardins.commune_insee → communes`, absente depuis le 1a, D-78), `ImporterCommunes.php` (idempotent, transaction, aucun réseau), `ProposerProfil.php` (profil le plus proche, montagne au-dessus de 600 m, `demander_altitude` entre 400 et 800 m) et `CommuneController.php` ; modifier `routes.php` ; inscrire les routes au registre (référence partagée, comme la bibliothèque). Ajouter `communes` à la liste fermée `TABLES_SANS_JARDIN` de `tests/Persistance/CloisonnementSchemaTest.php` (table de référence, sinon V27 rougit, D-79).
 - [ ] `tests/Persistance/ImportCommunesTest.php` : V135, sur un témoin de 12 communes et 4 stations inventées, dont une à période incomplète.
 - [ ] `tests/Routes/ProfilCommuneTest.php` : V136, les quatre cas.
 
