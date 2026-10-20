@@ -7,8 +7,8 @@ quitté sans rien perdre. Données fictives uniquement.
 """
 from __future__ import annotations
 
-from vague1 import (BLANC, ECRANS, FOND, FORT, SECOND, SURFACE, TEXTE, TRAIT, d, ids_pages,
-                    texte_flux)
+from vague1 import (BLANC, ECRANS, FOND, FORT, INTERFACE, SECOND, SURFACE, TEXTE, TRAIT, d,
+                    ids_pages, texte_flux)
 
 BW, BH = 1440, 900
 COL = 760                       # colonne des formulaires, centrée
@@ -50,6 +50,16 @@ def entete(f, etape: int, jardin: str | None = None):
 
 def champ(parent, x, y, w, libelle, valeur=None, indication=None, erreur=None, h=48):
     d.texte(parent, x, y, w, libelle, 15, gras=True)
+    if INTERFACE:   # « ↓ » en fin de valeur : une liste de choix
+        texte = valeur or indication or ""
+        c = d.instance("Champ", parent, x, y + 26, w, h, {
+            "etat": "erreur" if erreur else ("rempli" if valeur else "vide"),
+            "valeur": texte.removesuffix("↓").rstrip(), "liste": texte.endswith("↓")},
+            calque=f"Champ · {libelle}")
+        if erreur:
+            with d.etat("erreur"):
+                d.texte(parent, x, y + 26 + h + 8, w, f"⚠ {erreur}", 14, gras=True)
+        return c
     with d.etat("erreur", fond=False):
         c = d.cadre(f"Champ · {libelle}", parent, x, y + 26, w, h, fond=FOND, rayon=8,
                     trait=FORT if erreur else TRAIT)
@@ -92,6 +102,14 @@ def b2_suite(f):
 
 
 def b2_autre(f, y, libelle="Choisir un autre climat"):
+    if INTERFACE:   # le texte puis sa flèche, à la largeur du texte
+        a = d.noeud("frame", parent=f, name=f"Lien · {libelle}", x=CX, y=y, props={
+            "fills": [], "layout": "horizontal", "gap": 6, "crossAlign": "center",
+            "padding": [6, 0, 6, 0], "sizingH": "hug", "sizingV": "hug"})
+        d.noeud("text", parent=a, text=libelle, name=libelle, props={
+            "fontFamily": "Inter", "fontStyle": "Bold", "fontSize": 15, "fills": [TEXTE]})
+        d.icone(a, "arrow-right", 0, 0, cote=20)
+        return a
     a = d.cadre(f"Lien · {libelle}", f, CX, y, 320, 32)
     d.texte(a, 0, 6, 320, f"{libelle} →", 15, gras=True)
     return a
@@ -319,12 +337,20 @@ d.texte(zone_texte, 16, 14, 490, "Prunier n°1\tPrunier\tVerger haut\nPrunier n�
 d.texte(col, 608, 124, 600, "Ce que nous avons compris", 15, gras=True)
 for j, (c, v) in enumerate([("Colonne 1", "Nom"), ("Colonne 2", "Espèce"), ("Colonne 3", "Zone")]):
     d.texte(col, 608 + j * 200, 158, 190, c, 13, couleur=SECOND)
+    if INTERFACE:
+        d.instance("Champ", col, 608 + j * 200, 180, 184, 40,
+                   {"etat": "rempli", "valeur": v, "liste": True}, calque=f"Choix · {c}")
+        continue
     s = d.cadre(f"Choix · {c}", col, 608 + j * 200, 180, 184, 40, fond=FOND, rayon=6, trait=TRAIT)
     d.texte(s, 12, 10, 160, f"{v}  ↓", 15, gras=True)
 VERDICTS = [("✓ 9 lignes prêtes", None, False),
             ("⚠ Ligne 4 : la zone « Fond du jardin » n'existe pas", "Créer la zone", True),
             ("⚠ Ligne 6 : « Néflier » n'est pas dans la bibliothèque — importé sans règle", None, True)]
 for i, (v, action, fort) in enumerate(VERDICTS):
+    if INTERFACE:
+        d.bandeau(col, 608, 248 + i * 64, 784, 56, "attention" if fort else "succes", v[2:],
+                  action=action, largeur_action=160)
+        continue
     with d.etat("attention" if fort else "fait", fond=fort):
         r = d.cadre("Verdict", col, 608, 248 + i * 64, 784, 56, fond=FOND, rayon=8,
                     trait=FORT if fort else TRAIT)

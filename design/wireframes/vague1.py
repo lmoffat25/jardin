@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import subprocess
 import sys
 from contextlib import contextmanager
@@ -37,6 +38,10 @@ W, H, M = 390, 844, 16
 INTERFACE = os.environ.get("JARDIN_PASSE") == "interface"
 sys.path.insert(0, str(RACINE / "interface"))
 from icones import ICONES  # noqa: E402  (Lucide, O25)
+
+# Les glyphes provisoires des wireframes, et l'icône qui les remplace à l'interface.
+GLYPHES = {"⚠": "triangle-alert", "✓": "check", "↓": "chevron-down", "+": "plus",
+           "‹": "chevron-left", "›": "chevron-right", "→": "arrow-right"}
 
 # Le rôle de chaque gris, selon ce qu'il colore. Un gris absent de la table
 # arrête la construction : une valeur en dur ne passe pas (M6).
@@ -127,7 +132,9 @@ class Doc:
         elif props.get("stroke"):
             self.lier(i, "stroke", self.role("stroke", props["stroke"]))
 
-    def instance(self, nom: str, parent, x=0, y=0, w=None, h=None, proprietes=None) -> int:
+    def instance(self, nom: str, parent, x=0, y=0, w=None, h=None, proprietes=None,
+                 calque=None, props=None) -> int:
+        """`calque` nomme l'instance ; `props` la règle (`node.set`), après ses propriétés."""
         c = self.composants[nom]
         kw = {"parent": parent} if parent else {}
         self.cmd("instance.create", component=c["id"], x=x, y=y, **kw)
@@ -135,9 +142,16 @@ class Doc:
         self.suivant += c["calques"]          # chaque calque de l'instance prend un identifiant
         if proprietes:
             self.cmd("instance.setProperties", ids=[i], properties=proprietes)
+        reglages = dict(props or {})
         if w is not None:
-            self.cmd("node.set", ids=[i], width=w, height=h, name=f"{nom} · {proprietes}")
+            reglages.update(width=w, height=h)
+        if reglages or calque:
+            self.cmd("node.set", ids=[i], name=calque or f"{nom} · {proprietes}", **reglages)
         return i
+
+    def partie(self, i: int, nom: str, calque: str) -> int:
+        """L'identifiant d'un calque nommé du composant `nom` dans son instance `i`."""
+        return i + self.composants[nom]["parties"][calque]
 
     def densite(self, f: int, mode: str) -> None:
         if INTERFACE:
@@ -171,16 +185,47 @@ class Doc:
         return self.noeud("frame", name=nom, x=x, y=y, width=w, height=h, props=props, **kw)
 
     def texte(self, parent, x, y, w, s, taille=16, gras=False, couleur=TEXTE, align="left"):
+        if INTERFACE:   # un glyphe en tête ou en fin devient une icône Lucide (§2, icônes)
+            avant, apres = re.match(r"([⚠✓])\s+(.*)", s, re.S), re.match(r"(.*?)\s+([✓↓])$", s, re.S)
+            if apres and apres[2] == "✓" and align != "right":   # « Essai : réseau ✓ » reste
+                apres = None
+            cote = 16 if taille <= 15 else (20 if taille <= 20 else 24)
+            dy = max(0, (round(taille * 1.21) - cote) / 2)   # centrée sur la première ligne
+            if avant:
+                self.icone(parent, GLYPHES[avant[1]], x, y + dy, couleur, cote=cote)
+                x, w, s = x + cote + 6, w - cote - 6, avant[2]
+            elif apres:
+                self.icone(parent, GLYPHES[apres[2]], x + w - cote, y + dy, couleur, cote=cote)
+                w, s = w - cote - 6, apres[1]
         return self.noeud("text", parent=parent, x=x, y=y, text=s, name=s[:40], props={
             "width": w, "textAutoResize": "height", "fontFamily": "Inter",
             "fontStyle": "Bold" if gras else "Regular", "fontSize": taille,
             "fills": [couleur], "textAlign": align})
 
-    def bouton(self, parent, x, y, w, h, libelle, principal=False, inactif=False):
+    def bouton(self, parent, x, y, w, h, libelle, principal=False, inactif=False, icone=None):
+        """`icone` : un bouton d'icône seule (passe interface), `libelle` étant son nom accessible.
+        Un « + » ou un « ‹ » en tête, un « › » ou un « → » en fin deviennent une icône."""
         if INTERFACE:
             variante = "inactif" if inactif else ("principale" if principal else "secondaire")
-            return self.instance("Bouton", parent, x, y, w, h,
-                                 {"variante": variante, "libelle": libelle})
+            proprietes = {"variante": variante, "libelle": libelle}
+            icones = {}
+            if icone:
+                icones["icone"] = icone
+                proprietes["avecLibelle"] = False
+            elif m := re.match(r"([+‹])\s+(.*)", libelle):
+                icones["icone"], proprietes["libelle"] = GLYPHES[m[1]], m[2]
+            elif m := re.match(r"(.*?)\s+([›→])$", libelle):
+                icones["iconeApres"], proprietes["libelle"] = GLYPHES[m[2]], m[1]
+            for prop, nom in icones.items():
+                proprietes[prop] = self.composants[f"Icône/{nom}"]["id"]
+                proprietes["avecIcone" if prop == "icone" else "avecIconeApres"] = True
+            i = self.instance("Bouton", parent, x, y, w, h, proprietes,
+                              calque=f"Bouton · {libelle}")
+            # Changer d'icône rend au trait le rôle du composant Icône : on le relie au texte.
+            for prop in icones:
+                self.lier(self.partie(i, "Bouton", prop) + 1, "stroke",
+                          fondations.BOUTON_TEXTE[variante])
+            return i
         fond = FORT if principal and not inactif else (SURFACE if inactif else FOND)
         b = self.cadre(f"Bouton · {libelle}", parent, x, y, w, h, fond=fond, rayon=10,
                        trait=None if principal else TRAIT)
@@ -188,15 +233,16 @@ class Doc:
         self.texte(b, 8, (h - 22) / 2, w - 16, libelle, 17, gras=True, couleur=couleur, align="center")
         return b
 
-    def icone(self, parent, nom, x, y, couleur=TEXTE, libelle=None):
-        """Une icône Lucide de 24 px. `libelle` est son nom accessible : il nomme le calque, et
-        le composant React le rend en `aria-label` (conception-ecrans.md, icônes)."""
+    def icone(self, parent, nom, x, y, couleur=TEXTE, libelle=None, cote=24):
+        """Une icône Lucide (24 px, ou `cote`). `libelle` est son nom accessible : il nomme le
+        calque, et le composant React le rend en `aria-label` (conception-ecrans.md, icônes)."""
         nom_calque = f"Icône · {libelle or nom}"
         if INTERFACE:
-            i = self.instance(f"Icône/{nom}", parent, x, y)
-            self.cmd("node.set", ids=[i], name=nom_calque)
-            if couleur != TEXTE:              # le trait est le seul calque de l'instance
-                self.lier(i + 1, "stroke", self.role("text", couleur))
+            taille = {"w": cote, "h": cote} if cote != 24 else {}
+            i = self.instance(f"Icône/{nom}", parent, x, y, calque=nom_calque, **taille)
+            role = self.role("text", couleur)  # un état en cours (d.etat) colore aussi l'icône
+            if role != "texte/principal":      # le trait est le seul calque de l'instance
+                self.lier(i + 1, "stroke", role)
             return i
         c = self.cadre(nom_calque, parent, x, y, 24, 24)
         self.noeud("vector", parent=c, path=ICONES[nom], name="trait",
@@ -207,12 +253,31 @@ class Doc:
     def bouton_icone(self, parent, x, y, w, h, nom, libelle, principal=False, inactif=False):
         """Un geste universel (retour, retirer, monter) : l'icône seule, `libelle` pour le nom
         accessible. Les actions qui engagent gardent leur texte."""
+        if INTERFACE:
+            return self.bouton(parent, x, y, w, h, libelle, principal, inactif, icone=nom)
         b = self.bouton(parent, x, y, w, h, "", principal=principal, inactif=inactif)
         self.cmd("node.set", ids=[b], name=f"Bouton · {libelle}")
         couleur = BLANC if principal and not inactif else (TRAIT if inactif else TEXTE)
         self.doublures[b] = self.icone(parent, nom, x + (w - 24) / 2, y + (h - 24) / 2, couleur,
                                        libelle)
         return b
+
+    def bandeau(self, parent, x, y, w, h, sorte, titre, detail=None, action=None,
+                principal=False, largeur_action=120):
+        """Passe interface : une instance de Bandeau (`succes`, `non-envoye`, `attention`,
+        `erreur`). Rend l'instance et son bouton d'action (None sans action)."""
+        proprietes = {"sorte": sorte, "titre": titre, "avecDetail": bool(detail),
+                      "avecAction": bool(action)}
+        if detail:
+            proprietes["detail"] = detail
+        i = self.instance("Bandeau", parent, x, y, w, h, proprietes, calque=f"Bandeau · {titre}")
+        if not action:
+            return i, None
+        b = self.partie(i, "Bandeau", "action")
+        self.cmd("instance.setProperties", ids=[b], properties={
+            "variante": "principale" if principal else "secondaire", "libelle": action})
+        self.cmd("node.set", ids=[b], width=largeur_action, height=48)
+        return i, b
 
     def logo(self, parent, x, y):
         """Une seule marque (§2) : le composant Marque/Logo à l'interface."""
@@ -353,6 +418,14 @@ def liste_du_jour(f, y, lignes, boutons_fait: dict):
             entete = boite(f"Zone · {z}", liste, "vertical", padding=[14, M, 2, M])
             texte_flux(entete, z.upper(), 13, gras=True, couleur=SECOND)
             zone = z
+        if INTERFACE:
+            ligne = d.instance("Échéance/Ligne", liste, proprietes={
+                "etat": "en-retard" if retard else "a-faire", "plante": plante,
+                "detail": f"{inter} · {etat}"}, calque=f"Échéance · {plante}",
+                props={"sizingH": "fill"})
+            boutons_fait[plante] = d.partie(ligne, "Échéance/Ligne", "fait")
+            RANGS_ECHEANCE.append(ligne)
+            continue
         ligne = boite(f"Échéance · {plante}", liste, "horizontal", padding=[12, M, 12, M],
                       gap=12, trait_bas=True)
         col = boite("Texte", ligne, "vertical", gap=2)
@@ -396,10 +469,14 @@ annuler_conf = d.bouton(conf, M, 208, W - 2 * M, 56, "Annuler")
 t1ok = ecran("T1 · 03 · Aujourd'hui — enregistré")
 entete_aujourdhui(t1ok, "mar. 21 oct. · 3 à faire")
 pastille_essai(t1ok)
-bandeau = d.cadre("Bandeau · enregistré", t1ok, M, 128, W - 2 * M, 64, fond=SURFACE, rayon=10)
-d.texte(bandeau, 14, 10, 220, "✓ Enregistré", 16, gras=True)
-d.texte(bandeau, 14, 34, 230, "Taille · Pommier 'Reine des reinettes'", 13, couleur=SECOND)
-annuler_ok = d.bouton(bandeau, W - 2 * M - 104, 8, 96, 48, "Annuler")
+if INTERFACE:
+    _, annuler_ok = d.bandeau(t1ok, M, 128, W - 2 * M, 72, "succes", "Enregistré",
+                              "Taille · Pommier 'Reine des reinettes'", "Annuler", largeur_action=96)
+else:
+    bandeau = d.cadre("Bandeau · enregistré", t1ok, M, 128, W - 2 * M, 64, fond=SURFACE, rayon=10)
+    d.texte(bandeau, 14, 10, 220, "✓ Enregistré", 16, gras=True)
+    d.texte(bandeau, 14, 34, 230, "Taille · Pommier 'Reine des reinettes'", 13, couleur=SECOND)
+    annuler_ok = d.bouton(bandeau, W - 2 * M - 104, 8, 96, 48, "Annuler")
 fait_t1ok: dict = {}
 liste_du_jour(t1ok, 204, LIGNES[1:], fait_t1ok)
 puces_t1ok = tiroir_je_viens_de_faire(t1ok)
@@ -419,16 +496,25 @@ def choisir_plantes(nom, coches: int, titre="Taille", sous="Près de vous", list
     d.texte(f, 64, 56, 180, titre, 24, gras=True)
     pastille_essai(f)
     d.texte(f, 64, 88, 250, "Quelles plantes ?", 15, couleur=SECOND)
-    champ = d.cadre("Champ · recherche", f, M, 124, W - 2 * M, 48, fond=FOND, rayon=10, trait=TRAIT)
-    d.texte(champ, 14, 14, 300, "Rechercher une plante ou un code", 15, couleur=TRAIT)
+    if INTERFACE:
+        d.instance("Champ", f, M, 124, W - 2 * M, 48, {
+            "etat": "vide", "valeur": "Rechercher une plante ou un code"}, calque="Champ · recherche")
+    else:
+        champ = d.cadre("Champ · recherche", f, M, 124, W - 2 * M, 48, fond=FOND, rayon=10,
+                        trait=TRAIT)
+        d.texte(champ, 14, 14, 300, "Rechercher une plante ou un code", 15, couleur=TRAIT)
     d.texte(f, M, 188, W - 2 * M, sous.upper(), 13, gras=True, couleur=SECOND)
     rangs = []
     liste_p = boite("Plantes", f, "vertical", x=0, y=208, width=W)
     for i, (plante, ou) in enumerate(liste):
         r = boite(f"Plante · {plante}", liste_p, "horizontal", padding=[10, M, 10, M], gap=14)
-        case = d.cadre("Case", r, 0, 0, 28, 28, fond=FORT if i < coches else FOND, rayon=6, trait=FORT)
-        if i < coches:
-            d.texte(case, 0, 3, 28, "✓", 17, gras=True, couleur=BLANC, align="center")
+        if INTERFACE:
+            d.instance("Case", r, 0, 0, 28, 28, {"etat": "cochee" if i < coches else "vide"})
+        else:
+            case = d.cadre("Case", r, 0, 0, 28, 28, fond=FORT if i < coches else FOND, rayon=6,
+                           trait=FORT)
+            if i < coches:
+                d.texte(case, 0, 3, 28, "✓", 17, gras=True, couleur=BLANC, align="center")
         col = boite("Texte", r, "vertical", gap=2)
         texte_flux(col, plante, 17, gras=True)
         texte_flux(col, ou, 14, couleur=SECOND)
@@ -449,14 +535,19 @@ t3c, t3c_retour, t3c_rangs, t3c_valider = choisir_plantes("T3 · 03 · Choisir l
 t4 = ecran("T4 · 01 · Aujourd'hui — non envoyé")
 entete_aujourdhui(t4, "mar. 21 oct. · 4 à faire")
 pastille_essai(t4)
-with d.etat("non-envoye"):
-    alerte = d.cadre("Bandeau · non envoyé", t4, M, 128, W - 2 * M, 140, fond=FOND, rayon=10,
-                     trait=FORT)
-    d.texte(alerte, 14, 12, W - 2 * M - 28, "⚠ Pas envoyé — pas de réseau", 16, gras=True)
-d.texte(alerte, 14, 38, W - 2 * M - 28, "Taille · Pommier 'Reine des reinettes'", 13,
-        couleur=SECOND)
-d.texte(alerte, 14, 62, W - 2 * M - 28, "14:32 · gardé sur ce téléphone.", 13, couleur=SECOND)
-renvoyer = d.bouton(alerte, W - 2 * M - 126, 80, 116, 48, "Renvoyer", principal=True)
+if INTERFACE:
+    _, renvoyer = d.bandeau(t4, M, 128, W - 2 * M, 140, "non-envoye", "Pas envoyé — pas de réseau",
+                            "Taille · Pommier 'Reine des reinettes'\n14:32 · gardé sur ce "
+                            "téléphone.", "Renvoyer", principal=True, largeur_action=116)
+else:
+    with d.etat("non-envoye"):
+        alerte = d.cadre("Bandeau · non envoyé", t4, M, 128, W - 2 * M, 140, fond=FOND, rayon=10,
+                         trait=FORT)
+        d.texte(alerte, 14, 12, W - 2 * M - 28, "⚠ Pas envoyé — pas de réseau", 16, gras=True)
+    d.texte(alerte, 14, 38, W - 2 * M - 28, "Taille · Pommier 'Reine des reinettes'", 13,
+            couleur=SECOND)
+    d.texte(alerte, 14, 62, W - 2 * M - 28, "14:32 · gardé sur ce téléphone.", 13, couleur=SECOND)
+    renvoyer = d.bouton(alerte, W - 2 * M - 126, 80, 116, 48, "Renvoyer", principal=True)
 fait_t4: dict = {}
 liste_du_jour(t4, 284, LIGNES[:3], fait_t4)
 tiroir_je_viens_de_faire(t4)

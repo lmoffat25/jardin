@@ -55,6 +55,10 @@ ETATS = {"urgent": "en-retard", "urgente": "en-retard", "en retard": "en-retard"
 def pastille(parent, x, y, texte, fort=False):
     w = 14 + 8 * len(texte)
     nom = ETATS.get(texte.lower())
+    if vague1.INTERFACE:
+        d.instance("Pastille", parent, x, y, w, 26, {"etat": nom or "neutre",
+                   "forte": "oui" if fort else "non", "libelle": texte}, calque=f"État · {texte}")
+        return w
     with d.etat(nom) if nom else d.surcharge({}):
         p = d.cadre(f"État · {texte}", parent, x, y, w, 26, fond=FORT if fort else FOND, rayon=13,
                     trait=FORT)
@@ -105,10 +109,14 @@ def liste_plantes(nom, cochees=0, recherche=None, vide=False):
     d.texte(f, CX0, 86, 600, "142 plantes actives · 6 zones", 16, couleur=SECOND)
     lot = d.bouton(f, CX0 + CW - 440, 40, 200, 48, "Ajouter en lot")
     nouvelle = d.bouton(f, CX0 + CW - 228, 40, 228, 48, "Nouvelle plante", principal=True)
-    champ_r = d.cadre("Champ · recherche", f, CX0, 128, 360, 44, fond=FOND, rayon=8,
-                      trait=FORT if recherche else TRAIT)
-    d.texte(champ_r, 14, 12, 330, recherche or "Nom ou code (FRU-014)", 15,
-            couleur=TEXTE if recherche else TRAIT)
+    if vague1.INTERFACE:
+        d.instance("Champ", f, CX0, 128, 360, 44, {"etat": "rempli" if recherche else "vide",
+                   "valeur": recherche or "Nom ou code (FRU-014)"}, calque="Champ · recherche")
+    else:
+        champ_r = d.cadre("Champ · recherche", f, CX0, 128, 360, 44, fond=FOND, rayon=8,
+                          trait=FORT if recherche else TRAIT)
+        d.texte(champ_r, 14, 12, 330, recherche or "Nom ou code (FRU-014)", 15,
+                couleur=TEXTE if recherche else TRAIT)
     x = CX0 + 376
     for filtre in ["Zone : toutes", "Catégorie : toutes", "Actives", "À faire : tout"]:
         w = 48 + 8 * len(filtre)

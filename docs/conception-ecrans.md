@@ -111,7 +111,15 @@ dessinée à la main.
   `scripts/design/importer-lucide.py` dans `design/interface/icones.py`, et
   l'avis est dans `design/interface/LICENSE-lucide`. Une icône a un trait de
   2 px lié à `texte/principal`, que l'instance relie à un autre rôle
-  (`texte/inverse`, `texte/desactive`).
+  (`texte/inverse`, `texte/desactive`). Les icônes suivent la taille de leur
+  instance (contraintes « scale ») : 24 px par défaut, 16 ou 20 px à côté
+  d'un texte de 15 ou de 20 px au plus.
+  - **Permuter une icône rend le trait de l'icône d'origine.** Dans un
+    composant qui porte une icône permutable (`icone`, `iconeApres` du
+    Bouton), changer d'icône par la propriété remet sur le trait le rôle du
+    composant `Icône/<nom>`, pas celui que lui donnait le composant hôte. On
+    relie donc le trait à nouveau sur l'instance, après la permutation
+    (`Doc.bouton` le fait selon `fondations.BOUTON_TEXTE`).
   - **Icône seule** pour les gestes universels : retour, retirer, monter,
     descendre, ouvrir une liste. Chacune porte un nom accessible (« Retour »,
     « Retirer Haies »), qui nomme le calque et devient l'`aria-label` du
@@ -119,8 +127,14 @@ dessinée à la main.
   - **Le texte reste** sur ce qui engage : « Fait », « Continuer », « Sauter
     cette fois », « Ajouter une photo ». Une icône peut l'accompagner, jamais
     le remplacer.
-  - Glyphes encore provisoires : ✓ (case, étapes, messages), ⚠ (alertes),
-    « + » des boutons d'ajout, « → » des liens, ‹ › de la pagination.
+  - **Les glyphes des wireframes deviennent des icônes à l'interface.** ⚠ et
+    ✓ en tête de texte, ↓ en fin de valeur, ✓ en fin d'un texte aligné à
+    droite (`Doc.texte`) ; « + » et « ‹ » en tête de bouton, « › » et « → »
+    en fin (`Doc.bouton`). Les wireframes gardent leurs glyphes.
+  - Glyphes qui restent du texte : « › » des fils d'Ariane, les puces, les
+    points du mot de passe, « × » des dimensions, la légende de la frise, et
+    le ✓ de l'appareil d'essai (« Essai : réseau ✓ »), qui n'est pas de
+    l'interface.
 
 > **M5** — Les variables portent **les mêmes noms dans le code** (variables
 > CSS, configuration Tailwind), avec les trois mêmes couches. La marque change
@@ -260,15 +274,25 @@ d'échéance, Vignette de plante, Photo, Bandeau de message (information,
 erreur, non envoyé), Confirmation, Navigation terrain, Navigation bureau,
 Tableau (en-tête, ligne), Filtre, Icône.
 
-**Où on en est (20/10/2026).** Trois composants existent, sur la page 6 :
-`Bouton` (`variante = principale | secondaire | inactif`, propriété
-`libelle`), `Case` (`etat = vide | cochee`), `Marque/Logo`. Toutes leurs
-apparitions dans les écrans en sont des instances. Les états (en retard, à
-faire, fait, hors saison, non envoyé, erreur, attention) sont pour l'instant
-portés par des variables `etat/*` appliquées aux calques, pas par un
-composant. Restent à extraire, chacun servant à plusieurs écrans : Pastille
-d'état, Ligne d'échéance, Bandeau de message, Champ, et les `Icône/<nom>`
-Lucide à la place des glyphes.
+**Où on en est (20/10/2026).** Sept composants existent sur la page 6, avec
+les 19 `Icône/<nom>` Lucide (D-85). Toutes leurs apparitions dans les écrans
+de l'interface en sont des instances ; les wireframes ne changent pas.
+
+| Composant | Variantes | Propriétés |
+|---|---|---|
+| `Bouton` | `variante = principale \| secondaire \| inactif` | `libelle` ; `avecIcone`, `avecLibelle`, `avecIconeApres` ; `icone`, `iconeApres` (permutation) |
+| `Case` | `etat = vide \| cochee` | — |
+| `Marque/Logo` | — | — |
+| `Pastille` | `etat = en-retard \| a-faire \| fait \| hors-saison \| non-envoye \| neutre`, `forte = non \| oui` | `libelle` |
+| `Champ` | `etat = vide \| rempli \| erreur` | `valeur` ; `liste` (le chevron d'une liste de choix) |
+| `Bandeau` | `sorte = succes \| non-envoye \| attention \| erreur` | `titre`, `detail` ; `avecDetail`, `avecAction` (un `Bouton` imbriqué) |
+| `Échéance/Ligne` | `etat = a-faire \| en-retard` | `plante`, `detail`, `rang` ; `avecNumero` (la tournée) ; un `Bouton` « Fait » imbriqué |
+
+Écartés par M9, parce qu'un seul écran s'en sert : une ligne d'échéance du
+bureau (`Échéance/Rang`, seulement B4), les cartes de B6 et de T5, le motif
+de B9, la zone de collage de B3. Les autres états (hors saison sur une
+fiche, par exemple) restent portés par les variables `etat/*` appliquées aux
+calques.
 
 > **M9** — Un composant n'est créé que si> **M9** — Un composant n'est créé que si **au moins deux écrans** s'en
 > servent. Sinon c'est un élément de l'écran. La bibliothèque reste à la
