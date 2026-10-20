@@ -85,7 +85,7 @@ PLANTES = [  # nom, code, espèce, zone, prochaine échéance, en retard ?
     ("Pommier 'Belle de Boskoop'", "FRU-014", "Pommier", "Verger haut",
      "Taille · avant le 7 avril", False),
     ("Prunier n°3", "FRU-021", "Prunier", "Verger haut",
-     "⚠ Taille manquée en sept. · suivante en août", True),
+     "⚠ Taille manquée en sept. · suivante en juin", True),
     ("Cerisier 'Burlat'", "FRU-022", "Cerisier", "Verger bas", "Taille · à venir, août", False),
     ("Haie de charmilles — côté route", "HAI-001", "Charme (charmille)", "Haies",
      "Taille · à venir, nov.", False),

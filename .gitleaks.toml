@@ -1,0 +1,3 @@
+# Règles par défaut de gitleaks, aucune exception (sprint 0a, C25).
+[extend]
+useDefault = true

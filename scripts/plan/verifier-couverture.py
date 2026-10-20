@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Vérifie la couverture contrat <-> sprints du plan jardin, et la taille des sprints."""
-import re,sys
-D='~/jardin/docs/plan/'
+import os,re,sys
+D=os.path.join(os.path.dirname(os.path.abspath(__file__)),'..','..','docs','plan','')
 c=open(D+'validation-contract.md').read(); t=open(D+'tasks.md').read()
 err=[];warn=[]
 defin=sorted({int(n) for n in re.findall(r'(?m)^\*\*V(\d+) — ',c)})

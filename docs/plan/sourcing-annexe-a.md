@@ -65,7 +65,7 @@ au sens du CDC (décalage 0), ce qui est une hypothèse.
 | Toutes haies — butoirs de nidification | butoirs | début **16/08**, fin **15/03** (exclusion 16/03 → 15/08) | `verifiee` | 6 |
 | Pommier, poirier — taille d'hiver | R2 | 01/12 → 31/03, optimale 01/02 → 31/03, 1 an | `verifiee` | 6 |
 | Cerisier — taille | R2 | 01/08 → 30/09, 1 an | `verifiee` | 6 |
-| Prunier — taille | R2 | 01/08 → 30/09, 1 an | `indicative` | 5 |
+| Prunier — taille | R2 | 01/06 → 30/09, 1 an | `verifiee` | 6 |
 | Haie persistante — taille | R2 ×1 (et non ×2) | 16/08 → 30/09, 1 an | `verifiee` | 4 |
 | Haie caduque — taille | R2 | 01/11 → 15/03, périodicité à trancher | `indicative` | 4 |
 | Arbuste à floraison printanière — taille | R2 (transposition de R4) | 01/04 → 31/07, optimale 01/05 → 30/06 | `indicative` | 5 |
@@ -255,7 +255,11 @@ type_regle: R2
 fenetres: [{debut: 01/08, fin: 30/09, optimal: [01/08, 30/09], libelle: "après récolte, temps sec"}]
 periodicite_annees: 1
 confiance: verifiee
-# prunier : mêmes valeurs, confiance: indicative
+# prunier (décision du 20/10/2026, voir plus bas)
+type_regle: R2
+fenetres: [{debut: 01/06, fin: 30/09, optimal: [01/06, 30/09], libelle: "en été, temps sec"}]
+periodicite_annees: 1
+confiance: verifiee
 ```
 
 Aucune optimale plus étroite n'est sourcée : elle est égale à la fenêtre. (Le
@@ -313,6 +317,17 @@ sources institutionnelles qui donnent l'été (C3, C4) parlent des noyaux en
 général ; la seule fiche institutionnelle propre au prunier (SNHF) ne donne
 aucune période et déconseille presque la taille ; la vulgarisation spécifique
 diverge (automne, mars, printemps). B-T1 : satisfait par les deux.
+
+**Prunier, décision du 20/10/2026 (Léon : « va pour l'été »).** La RHS,
+source propre au prunier (« How to grow plums »,
+https://www.rhs.org.uk/fruit/plums/grow-your-own), écrit que les arbres établis
+« should be pruned in summer » et qu'il faut éviter « the dormant season or […]
+mid- to late autumn ». Fenêtre **01/06 → 30/09** : début de l'été météorologique
+**(transcription)** de « summer », fin au 30/09 par C4 (« fin d'été après la
+récolte ») et C2 (« Ne pas tailler pendant la période automnale »). Aucune
+optimale plus étroite n'est sourcée. Statut **`verifiee`** : deux sources
+indépendantes concordent (RHS ; C3 et C4), règle B2 du protocole. Détail :
+`docs/plan/recherche-q20-q22.md`, N5.
 
 ---
 
