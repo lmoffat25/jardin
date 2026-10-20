@@ -20,8 +20,7 @@ final class JardinController
 {
     /**
      * Un code officiel de commune (COG de l'Insee) : cinq chiffres, ou 2A/2B
-     * pour la Corse. Son existence se vérifie contre la table `communes`, qui
-     * arrive au 2f (D-83).
+     * pour la Corse, présent dans le référentiel `communes` (D-83).
      */
     private const COMMUNE_INSEE = 'regex:/^(\d{5}|2[AB]\d{3})$/';
 
@@ -78,7 +77,7 @@ final class JardinController
         $saisie = $request->validate([
             'nom' => ['required', 'string', 'max:120'],
             'profil_climatique_id' => ['required', 'integer', 'exists:profils_climatiques,id'],
-            'commune_insee' => ['nullable', 'string', self::COMMUNE_INSEE],
+            'commune_insee' => ['nullable', 'string', self::COMMUNE_INSEE, 'exists:communes,code_insee'],
         ]);
 
         return [...$saisie, 'profil_climatique_id' => (int) $saisie['profil_climatique_id']];

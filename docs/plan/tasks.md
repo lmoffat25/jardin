@@ -714,7 +714,8 @@ Chaque sprint, en plus de sa propre porte :
 ---
 
 ## Sprint 2f — Proposer le climat depuis la commune
-<!-- taille : 2 assertions, 8 fichiers, 3 classes de test -->
+<!-- taille : 2 assertions, 9 fichiers, 5 classes de test -->
+<!-- derogation-taille: découvert en construisant (D-86) : V11 interdit DB:: dans src/, d'où le modèle Commune, que V34 oblige à inscrire au référentiel de ModelesCloisonnesTest ; symfony/yaml doit passer en dépendance de production (composer.json). Couper le sprint laisserait une table sans modèle ou un import sans paramètres -->
 
 **Objectif :** l'utilisateur tape sa commune, l'outil lui propose un profil climatique et lui dit pourquoi ; le référentiel est importé sur le serveur, jamais interrogé à distance.
 **Constructeur :** back
@@ -729,14 +730,14 @@ Chaque sprint, en plus de sa propre porte :
 **Question UX possible :** aucune — B2 · 01 à B2 · 05 sont dessinés
 **En attente :** rien — Q24 tranchée : Trappes, 6 j/°C, février-avril ; le code et les tests n'en dépendent pas, ils lisent ces valeurs dans `bibliotheque/climat/parametres.yaml`
 **Assertions :** V135, V136
-**Fichiers :** `scripts/climat/generer-communes.py`, `bibliotheque/climat/parametres.yaml`, `src/Comptes/Climat/ImporterCommunes.php`, `src/Comptes/Climat/ProposerProfil.php`, `src/Comptes/Climat/CommuneController.php`, `src/Comptes/routes.php`, `src/Comptes/Jardins/JardinController.php`, `database/migrations/…_creer_communes.php`
-**Classes de test :** `tests/Persistance/ImportCommunesTest.php`, `tests/Routes/ProfilCommuneTest.php`, `tests/Persistance/CloisonnementSchemaTest.php`
+**Fichiers :** `scripts/climat/generer-communes.py`, `src/Comptes/Console/ImporterCommunes.php`, `src/Comptes/Climat/ProposerProfil.php`, `src/Comptes/Climat/CommuneController.php`, `src/Comptes/Domaine/Commune.php`, `src/Comptes/routes.php`, `src/Comptes/Jardins/JardinController.php`, `database/migrations/2026_10_20_000010_creer_communes.php`, `composer.json` (symfony/yaml en dépendance de production, D-86 ; le dossier bibliotheque ne compte pas, D-29)
+**Classes de test :** `tests/Persistance/ImportCommunesTest.php`, `tests/Routes/ProfilCommuneTest.php`, `tests/Persistance/CloisonnementSchemaTest.php`, `tests/Routes/JardinTest.php` (la clé étrangère exige les communes que ses cas désignent, D-86), `tests/Architecture/ModelesCloisonnesTest.php` (Commune au référentiel, V34)
 **Fin :** une commune saisie rend un profil proposé, sa raison, et la liste des cinq en repli.
 
-- [ ] Écrire `scripts/climat/generer-communes.py` : base officielle des codes postaux (La Poste), COG de l'Insee, liste et fiches climatologiques Météo-France (période 1991-2020 complète seulement), altitude du chef-lieu par le service altimétrique de l'IGN ; calcul de RG-52 avec `parametres.yaml` ; écrit `communes.csv` et la date de chaque source. Le lancer une fois, hors CI, et commiter le CSV.
-- [ ] Implémenter la migration (table `communes`, puis la clé `jardins.commune_insee → communes`, absente depuis le 1a, D-78), `ImporterCommunes.php` (idempotent, transaction, aucun réseau), `ProposerProfil.php` (profil le plus proche, montagne au-dessus de 600 m, `demander_altitude` entre 400 et 800 m) et `CommuneController.php` ; modifier `routes.php` ; inscrire les routes au registre (référence partagée, comme la bibliothèque). Ajouter `exists:communes,code_insee` à la règle `commune_insee` de `src/Comptes/Jardins/JardinController.php`, qui ne vérifie que le format depuis le 2d (D-83). Ajouter `communes` à la liste fermée `TABLES_SANS_JARDIN` de `tests/Persistance/CloisonnementSchemaTest.php` (table de référence, sinon V27 rougit, D-79).
-- [ ] `tests/Persistance/ImportCommunesTest.php` : V135, sur un témoin de 12 communes et 4 stations inventées, dont une à période incomplète.
-- [ ] `tests/Routes/ProfilCommuneTest.php` : V136, les quatre cas.
+- [x] Écrire `scripts/climat/generer-communes.py` : base officielle des codes postaux (La Poste), COG de l'Insee, liste et fiches climatologiques Météo-France (période 1991-2020 complète marquée, `periode_complete`), altitude du point La Poste par le service altimétrique de l'IGN ; écrit `communes.csv`, `stations.csv` et `sources.csv` (la date de chaque source). Le calcul de RG-52 a lieu à l'import, avec `bibliotheque/climat/parametres.yaml` (D-86). Le lancer une fois, hors CI, et commiter les CSV.
+- [x] Implémenter la migration (table `communes`, puis la clé `jardins.commune_insee → communes`, absente depuis le 1a, D-78), `src/Comptes/Console/ImporterCommunes.php` (idempotent, transaction, aucun réseau ; station, écart, décalage et profil calculés ici, D-86), `ProposerProfil.php` (profil le plus proche, montagne au-dessus de 600 m, `demander_altitude` entre 400 et 800 m) et `CommuneController.php` ; modifier `routes.php` ; inscrire les routes au registre (référence partagée, comme la bibliothèque). Ajouter `exists:communes,code_insee` à la règle `commune_insee` de `src/Comptes/Jardins/JardinController.php`, qui ne vérifie que le format depuis le 2d (D-83). Ajouter `communes` à la liste fermée `TABLES_SANS_JARDIN` de `tests/Persistance/CloisonnementSchemaTest.php` (table de référence, sinon V27 rougit, D-79).
+- [x] `tests/Persistance/ImportCommunesTest.php` : V135, sur un témoin de 12 communes et 4 stations inventées, dont une à période incomplète.
+- [x] `tests/Routes/ProfilCommuneTest.php` : V136, les quatre cas.
 
 ---
 
