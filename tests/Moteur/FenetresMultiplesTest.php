@@ -129,7 +129,7 @@ it('refuse une règle R2 sans fenêtre', function () {
 })->throws(InvalidArgumentException::class);
 
 it('ne choisit aucune fenêtre pour une règle qui n\'en a pas', function () {
-    $regle = new Regle('r', 'p', 1, 'R1', 1, [], [], 'verifiee', 'bibliotheque', JeuTemoin::jour('2026-06-01'));
+    $regle = JeuTemoin::tonte();
 
     ChoixDeFenetre::prochaine($regle, Historique::vide(), Decalage::jours(0), JeuTemoin::jour('2026-09-01'));
 })->throws(LogicException::class, 'Règle sans fenêtre');

@@ -6,6 +6,8 @@ namespace Tests\Moteur\Temoins;
 
 use Src\Echeances\Moteur\Calendrier;
 use Src\Echeances\Moteur\Fenetre;
+use Src\Echeances\Moteur\Historique;
+use Src\Echeances\Moteur\IntervalleSaisonnier;
 use Src\Echeances\Moteur\JourMois;
 use Src\Echeances\Moteur\Regle;
 
@@ -71,6 +73,42 @@ final class JeuTemoin
             $periodicite,
             $effetLe,
         );
+    }
+
+    /**
+     * Tonte de la pelouse (R1) : 7 jours au printemps (mars–juin), 14 l'été
+     * (juillet–août), 10 à l'automne (septembre–novembre), 0 l'hiver
+     * (décembre–février). `$intervalles` remplace les quatre saisons.
+     *
+     * @param  list<IntervalleSaisonnier>|null  $intervalles
+     */
+    public static function tonte(?array $intervalles = null): Regle
+    {
+        return new Regle(
+            id: 'regle-tonte',
+            planteId: 'plante-pelouse',
+            typeId: 2,
+            typeRegle: 'R1',
+            periodiciteAnnees: 1,
+            fenetres: [],
+            intervalles: $intervalles ?? [
+                new IntervalleSaisonnier(3, 6, 7),
+                new IntervalleSaisonnier(7, 8, 14),
+                new IntervalleSaisonnier(9, 11, 10),
+                new IntervalleSaisonnier(12, 2, 0),
+            ],
+            confiance: 'indicative',
+            origine: 'bibliotheque',
+            effetLe: self::jour('2026-06-01'),
+        );
+    }
+
+    /** L'historique d'une seule tonte de la pelouse témoin, ou aucun. */
+    public static function tondueLe(?string $iso): Historique
+    {
+        return $iso === null
+            ? Historique::vide()
+            : Historique::depuis([['plante_id' => 'plante-pelouse', 'type_id' => 2, 'fait_le' => self::jour($iso)]]);
     }
 
     /** Une date du moteur, à minuit à Paris, depuis `AAAA-MM-JJ`. */

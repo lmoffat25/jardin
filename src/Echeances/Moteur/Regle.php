@@ -12,7 +12,7 @@ final readonly class Regle
 
     /**
      * @param  list<Fenetre>  $fenetres  R2
-     * @param  list<mixed>  $intervalles  R1, typés au sprint 3d
+     * @param  list<IntervalleSaisonnier>  $intervalles  R1 : des saisons sans mois commun, une au moins active
      */
     public function __construct(
         public string $id,
@@ -35,9 +35,83 @@ final readonly class Regle
         if ($typeRegle === 'R2' && $fenetres === []) {
             throw new \InvalidArgumentException('Règle R2 sans fenêtre');
         }
+        if ($typeRegle === 'R1') {
+            self::exigerSaisons($intervalles);
+        }
         // usort est stable : deux fenêtres de même ordre gardent leur ordre de déclaration.
         usort($fenetres, fn (Fenetre $a, Fenetre $b) => $a->ordre <=> $b->ordre);
         $this->fenetres = $fenetres;
+    }
+
+    /**
+     * L'intervalle de la saison qui contient $date, bornes décalées ; 0 hors
+     * saison. La valeur n'est jamais décalée (RG-25).
+     */
+    public function intervalleDe(\DateTimeImmutable $date, Decalage $decalage): int
+    {
+        return $this->saisonDe($date, $decalage)[0]->intervalleJours ?? 0;
+    }
+
+    /**
+     * La saison qui contient $date, et sa période décalée ; null hors de toute
+     * saison déclarée. Trois années de début : une saison à cheval ou décalée
+     * déborde sur l'année voisine.
+     *
+     * @return array{0: IntervalleSaisonnier, 1: Periode}|null
+     */
+    public function saisonDe(\DateTimeImmutable $date, Decalage $decalage): ?array
+    {
+        $jour = Calendrier::jour($date);
+        $annee = (int) $jour->format('Y');
+        foreach ($this->intervalles as $saison) {
+            foreach ([$annee - 1, $annee, $annee + 1] as $anneeDeDebut) {
+                $periode = $saison->projeter($anneeDeDebut, $decalage);
+                if ($periode->contient($jour)) {
+                    return [$saison, $periode];
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /** Le premier jour, strictement après $date, d'une saison d'intervalle non nul. */
+    public function ouvertureSuivante(\DateTimeImmutable $date, Decalage $decalage): \DateTimeImmutable
+    {
+        $jour = Calendrier::jour($date);
+        $annee = (int) $jour->format('Y');
+        $ouvertures = [];
+        $actives = array_filter($this->intervalles, fn (IntervalleSaisonnier $s) => $s->intervalleJours > 0);
+        foreach ($actives as $saison) {
+            foreach ([$annee, $annee + 1, $annee + 2] as $anneeDeDebut) {
+                $debut = $saison->projeter($anneeDeDebut, $decalage)->debut;
+                if ($debut > $jour) {
+                    $ouvertures[] = $debut;
+                }
+            }
+        }
+
+        // Jamais vide : une règle R1 a une saison active (constructeur).
+        return min($ouvertures ?: throw new \LogicException('Règle sans saison active'));
+    }
+
+    /**
+     * Une règle R1 a au moins une saison active (sinon elle ne produirait
+     * jamais rien, RG-40), et deux saisons n'ont aucun mois commun (D-90).
+     *
+     * @param  list<IntervalleSaisonnier>  $saisons
+     */
+    private static function exigerSaisons(array $saisons): void
+    {
+        $mois = array_merge([], ...array_map(fn (IntervalleSaisonnier $s) => $s->mois(), $saisons));
+        foreach (array_count_values($mois) as $m => $fois) {
+            if ($fois > 1) {
+                throw new \InvalidArgumentException("Mois {$m} dans deux saisons");
+            }
+        }
+        if (array_filter($saisons, fn (IntervalleSaisonnier $s) => $s->intervalleJours > 0) === []) {
+            throw new \InvalidArgumentException('Règle R1 sans saison active');
+        }
     }
 
     /** @param  list<string>  $admises */
