@@ -9,6 +9,12 @@
             <directory>tests</directory>
         </testsuite>
     </testsuites>
+    <!-- Les balayages sont à part de la suite rapide (C11) : make balayage. -->
+    <groups>
+        <exclude>
+            <group>balayage</group>
+        </exclude>
+    </groups>
     <source>
         <include>
             <directory>app</directory>

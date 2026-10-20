@@ -17,6 +17,29 @@ use Src\Echeances\Moteur\Regle;
  */
 final class JeuTemoin
 {
+    /** Les cinq profils climatiques et leur décalage en jours (RG-25). */
+    public const PROFILS = ['Très doux' => -15, 'Doux' => -7, 'Tempéré' => 0, 'Frais' => 7, 'Montagne' => 21];
+
+    /**
+     * Les règles témoins, une de chaque forme : R2 à une fenêtre (pommier,
+     * cerisier), à butoirs (haie), à deux fenêtres, et R1 (tonte).
+     *
+     * @return list<Regle>
+     */
+    public static function toutes(): array
+    {
+        return [self::pommier(), self::cerisier(), self::haie(), self::deuxPassages(), self::tonte()];
+    }
+
+    /** Une intervention le même jour sur chaque plante témoin, du type de sa règle. */
+    public static function toutesFaitesLe(\DateTimeImmutable $jour): Historique
+    {
+        return Historique::depuis(array_map(
+            fn (Regle $r) => ['plante_id' => $r->planteId, 'type_id' => $r->typeId, 'fait_le' => $jour],
+            self::toutes(),
+        ));
+    }
+
     /** Taille du pommier : fenêtre 01/12 → 31/03, optimale 01/02 → 15/03. */
     public static function pommier(
         int $periodicite = 1,

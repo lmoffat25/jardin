@@ -592,7 +592,7 @@ rien avant le premier déploiement.
 
 | # | Question | Quand |
 |---|---|---|
-| O16 | Seuil initial de mutations tuées | Au premier moteur complet — à mesurer, pas à supposer |
+| O16 | Seuil initial de mutations tuées | Au premier moteur complet — à mesurer, pas à supposer. **Mesuré au sprint 3e : 100 %** (393 mutations, aucune survivante), écrit dans `tests/mutation-seuil.txt` (D-91) |
 | O17 | ~~Conditions de passage à la fusion automatique (C24)~~ | **Levé le 19/10/2026** : fusion automatique dès le départ (C24 révisée) |
 | O18 | Niveau PHPStan réellement tenable avec Larastan sur Laravel 12 | Au chantier 0 |
 | O19 | Fournisseur du tunnel ou du certificat pour le téléphone (E1, O13) | Au chantier 0, avant le premier écran terrain |

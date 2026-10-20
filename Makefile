@@ -7,6 +7,9 @@ else
   X := ddev exec
 endif
 
+# Une ligne de shell, là où tournent les commandes : `ddev exec` la passe à bash.
+dans := $(if $(X),$(X),sh -c)
+
 # Échec forcé d'une cible, pour le test de l'enchaînement (V5) : ECHEC=<cible>.
 echec = @if [ "$(ECHEC)" = "$(1)" ]; then echo "échec forcé : $(1)"; exit 1; fi
 
@@ -40,9 +43,11 @@ formater:
 	$(if $(filter %.php,$(FICHIERS)),$(X) vendor/bin/pint $(filter %.php,$(FICHIERS)))
 	$(if $(filter %.ts %.tsx %.css,$(FICHIERS)),$(X) npx prettier --write $(filter %.ts %.tsx %.css,$(FICHIERS)))
 
+# Les tests du moteur sans les balayages (exclus par phpunit.xml, C11), chronométrés
+# là où ils tournent : au-delà d'une seconde, la cible échoue (TS-8).
 moteur:
 	$(call echec,moteur)
-	$(X) vendor/bin/pest tests/Moteur
+	$(dans) 'debut=$$(date +%s%N); vendor/bin/pest tests/Moteur || exit 1; ms=$$(( ($$(date +%s%N) - debut) / 1000000 )); echo "moteur : $$ms ms"; [ $$ms -lt 1000 ] || { echo "moteur : plus d une seconde (TS-8)"; exit 1; }'
 
 # Types TypeScript générés depuis les classes PHP #[TypeScript] (V8, D-77). Les tests
 # désignent d'autres sources et sorties : TYPES_SOURCES, TYPES_SORTIE, TYPES.
@@ -80,19 +85,21 @@ test:
 	$(X) bash scripts/plan/tests/test-porter-reponses.sh
 	$(X) bash scripts/ddev/tests/test-nommer-worktree.sh
 
+# Les invariants calendaires, chaque jour de deux années (C11, V59) : à part de la suite rapide.
 balayage:
 	$(call echec,balayage)
-	@echo "(vide)"
+	$(X) vendor/bin/pest tests/Moteur --group=balayage
 
 e2e:
 	$(call echec,e2e)
 	@echo "(vide)"
 
 # Le moteur seul (C9) : les tests de tests/Moteur déclarent par mutates() la classe
-# qu'ils gardent. Pas de seuil avant le premier moteur complet (C10, sprint 3e).
+# qu'ils gardent. Sous le seuil versionné, la cible échoue ; il ne fait que monter
+# (C10, V61, tests/Architecture/SeuilMutationTest.php).
 mutation:
 	$(call echec,mutation)
-	$(X) vendor/bin/pest tests/Moteur --mutate --no-cache
+	$(X) vendor/bin/pest tests/Moteur --mutate --no-cache --min=$$(cat tests/mutation-seuil.txt)
 
 # Informatif pendant un jalon, bloquant à sa livraison : LIVRAISON=1 (C12).
 criteres:
