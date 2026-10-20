@@ -1001,6 +1001,7 @@ Chaque assertion est couverte par au moins un sprint de `tasks.md`.
 | 0d | V9, V10, V11, V12 |
 | 0e | V13, V14, V15, V16, V17 |
 | 0f | V18, V19, V20, V21 |
+| 0t | V18, V19 |
 | 0g | V22, V127 |
 | 0h | V8 |
 | 1a | V23, V24, V25 |

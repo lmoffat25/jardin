@@ -23,3 +23,9 @@ __pycache__/
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# État local du clone principal pour l'enchaînement (D-12)
+/docs/plan/handoffs.jsonl
+/docs/plan/run.log
+# Nom de projet DDEV propre à un worktree (make setup, D-73)
+/.ddev/config.worktree.yaml

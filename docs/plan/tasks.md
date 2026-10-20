@@ -13,6 +13,7 @@ et la méthode du chapitre 7 (`README.md`). Contrat : `validation-contract.md`.
   [0d](#sprint-0d--outillage-strict-crochets-frontières) ·
   [0e](#sprint-0e--ci-complète-fusion-automatique-consignes-des-agents) ·
   [0f](#sprint-0f--enchaînement-des-sprints) ·
+  [0t](#sprint-0t--passe-témoin-de-lenchaînement) ·
   [0g](#sprint-0g--taille-des-sprints-et-réponses-de-léon) ·
   [0h](#sprint-0h--types-typescript-générés-depuis-php)
 - Schéma : [1a](#sprint-1a--migrations-du-socle-et-jeu-de-référence) ·
@@ -356,17 +357,42 @@ Chaque sprint, en plus de sa propre porte :
 
 ### 0f.1 Script
 
-- [ ] Implémenter `scripts/plan/enchainer.sh` en adaptant `buildfeature-run.sh` : chaque passe est `claude -p "/construire-sprint --un-sprint" --permission-mode auto` dans le clone principal, avec `CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS=0` ; avant chaque passe `git -C <clone> pull --ff-only` (échec → code `1`) ; état = cases non cochées des sections `## Sprint` de `docs/plan/tasks.md` lu sur `main`, en **excluant** les sprints dont l'en-tête porte `**En attente :**` ; lignes de `docs/plan/handoffs.jsonl` ; `^ARRET:` dans la sortie → code `3` ; passe sans ligne nouvelle et sans `ARRET:` → une relance, puis code `3` ; résumé de passe lu dans `run.log` (blocs « Décisions prises », « Points faibles », « En attente », ligne « Suivant : »).
-- [ ] Modifier `.gitignore` : `docs/plan/handoffs.jsonl`, `docs/plan/run.log`.
-- [ ] Créer `.claude/skills/construire-sprint/SKILL.md` adapté de `buildfeature` : lire `AGENTS.md`, choisir le premier sprint non coché et non en attente, créer la branche et le worktree, tests d'abord, construire, `make verifier`, demande de fusion en brouillon puis prête avec fusion automatique, attendre la fusion (`gh pr checks --watch`), corriger tant que la CI est rouge, puis écrire la ligne de handoff dans le `handoffs.jsonl` du clone principal (`git rev-parse --git-common-dir`). Une question UX → `questions-ux.md` + `**En attente :** Q-UX-n` dans l'en-tête du sprint, dans la même demande de fusion, puis fin de passe sans handoff mais avec la ligne « Suivant : ».
+- [x] Implémenter `scripts/plan/enchainer.sh` en adaptant `buildfeature-run.sh` : chaque passe est `claude -p "/construire-sprint --un-sprint" --permission-mode auto` dans le clone principal, avec `CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS=0` ; avant chaque passe `git -C <clone> pull --ff-only` (échec → code `1`) ; état = cases non cochées des sections `## Sprint` de `docs/plan/tasks.md` lu sur `main`, en **excluant** les sprints dont l'en-tête porte `**En attente :**` ; lignes de `docs/plan/handoffs.jsonl` ; `^ARRET:` dans la sortie → code `3` ; passe sans ligne nouvelle et sans `ARRET:` → une relance, puis code `3` ; résumé de passe lu dans `run.log` (blocs « Décisions prises », « Points faibles », « En attente », ligne « Suivant : »).
+- [x] Modifier `.gitignore` : `docs/plan/handoffs.jsonl`, `docs/plan/run.log`.
+- [x] Créer `.claude/skills/construire-sprint/SKILL.md` adapté de `buildfeature` : lire `AGENTS.md`, choisir le premier sprint non coché et non en attente, créer la branche et le worktree, tests d'abord, construire, `make verifier`, demande de fusion en brouillon puis prête avec fusion automatique, attendre la fusion (`gh pr checks --watch`), corriger tant que la CI est rouge, puis écrire la ligne de handoff dans le `handoffs.jsonl` du clone principal (`git rev-parse --git-common-dir`). Une question UX → `questions-ux.md` + `**En attente :** Q-UX-n` dans l'en-tête du sprint, dans la même demande de fusion, puis fin de passe sans handoff mais avec la ligne « Suivant : ».
 
 ### 0f.2 Tests
 
-- [ ] `scripts/plan/tests/test-enchainer.sh` : les dix cas repris (avec faux claude), plus : un sprint `En attente` est sauté ; tous en attente → `5` et `ENCHAINER_PREVENIR` appelé ; `pull --ff-only` en échec → `1` ; sans `MAX_SPRINTS`, la boucle s'arrête après 3 passes avec `4` (V18–V21).
+- [x] `scripts/plan/tests/test-enchainer.sh` : les dix cas repris (avec faux claude), plus : un sprint `En attente` est sauté ; tous en attente → `5` et `ENCHAINER_PREVENIR` appelé ; `pull --ff-only` en échec → `1` ; sans `MAX_SPRINTS`, la boucle s'arrête après 3 passes avec `4` (V18–V21).
 
 ### 0f.3 ARRÊT — première passe réelle
 
-- [ ] Après la fusion de ce sprint : `ARRET:` avec la commande de la passe réelle sur le plan témoin et ce qu'elle doit montrer. Léon la lance ; les sprints suivants (à partir de 0g) passent par l'enchaînement.
+- [x] Après la fusion de ce sprint : `ARRET:` avec la commande de la passe réelle (`MAX_SPRINTS=1 bash scripts/plan/enchainer.sh` depuis le clone principal, sur `main`), qui construit le sprint témoin 0t, et ce qu'elle doit montrer (D-73). Léon la lance ; les sprints suivants (à partir de 0g) passent par l'enchaînement.
+
+---
+
+## Sprint 0t — Passe témoin de l'enchaînement
+<!-- taille : 2 assertions, 0 fichiers, 0 classes de test -->
+
+**Objectif :** la première passe sans surveillance (0f.3) construit un sprint sans risque, de la branche à la ligne de handoff : le dépôt public reçoit son `README.md`.
+**Constructeur :** une passe de l'enchaînement, **lancée par Léon** (D-32, D-73)
+**Risque :** léger
+**Lecture :** `AGENTS.md` ; `.claude/skills/construire-sprint/SKILL.md`.
+**Contrat :** `README.md` à la racine : le nom du produit en titre, deux lignes qui le décrivent, un renvoi à `AGENTS.md` et à `docs/cahier-des-charges-fonctionnel.md`. Aucun chemin personnel, aucune donnée réelle.
+**Tests d'abord :** sans objet (aucun comportement) ; la preuve est la passe elle-même.
+**Preuve :** sans objet
+**Itérer sur / lancer une fois :** sans objet / `make verifier`.
+**Porte :** `make verifier`, puis la CI de la demande de fusion, fusionnée automatiquement.
+**Vérification en marche :** Léon relève la fusion, cette case cochée sur `main`, une ligne de plus dans `docs/plan/handoffs.jsonl`, le bilan affiché par la boucle et son code `4` (`MAX_SPRINTS=1`, des sprints restent).
+**Question UX possible :** aucune
+**Assertions :** V18, V19
+**Fichiers :** aucun
+**Classes de test :** aucun
+**Fin :** la demande de fusion du README est fusionnée sans geste, par une session lancée par la boucle.
+
+### 0t.1 README
+
+- [ ] Créer `README.md` selon le contrat ; demande de fusion en fusion automatique ; ligne de handoff après la fusion.
 
 ---
 
