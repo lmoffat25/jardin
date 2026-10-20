@@ -25,6 +25,11 @@ final class Calendrier
         return new \DateTimeImmutable(sprintf('%04d-%02d-%02d 00:00:00', $annee, $mois, $jour), new \DateTimeZone(self::FUSEAU));
     }
 
+    public static function dernierJourDuMois(int $annee, int $mois): \DateTimeImmutable
+    {
+        return self::date($annee, $mois, (int) (new \DateTimeImmutable(sprintf('%04d-%02d-01', $annee, $mois)))->format('t'));
+    }
+
     /** Le jour civil d'une date, dans son propre fuseau, ramené à minuit à Paris. */
     public static function jour(\DateTimeImmutable $date): \DateTimeImmutable
     {

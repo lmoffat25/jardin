@@ -129,16 +129,20 @@ it('refuse un type de règle, une confiance ou une origine inconnus', function (
 
 it('accepte chaque type, confiance et origine du contrat', function (string $type, string $confiance, string $origine) {
     $fenetres = $type === 'R2' ? JeuTemoin::pommier()->fenetres : [];
+    $intervalles = $type === 'R1' ? JeuTemoin::tonte()->intervalles : [];
 
-    expect(new Regle('r', 'p', 1, $type, 1, $fenetres, [], $confiance, $origine, JeuTemoin::jour('2026-06-01')))->toBeInstanceOf(Regle::class);
+    expect(new Regle('r', 'p', 1, $type, 1, $fenetres, $intervalles, $confiance, $origine, JeuTemoin::jour('2026-06-01')))->toBeInstanceOf(Regle::class);
 })->with([
     ['R1', 'verifiee', 'bibliotheque'],
     ['R2', 'indicative', 'ajustee'],
     ['R2', 'verifiee', 'libre'],
 ]);
 
-it('ne calcule pas encore une règle R1 (3d)', function () {
-    $regle = new Regle('r', 'p', 1, 'R1', 1, JeuTemoin::pommier()->fenetres, [], 'verifiee', 'bibliotheque', JeuTemoin::jour('2026-06-01'));
+it('calcule les règles R1 et R2 ensemble, dans l\'ordre donné', function () {
+    $echeances = Moteur::calculer([JeuTemoin::tonte(), JeuTemoin::pommier()], Historique::vide(), Decalage::jours(0), JeuTemoin::jour('2026-09-01'));
 
-    Moteur::calculer([$regle], Historique::vide(), Decalage::jours(0), JeuTemoin::jour('2026-09-01'));
-})->throws(LogicException::class);
+    expect(array_map(fn (Echeance $e) => [$e->regleId, $e->dueLe->format('d/m/Y')], $echeances))->toBe([
+        ['regle-tonte', '01/09/2026'],
+        ['regle-pommier', '01/12/2026'],
+    ]);
+});

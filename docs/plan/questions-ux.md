@@ -322,3 +322,30 @@ la colonne `echeances.explication` (400 caractères).
 **Ce qui attend :** rien ne bloque. Appliquée : la recommandation (sprint 3b,
 D-88), le 20/10/2026. Une autre réponse ne change que `Explication::enPhrase`.
 **Réponse :**
+
+## Q-UX-19 — La phrase qui explique une échéance de tonte (R1)
+
+**Question :** une règle R1 n'a pas de fenêtre : elle a des saisons, chacune
+avec son intervalle, et le climat déplace la saison, jamais l'intervalle
+(RG-25). Q-UX-18 a fixé la phrase d'une règle R2 ; comment s'écrit celle d'une
+tonte ?
+**Concerne :** B4 (tableau de bord), B6 (fiche plante, carte d'échéance), T1 ;
+la colonne `echeances.explication` (400 caractères).
+**Options :**
+1. **Recommandé — « Tonte · Pelouse : règle de la bibliothèque, tous les 7 jours
+   de mars à juin, saison avancée de 15 jours pour votre climat. »**, sur le
+   modèle de Q-UX-18 : la saison est celle où tombe l'échéance ; « chaque jour »
+   pour un intervalle d'un jour, « en mai » pour une saison d'un mois ; « saison
+   décalée » pour un climat plus froid ; rien sur le climat en plaine ; « Règle
+   indicative. » quand elle l'est.
+2. Sans la saison : « Tonte · Pelouse : règle de la bibliothèque, tous les
+   7 jours. » — plus court, mais n'explique pas pourquoi une tonte de novembre
+   est reportée en mars.
+3. Toutes les saisons : « … 7 jours de mars à juin, 14 en été, 10 à l'automne,
+   aucune l'hiver » — complet, mais long sur une carte de téléphone.
+
+**Ce qui attend :** rien ne bloque. Appliquée : la recommandation (sprint 3d,
+D-90), le 20/10/2026. Une autre réponse ne change que `Explication::enPhrase`.
+Après une tonte de fin juin, l'échéance de juillet dit « tous les 14 jours »
+alors qu'elle tombe 7 jours après : la phrase décrit la saison de l'échéance.
+**Réponse :**
