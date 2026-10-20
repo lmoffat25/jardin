@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Src\Comptes\Http\ConnexionController;
+use Src\Comptes\Jardins\JardinController;
 
 Route::middleware('guest')->group(function () {
     Route::get('/connexion', [ConnexionController::class, 'afficher'])->name('connexion');
@@ -11,3 +12,13 @@ Route::middleware('guest')->group(function () {
 Route::post('/deconnexion', [ConnexionController::class, 'deconnecter'])
     ->middleware('auth')
     ->name('deconnexion');
+
+// Hors du groupe `metier` : un compte sans jardin doit pouvoir en créer un, et
+// `jardin` le renverrait ici en boucle (D-82).
+Route::middleware('auth')->group(function () {
+    Route::get('/jardins/nouveau', [JardinController::class, 'nouveau'])->name('jardins.nouveau');
+    Route::post('/jardins', [JardinController::class, 'creer']);
+    Route::post('/jardins/{jardin}/basculer', [JardinController::class, 'basculer']);
+});
+
+Route::put('/jardin', [JardinController::class, 'modifier'])->middleware('metier');

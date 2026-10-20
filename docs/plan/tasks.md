@@ -669,15 +669,15 @@ Chaque sprint, en plus de sa propre porte :
 
 ### 2d.1 Actions
 
-- [ ] Implémenter `src/Comptes/Jardins/CreerJardin.php` : `executer(Utilisateur $u, string $nom, int $profilId): Jardin` ; transaction ; crée le jardin et l'adhésion `proprietaire` ; positionne la session et `JardinCourant`.
-- [ ] Implémenter `src/Comptes/Jardins/ChoisirProfilClimatique.php` : met à jour `jardins.profil_climatique_id` du jardin courant, rien d'autre (V75 le vérifiera côté échéances).
-- [ ] Implémenter `src/Comptes/Jardins/BasculerDeJardin.php` : vérifie l'adhésion, écrit `session('jardin_id')` ; sinon `AuthorizationException` (`403`), session inchangée.
-- [ ] Implémenter `src/Comptes/Policies/JardinPolicy.php` (`modifier` : rôle `proprietaire`), `src/Comptes/Jardins/JardinController.php` (`nouveau`, `creer`, `modifier`, `basculer`), et modifier `src/Comptes/routes.php`. Validation : `nom` requis, 1 à 120 caractères ; `profil_climatique_id` requis et existant.
+- [x] Implémenter `src/Comptes/Jardins/CreerJardin.php` : `executer(Utilisateur $u, string $nom, int $profilId): Jardin` ; transaction ; crée le jardin et l'adhésion `proprietaire` ; positionne la session et `JardinCourant`.
+- [x] Implémenter `src/Comptes/Jardins/ChoisirProfilClimatique.php` : met à jour `jardins.profil_climatique_id` du jardin courant, rien d'autre (V75 le vérifiera côté échéances).
+- [x] Implémenter `src/Comptes/Jardins/BasculerDeJardin.php` : vérifie l'adhésion, écrit `session('jardin_id')` ; sinon `AuthorizationException` (`403`), session inchangée.
+- [x] Implémenter `src/Comptes/Policies/JardinPolicy.php` (`modifier` : rôle `proprietaire`), `src/Comptes/Jardins/JardinController.php` (`nouveau`, `creer`, `modifier`, `basculer`), et modifier `src/Comptes/routes.php`. Validation : `nom` requis, 1 à 120 caractères ; `profil_climatique_id` requis et existant.
 
 ### 2d.2 Tests
 
-- [ ] `tests/Routes/JardinTest.php` : les quatre cas de V39 (nominal, refus sans nom / sans profil / profil inconnu, autre jardin, relecture de `jardins` et `adhesions`) ; un membre qui modifie → `403`.
-- [ ] `tests/Routes/BasculerTest.php` : vers un jardin avec adhésion, puis sans (`403`, jardin courant inchangé relu par les props) (V40).
+- [x] `tests/Routes/JardinTest.php` : les quatre cas de V39 (nominal, refus sans nom / sans profil / profil inconnu, autre jardin, relecture de `jardins` et `adhesions`) ; un membre qui modifie → `403`.
+- [x] `tests/Routes/BasculerTest.php` : vers un jardin avec adhésion, puis sans (`403`, jardin courant inchangé relu par les props) (V40).
 
 ---
 
@@ -714,7 +714,7 @@ Chaque sprint, en plus de sa propre porte :
 ---
 
 ## Sprint 2f — Proposer le climat depuis la commune
-<!-- taille : 2 assertions, 7 fichiers, 3 classes de test -->
+<!-- taille : 2 assertions, 8 fichiers, 3 classes de test -->
 
 **Objectif :** l'utilisateur tape sa commune, l'outil lui propose un profil climatique et lui dit pourquoi ; le référentiel est importé sur le serveur, jamais interrogé à distance.
 **Constructeur :** back
@@ -729,12 +729,12 @@ Chaque sprint, en plus de sa propre porte :
 **Question UX possible :** aucune — B2 · 01 à B2 · 05 sont dessinés
 **En attente :** rien — Q24 tranchée : Trappes, 6 j/°C, février-avril ; le code et les tests n'en dépendent pas, ils lisent ces valeurs dans `bibliotheque/climat/parametres.yaml`
 **Assertions :** V135, V136
-**Fichiers :** `scripts/climat/generer-communes.py`, `bibliotheque/climat/parametres.yaml`, `src/Comptes/Climat/ImporterCommunes.php`, `src/Comptes/Climat/ProposerProfil.php`, `src/Comptes/Climat/CommuneController.php`, `src/Comptes/routes.php`, `database/migrations/…_creer_communes.php`
+**Fichiers :** `scripts/climat/generer-communes.py`, `bibliotheque/climat/parametres.yaml`, `src/Comptes/Climat/ImporterCommunes.php`, `src/Comptes/Climat/ProposerProfil.php`, `src/Comptes/Climat/CommuneController.php`, `src/Comptes/routes.php`, `src/Comptes/Jardins/JardinController.php`, `database/migrations/…_creer_communes.php`
 **Classes de test :** `tests/Persistance/ImportCommunesTest.php`, `tests/Routes/ProfilCommuneTest.php`, `tests/Persistance/CloisonnementSchemaTest.php`
 **Fin :** une commune saisie rend un profil proposé, sa raison, et la liste des cinq en repli.
 
 - [ ] Écrire `scripts/climat/generer-communes.py` : base officielle des codes postaux (La Poste), COG de l'Insee, liste et fiches climatologiques Météo-France (période 1991-2020 complète seulement), altitude du chef-lieu par le service altimétrique de l'IGN ; calcul de RG-52 avec `parametres.yaml` ; écrit `communes.csv` et la date de chaque source. Le lancer une fois, hors CI, et commiter le CSV.
-- [ ] Implémenter la migration (table `communes`, puis la clé `jardins.commune_insee → communes`, absente depuis le 1a, D-78), `ImporterCommunes.php` (idempotent, transaction, aucun réseau), `ProposerProfil.php` (profil le plus proche, montagne au-dessus de 600 m, `demander_altitude` entre 400 et 800 m) et `CommuneController.php` ; modifier `routes.php` ; inscrire les routes au registre (référence partagée, comme la bibliothèque). Ajouter `communes` à la liste fermée `TABLES_SANS_JARDIN` de `tests/Persistance/CloisonnementSchemaTest.php` (table de référence, sinon V27 rougit, D-79).
+- [ ] Implémenter la migration (table `communes`, puis la clé `jardins.commune_insee → communes`, absente depuis le 1a, D-78), `ImporterCommunes.php` (idempotent, transaction, aucun réseau), `ProposerProfil.php` (profil le plus proche, montagne au-dessus de 600 m, `demander_altitude` entre 400 et 800 m) et `CommuneController.php` ; modifier `routes.php` ; inscrire les routes au registre (référence partagée, comme la bibliothèque). Ajouter `exists:communes,code_insee` à la règle `commune_insee` de `src/Comptes/Jardins/JardinController.php`, qui ne vérifie que le format depuis le 2d (D-83). Ajouter `communes` à la liste fermée `TABLES_SANS_JARDIN` de `tests/Persistance/CloisonnementSchemaTest.php` (table de référence, sinon V27 rougit, D-79).
 - [ ] `tests/Persistance/ImportCommunesTest.php` : V135, sur un témoin de 12 communes et 4 stations inventées, dont une à période incomplète.
 - [ ] `tests/Routes/ProfilCommuneTest.php` : V136, les quatre cas.
 
