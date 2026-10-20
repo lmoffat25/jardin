@@ -1480,8 +1480,8 @@ Fichier `src/Echeances/Calcul/CalculEcheances.php` (nom de la classe, PSR-4). `S
 
 ### 8a.1 Action
 
-- [ ] Implémenter `src/Journal/Saisie/SaisieIntervention.php` (données validées : `ids()`, `plantesIds()`, `lignesAInserer(string $jardinId, string $auteurId, \DateTimeImmutable $saisieLe): array` — `position_capturee` encodée en JSON, `jardin_id` explicite car `insertOrIgnore` ne passe pas par `creating`).
-- [ ] Implémenter `src/Journal/Saisie/EnregistrerIntervention.php` (reçoit `JardinCourant` et `Src\Support\Horloge` par injection, D-42).
+- [x] Implémenter `src/Journal/Saisie/SaisieIntervention.php` (données validées : `ids()`, `plantesIds()`, `lignesAInserer(string $jardinId, string $auteurId, \DateTimeImmutable $saisieLe): array` — `position_capturee` encodée en JSON, `jardin_id` explicite car `insertOrIgnore` ne passe pas par `creating`).
+- [x] Implémenter `src/Journal/Saisie/EnregistrerIntervention.php` (reçoit `JardinCourant` et `Src\Support\Horloge` par injection, D-42).
 
 **Cible — idempotence** (`EnregistrerIntervention::executer`) :
 
@@ -1512,13 +1512,13 @@ public function executer(SaisieIntervention $saisie, Utilisateur $auteur): Colle
 }
 ```
 
-- [ ] Implémenter `src/Journal/Saisie/InterventionController.php` (validation, appel, réponse JSON) et `src/Journal/Saisie/Introuvable.php` (exception rendue en `422` avec erreurs `lignes.N`) ; modifier `src/Journal/routes.php` ; inscrire la route au registre du cloisonnement (charge valide fournie).
+- [x] Implémenter `src/Journal/Saisie/InterventionController.php` (validation, appel, réponse JSON) et `src/Journal/Saisie/Introuvable.php` (exception rendue en `422` avec erreurs `lignes.N`) ; modifier `src/Journal/routes.php` ; inscrire la route au registre du cloisonnement (charge valide fournie).
 
 ### 8a.2 Tests
 
-- [ ] `tests/Routes/EnregistrerInterventionTest.php` : V93 (les quatre cas) ; V97 (plante archivée entre-temps, échéance déjà soldée, date passée de plusieurs mois).
-- [ ] `tests/Routes/IdempotenceTest.php` : V94 (deux envois, une ligne, deux réponses égales ; renvoi au contenu différent → ligne inchangée) ; V96 (six plantes, `lot_saisie_id` commun, renvoi). Groupe `critere-2`.
-- [ ] `tests/Routes/InterventionAutreJardinTest.php` : V95 (réponse octet pour octet égale à celle d'une plante introuvable, hors identifiants ; B intacte). Groupe `critere-12`.
+- [x] `tests/Routes/EnregistrerInterventionTest.php` : V93 (les quatre cas) ; V97 (plante archivée entre-temps, échéance déjà soldée, date passée de plusieurs mois).
+- [x] `tests/Routes/IdempotenceTest.php` : V94 (deux envois, une ligne, deux réponses égales ; renvoi au contenu différent → ligne inchangée) ; V96 (six plantes, `lot_saisie_id` commun, renvoi). Groupe `critere-2`.
+- [x] `tests/Routes/InterventionAutreJardinTest.php` : V95 (réponse octet pour octet égale à celle d'une plante introuvable, hors identifiants ; B intacte). Groupe `critere-12`.
 
 ---
 

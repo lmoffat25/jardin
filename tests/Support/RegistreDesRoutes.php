@@ -3,6 +3,7 @@
 namespace Tests\Support;
 
 use Closure;
+use Database\Factories\RegleFactory;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Route as Routes;
 use Src\Jardin\Domaine\Plante;
@@ -91,6 +92,18 @@ final class RegistreDesRoutes
             ],
             'GET /plantes/{plante}' => ['nature' => 'lit', 'role' => 'membre', 'parametres' => $plante],
             'GET /plantes/{plante}/historique' => ['nature' => 'lit', 'role' => 'membre', 'parametres' => $plante],
+            // Depuis A, la plante de B est introuvable : 422, rien n'est créé
+            // (EnregistrerInterventionTest). Le même identifiant sert au
+            // membre puis au propriétaire : le second envoi est un renvoi.
+            'POST /interventions' => [
+                'nature' => 'ecrit',
+                'role' => 'membre',
+                'charge' => fn (string $id): array => [
+                    'type_intervention_id' => RegleFactory::typeFourni('Tonte'),
+                    'faite_le' => '2026-08-30',
+                    'lignes' => [['id' => '5e0c9a52-7a1d-4c3e-9f4b-000000000001', 'plante_id' => $plante($id)['plante']]],
+                ],
+            ],
             // Les types fournis et ceux du jardin courant (TypesVisibles, D-55).
             'GET /types-intervention' => ['nature' => 'liste', 'role' => 'membre'],
             'POST /types-intervention' => ['nature' => 'ecrit', 'role' => 'proprietaire', 'charge' => fn (string $id): array => ['libelle' => 'Type créé', 'famille' => 'entretien']],
