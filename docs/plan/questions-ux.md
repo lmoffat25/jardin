@@ -31,6 +31,7 @@ que la réponse arrive avant le sprint.
 - [Q-UX-15 — Saisir les plantes zone par zone](#q-ux-15--saisir-les-plantes-zone-par-zone)
 - [Q-UX-16 — Altitude incertaine à la création du jardin](#q-ux-16--altitude-incertaine-à-la-création-du-jardin)
 - [Q-UX-17 — Trop d'essais de connexion](#q-ux-17--trop-dessais-de-connexion)
+- [Q-UX-20 — Ce que « cette semaine » et « ce mois » veulent dire](#q-ux-20--ce-que--cette-semaine--et--ce-mois--veulent-dire)
 
 ---
 
@@ -348,4 +349,25 @@ la colonne `echeances.explication` (400 caractères).
 D-90), le 20/10/2026. Une autre réponse ne change que `Explication::enPhrase`.
 Après une tonte de fin juin, l'échéance de juillet dit « tous les 14 jours »
 alors qu'elle tombe 7 jours après : la phrase décrit la saison de l'échéance.
+**Réponse :**
+
+## Q-UX-20 — Ce que « cette semaine » et « ce mois » veulent dire
+
+**Question :** le tableau de bord range les échéances à venir en « cette
+semaine », « ce mois », puis au planning par mois (critère 3). Une échéance due
+dans cinq jours, un samedi, est-elle « cette semaine » ?
+**Concerne :** B4 (tableau de bord), V76, V80.
+**Options :**
+1. **Recommandé — des fenêtres glissantes** : « cette semaine », ce qui est dû
+   dans les 7 jours ; « ce mois », dans les 30 jours ; le planning ensuite, par
+   mois. Le dimanche, « cette semaine » n'est pas vide, et un libellé « Dans
+   les 7 jours » le dit sans ambiguïté.
+2. Semaine et mois du calendrier (jusqu'à dimanche, jusqu'au 31) : plus
+   proche des mots, mais « cette semaine » est presque vide en fin de semaine
+   et la fin du mois arrive sans prévenir.
+3. Pas de « semaine » ni de « mois » : aujourd'hui, puis le planning par mois.
+
+**Ce qui attend :** rien ne bloque. Appliquée : la recommandation (sprint 6,
+D-100), le 20/10/2026. Une autre réponse ne change que
+`RegrouperEcheances::periode`.
 **Réponse :**

@@ -5,6 +5,7 @@ namespace Tests\Support;
 use Closure;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Route as Routes;
+use Src\Jardin\Domaine\Plante;
 
 /**
  * Toutes les routes de l'application (C15, V41, V128). Une route nouvelle
@@ -48,9 +49,16 @@ final class RegistreDesRoutes
     public static function entrees(): array
     {
         $jardin = fn (string $id): array => ['nom' => 'Jardin renommé', 'profil_climatique_id' => 2];
+        $plante = fn (string $id): array => ['plante' => (string) Plante::query()->withoutGlobalScopes()->where('jardin_id', $id)->orderBy('nom')->value('id')];
 
         return [
             'GET /' => ['nature' => 'liste', 'role' => 'membre'],
+            'GET /terrain' => ['nature' => 'liste', 'role' => 'membre'],
+            // Sans paramètres, la validation refuse ; le détail d'une zone de B
+            // rend 404 (TableauDeBordTest).
+            'GET /echeances/groupe' => ['nature' => 'liste', 'role' => 'membre'],
+            'GET /plantes/{plante}' => ['nature' => 'lit', 'role' => 'membre', 'parametres' => $plante],
+            'GET /plantes/{plante}/historique' => ['nature' => 'lit', 'role' => 'membre', 'parametres' => $plante],
             'GET /jardins/nouveau' => ['nature' => 'liste', 'role' => 'membre'],
             // Crée un jardin neuf, dont le créateur est propriétaire : aucun
             // rôle n'est exigé dans le jardin courant.
