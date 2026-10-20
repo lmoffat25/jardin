@@ -42,6 +42,14 @@ final readonly class Periode
         return $this->debut <= $jour && $jour <= $this->fin;
     }
 
+    public function dansOptimale(\DateTimeImmutable $date): bool
+    {
+        $jour = Calendrier::jour($date);
+
+        // L'optimale a ses deux bornes ou aucune (rognee).
+        return $this->optimalDebut !== null && $this->optimalDebut <= $jour && $jour <= $this->optimalFin;
+    }
+
     public function estVide(): bool
     {
         return $this->debut > $this->fin;
