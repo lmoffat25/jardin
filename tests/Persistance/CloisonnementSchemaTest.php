@@ -14,6 +14,7 @@ const TABLES_SANS_JARDIN = [
     // Référence, partagée par tous les jardins.
     'profils_climatiques', 'familles_botaniques', 'especes', 'regles_reference',
     'sources_regle', // 4a : rattachée à regles_reference
+    'communes', // 2f : référentiel importé (RG-52, D-66)
     // Le compte et le jardin lui-même.
     'utilisateurs', 'jardins',
     // Tables techniques de Laravel.

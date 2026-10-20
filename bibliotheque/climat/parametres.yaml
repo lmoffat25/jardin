@@ -1,0 +1,30 @@
+# Paramètres du profil climatique proposé depuis la commune (RG-52, Q24, D-66).
+# Lus par `php artisan jardin:importer-communes` ; ProposerProfil y lit aussi
+# les seuils d'altitude. Modifier une valeur demande de relancer l'import.
+
+# Station du profil « Tempéré » : Trappes (78), fiche 1991-2020 sans aucune
+# série courte (Q24, tranchée le 20/10/2026).
+station_reference: "78621001"
+
+# Février à avril : la seule fenêtre employée par une source (Chmielewski et
+# Rötzer 2001, cités par Weil et al., Climatologie 15, 2018).
+mois: [2, 3, 4]
+
+# Valeur centrale de 5,7 à 7 j/°C : Vitasse et al. 2010 (arbres, d'un lieu à
+# l'autre), Weil et al. 2018 (pommier, d'une année à l'autre, −6), iDiv 2025
+# (herbacées, −7). Aucun coefficient mesuré sur des fruitiers d'un lieu à
+# l'autre : la proposition reste « indicative ».
+jours_par_degre: 6
+
+# Météo-France : « On perd environ 0,65 °C en s'élevant de 100 mètres. »
+gradient_c_par_100_m: 0.65
+
+# CDC §5.4 et RG-52 : Montagne au-dessus de 600 m (profil 5, D-78).
+montagne:
+  profil_id: 5
+  au_dessus_de_m: 600
+
+# RG-52 : « Votre jardin est-il à plus de 600 m ? » entre 400 et 800 m.
+demander_altitude:
+  de_m: 400
+  a_m: 800

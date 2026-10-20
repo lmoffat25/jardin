@@ -60,6 +60,15 @@ final class RegistreDesRoutes
                 'charge' => fn (string $id): array => [],
             ],
             'PUT /jardin' => ['nature' => 'ecrit', 'role' => 'proprietaire', 'charge' => $jardin],
+            // Référence partagée, comme la bibliothèque : aucune ligne de
+            // jardin. Le paramètre est un code de commune, pas un id de B ; la
+            // table est vide dans ce test, d'où le 404.
+            'GET /communes' => ['nature' => 'liste', 'role' => 'membre'],
+            'GET /communes/{code_insee}/profil' => [
+                'nature' => 'lit',
+                'role' => 'membre',
+                'parametres' => fn (string $id): array => ['code_insee' => '99101'],
+            ],
         ];
     }
 

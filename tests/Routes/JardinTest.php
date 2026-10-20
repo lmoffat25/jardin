@@ -4,7 +4,8 @@
 // jardin devient le jardin courant ; sans nom, sans profil, avec un profil ou un
 // code de commune inconnus, rien n'est créé ; le nouveau jardin ne voit rien de
 // l'autre ; changer le profil n'écrit que `jardins.profil_climatique_id`, et
-// seule la commune est écrite, jamais des coordonnées (RG-28, D-48).
+// seule la commune est écrite, jamais des coordonnées (RG-28, D-48). Une commune
+// bien formée mais absente du référentiel est refusée en 422 (D-83).
 
 use Database\Seeders\ReferenceSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -23,6 +24,13 @@ uses(RefreshDatabase::class);
 beforeEach(function () {
     $this->seed(ReferenceSeeder::class);
     $this->utilisateur = Utilisateur::factory()->create();
+    // Deux communes du référentiel, aux valeurs inventées (RG-28).
+    foreach (['25462' => 'Commune-Témoin', '2A004' => 'Commune-Témoin-de-Corse'] as $code => $nom) {
+        DB::table('communes')->insert([
+            'code_insee' => $code, 'nom' => $nom, 'nom_recherche' => strtolower($nom), 'codes_postaux' => '99000',
+            'altitude_m' => 100, 'station' => 'Station témoin', 'ecart_c' => 0, 'decalage_jours' => 0, 'profil_propose_id' => 3,
+        ]);
+    }
 });
 
 /** Le jardin de l'utilisateur, avec son adhésion de rôle donné. */
@@ -87,6 +95,7 @@ it('ne crée rien sur une saisie refusée', function (array $saisie, string $cha
     'sans profil' => [['nom' => 'Verger'], 'profil_climatique_id'],
     'profil inconnu' => [['nom' => 'Verger', 'profil_climatique_id' => 99], 'profil_climatique_id'],
     'commune inconnue' => [['nom' => 'Verger', 'profil_climatique_id' => 3, 'commune_insee' => '9999'], 'commune_insee'],
+    'commune bien formée, absente du référentiel' => [['nom' => 'Verger', 'profil_climatique_id' => 3, 'commune_insee' => '25463'], 'commune_insee'],
 ]);
 
 it('refuse la création à une session fermée', function () {
