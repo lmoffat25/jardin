@@ -19,6 +19,7 @@ use Illuminate\Support\Str;
 use Illuminate\Testing\TestResponse;
 use Src\Comptes\Domaine\Utilisateur;
 use Src\Echeances\Domaine\EcheanceMaterialisee;
+use Src\Echeances\Domaine\Fenetre;
 use Src\Echeances\Domaine\Regle;
 use Src\Support\Jardin\JardinCourant;
 use Tests\Support\DeuxJardins;
@@ -177,6 +178,7 @@ it('accepte une plante archivée entre-temps', function () {
 it('accepte une intervention sur une échéance déjà soldée', function () {
     app(JardinCourant::class)->positionner($this->jardins->a->id);
     $regle = Regle::factory()->create(['plante_id' => $this->plante]);
+    Fenetre::factory()->for($regle)->create();
     EcheanceMaterialisee::factory()->for($regle)->create(['due_le' => '2026-08-01', 'etat' => 'soldee']);
 
     enregistrerDansA($this->jardins->membreA, saisieSimple(['faite_le' => '2026-08-02']))->assertOk();

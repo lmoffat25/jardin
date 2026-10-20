@@ -7,7 +7,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use Src\Bibliotheque\Domaine\TypeIntervention;
 use Src\Comptes\Domaine\Utilisateur;
+use Src\Echeances\Solde\SolderEcheance;
 use Src\Jardin\Domaine\Plante;
+use Src\Jardin\Localisation\EnregistrerPosition;
 use Src\Journal\Domaine\Intervention;
 use Src\Support\Horloge;
 use Src\Support\Jardin\JardinCourant;
@@ -20,6 +22,10 @@ use Src\Support\Jardin\JardinCourant;
  * future sont acceptées. Seul ce que le jardin courant ne connaît pas est
  * refusé, et un identifiant pris dans un autre jardin ne s'en distingue pas
  * (D-08).
+ *
+ * Une ligne nouvelle solde l'échéance qu'elle accomplit (V99, V100) et, seule
+ * dans sa saisie, place la plante par sa position (V101, D-17). Un renvoi ne
+ * fait ni l'un ni l'autre.
  */
 final class EnregistrerIntervention
 {
@@ -28,16 +34,19 @@ final class EnregistrerIntervention
     public function __construct(
         private readonly JardinCourant $jardinCourant,
         private readonly Horloge $horloge,
+        private readonly SolderEcheance $solder,
+        private readonly EnregistrerPosition $enregistrerPosition,
     ) {}
 
     /**
+     * @param  bool  $solder  faux pour « fait », qui solde son propre couple (D-57)
      * @return EloquentCollection<int, Intervention> les interventions stockées, dans l'ordre des lignes
      *
      * @throws ValidationException
      */
-    public function executer(SaisieIntervention $saisie, Utilisateur $auteur): EloquentCollection
+    public function executer(SaisieIntervention $saisie, Utilisateur $auteur, bool $solder = true): EloquentCollection
     {
-        return DB::transaction(function () use ($saisie, $auteur): EloquentCollection {
+        return DB::transaction(function () use ($saisie, $auteur, $solder): EloquentCollection {
             $jardinId = $this->jardinCourant->id();
 
             // 1. Plantes et type lus sous filtre : absents du jardin courant, introuvables.
@@ -52,6 +61,8 @@ final class EnregistrerIntervention
             }
 
             // 2. Insérer sans écraser : un renvoi ne fait rien (ON CONFLICT (id) DO NOTHING).
+            //    Ce qui existait déjà est noté : ni solde ni position pour un renvoi.
+            $dejaLa = Intervention::query()->whereKey($saisie->ids())->pluck('id')->all();
             Intervention::query()->insertOrIgnore($saisie->lignesAInserer($jardinId, $auteur->id, $this->horloge->maintenant()));
 
             // 3. Relire sous filtre. Un identifiant qui manque existe dans un
@@ -63,7 +74,16 @@ final class EnregistrerIntervention
                 throw Introuvable::lignes($absentes);
             }
 
-            // 4. L'état stocké, pas la demande, dans l'ordre des lignes.
+            // 4. Les lignes nouvelles soldent leur échéance ; seule, une ligne place sa plante.
+            $nouvelles = $stockees->reject(fn (Intervention $i) => in_array($i->id, $dejaLa, true))->values();
+            if ($solder) {
+                $this->solder->pourInterventions($nouvelles);
+            }
+            if ($saisie->position !== null && count($saisie->lignes) === 1 && $nouvelles->isNotEmpty()) {
+                $this->enregistrerPosition->depuisIntervention(Plante::query()->findOrFail($nouvelles->firstOrFail()->plante_id), $saisie->position);
+            }
+
+            // 5. L'état stocké, pas la demande, dans l'ordre des lignes.
             $rangs = array_flip($saisie->ids());
 
             return $stockees->sortBy(fn (Intervention $i) => $rangs[$i->id])->values();

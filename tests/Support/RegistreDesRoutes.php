@@ -6,6 +6,7 @@ use Closure;
 use Database\Factories\RegleFactory;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Route as Routes;
+use Src\Echeances\Domaine\Regle;
 use Src\Jardin\Domaine\Plante;
 use Src\Jardin\Domaine\Zone;
 
@@ -102,6 +103,18 @@ final class RegistreDesRoutes
                     'type_intervention_id' => RegleFactory::typeFourni('Tonte'),
                     'faite_le' => '2026-08-30',
                     'lignes' => [['id' => '5e0c9a52-7a1d-4c3e-9f4b-000000000001', 'plante_id' => $plante($id)['plante']]],
+                ],
+            ],
+            // Depuis A, une règle de B est introuvable : 404, rien n'est créé
+            // (FaitTest). Les jardins témoins n'ont aucune règle : la charge
+            // désigne la première, sinon une règle qui n'existe pas.
+            'POST /echeances/fait' => [
+                'nature' => 'ecrit',
+                'role' => 'membre',
+                'charge' => fn (string $id): array => [
+                    'id' => '5e0c9a52-7a1d-4c3e-9f4b-000000000002',
+                    'regle_id' => (string) (Regle::query()->withoutGlobalScopes()->where('jardin_id', $id)->orderBy('id')->value('id') ?? '5e0c9a52-7a1d-4c3e-9f4b-0000000000ff'),
+                    'due_le' => '2026-08-30',
                 ],
             ],
             // Les types fournis et ceux du jardin courant (TypesVisibles, D-55).
