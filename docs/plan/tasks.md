@@ -1297,21 +1297,21 @@ Fichier `src/Echeances/Calcul/CalculEcheances.php` (nom de la classe, PSR-4). `S
 
 ### 7a.1 Code court
 
-- [ ] Implémenter `src/Jardin/Domaine/CompteurCodeCourt.php` (trait de jardin, clé composée) et `src/Jardin/Identification/AttribuerCodeCourt.php` : préfixe = trois premières lettres de `especes.categorie` sans accent, en majuscules (`PLA` sans espèce) (D-03) ; `CompteurCodeCourt::query()->upsert(...)` puis relecture `lockForUpdate` dans la transaction de création, `dernier + 1` ; format `PREFIXE-NNN` (3 chiffres minimum). Jamais `COUNT`.
+- [x] Implémenter `src/Jardin/Domaine/CompteurCodeCourt.php` (trait de jardin, clé composée) et `src/Jardin/Identification/AttribuerCodeCourt.php` : préfixe = trois premières lettres de `especes.categorie` sans accent, en majuscules (`PLA` sans espèce) (D-03) ; `CompteurCodeCourt::query()->upsert(...)` puis relecture `lockForUpdate` dans la transaction de création, `dernier + 1` ; format `PREFIXE-NNN` (3 chiffres minimum). Jamais `COUNT`.
 
 ### 7a.2 Zones et plantes
 
-- [ ] Implémenter `src/Jardin/Zones/ZoneDuJardin.php` (règle de validation : zone trouvée par le scope et `archivee_le` nulle ; sinon « Zone introuvable dans ce jardin. ») ; tout choix de zone des sprints suivants passe par elle (D-53).
-- [ ] Implémenter `src/Jardin/Zones/ZoneController.php` (`lister`, `creer`, `renommer`) : validation `nom` requis, 1 à 120, `unique:zones,nom` **restreint au jardin courant** ; zone par le scope, `404` sinon ; liste par nom (D-65).
-- [ ] Implémenter `src/Jardin/Plantes/CreerPlante.php` : transaction ; zone (par `ZoneDuJardin`) et espèce vérifiées ; `AttribuerCodeCourt` ; `Plante::create` ; si espèce, `AppliquerReglesTypes`.
-- [ ] Implémenter `src/Bibliotheque/ReglesTypes/AppliquerReglesTypes.php` : pour chaque règle de référence en vigueur non écartée, crée `regles` (version 1, active, `regle_reference_id`, confiance, `origine` = `bibliotheque` sans ajustement, `ajustee` sinon, D-51) puis ses `fenetres` et `intervalles_saisonniers` depuis `parametres`, ajustements appliqués ; tout au `jardin_id` courant.
-- [ ] Modifier `src/Jardin/Plantes/PlanteController.php` (`creer`) et `src/Jardin/routes.php` ; inscrire les routes au registre du test de cloisonnement.
+- [x] Implémenter `src/Jardin/Zones/ZoneDuJardin.php` (règle de validation : zone trouvée par le scope et `archivee_le` nulle ; sinon « Zone introuvable dans ce jardin. ») ; tout choix de zone des sprints suivants passe par elle (D-53).
+- [x] Implémenter `src/Jardin/Zones/ZoneController.php` (`lister`, `creer`, `renommer`) : validation `nom` requis, 1 à 120, `unique:zones,nom` **restreint au jardin courant** ; zone par le scope, `404` sinon ; liste par nom (D-65).
+- [x] Implémenter `src/Jardin/Plantes/CreerPlante.php` : transaction ; zone (par `ZoneDuJardin`) et espèce vérifiées ; `AttribuerCodeCourt` ; `Plante::create` ; si espèce, `AppliquerReglesTypes`.
+- [x] Implémenter `src/Bibliotheque/ReglesTypes/AppliquerReglesTypes.php` : pour chaque règle de référence en vigueur non écartée, crée `regles` (version 1, active, `regle_reference_id`, confiance, `origine` = `bibliotheque` sans ajustement, `ajustee` sinon, D-51) puis ses `fenetres` et `intervalles_saisonniers` depuis `parametres`, ajustements appliqués ; tout au `jardin_id` courant.
+- [x] Modifier `src/Jardin/Plantes/PlanteController.php` (`creer`) et `src/Jardin/routes.php` ; inscrire les routes au registre du test de cloisonnement.
 
 ### 7a.3 Tests
 
-- [ ] `tests/Persistance/CodeCourtTest.php` : V81 (séquence, archivage puis création : code nouveau ; deux créations concurrentes par deux connexions : codes distincts — ce cas utilise `DatabaseMigrations` et non la transaction de test, pour que le verrou de la première connexion soit réel).
-- [ ] `tests/Routes/ZonesTest.php` : V82, les quatre cas ; liste rendue par ordre alphabétique.
-- [ ] `tests/Routes/CreerPlanteTest.php` : V83 (les quatre cas) et V84.
+- [x] `tests/Persistance/CodeCourtTest.php` : V81 (séquence, archivage puis création : code nouveau ; deux créations concurrentes par deux connexions : codes distincts — ce cas utilise `DatabaseMigrations` et non la transaction de test, pour que le verrou de la première connexion soit réel).
+- [x] `tests/Routes/ZonesTest.php` : V82, les quatre cas ; liste rendue par ordre alphabétique.
+- [x] `tests/Routes/CreerPlanteTest.php` : V83 (les quatre cas) et V84.
 
 ---
 

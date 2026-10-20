@@ -6,6 +6,7 @@ use Closure;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Route as Routes;
 use Src\Jardin\Domaine\Plante;
+use Src\Jardin\Domaine\Zone;
 
 /**
  * Toutes les routes de l'application (C15, V41, V128). Une route nouvelle
@@ -50,6 +51,7 @@ final class RegistreDesRoutes
     {
         $jardin = fn (string $id): array => ['nom' => 'Jardin renommé', 'profil_climatique_id' => 2];
         $plante = fn (string $id): array => ['plante' => (string) Plante::query()->withoutGlobalScopes()->where('jardin_id', $id)->orderBy('nom')->value('id')];
+        $zone = fn (string $id): string => (string) Zone::query()->withoutGlobalScopes()->where('jardin_id', $id)->orderBy('nom')->value('id');
 
         return [
             'GET /' => ['nature' => 'liste', 'role' => 'membre'],
@@ -57,6 +59,16 @@ final class RegistreDesRoutes
             // Sans paramètres, la validation refuse ; le détail d'une zone de B
             // rend 404 (TableauDeBordTest).
             'GET /echeances/groupe' => ['nature' => 'liste', 'role' => 'membre'],
+            'GET /zones' => ['nature' => 'liste', 'role' => 'membre'],
+            'POST /zones' => ['nature' => 'ecrit', 'role' => 'proprietaire', 'charge' => fn (string $id): array => ['nom' => 'Zone créée']],
+            'PUT /zones/{zone}' => [
+                'nature' => 'ecrit',
+                'role' => 'proprietaire',
+                'parametres' => fn (string $id): array => ['zone' => $zone($id)],
+                'charge' => fn (string $id): array => ['nom' => 'Zone renommée'],
+            ],
+            // Depuis A, la zone de B est refusée par `ZoneDuJardin` (CreerPlanteTest).
+            'POST /plantes' => ['nature' => 'ecrit', 'role' => 'proprietaire', 'charge' => fn (string $id): array => ['nom' => 'Plante créée', 'zone_id' => $zone($id)]],
             'GET /plantes/{plante}' => ['nature' => 'lit', 'role' => 'membre', 'parametres' => $plante],
             'GET /plantes/{plante}/historique' => ['nature' => 'lit', 'role' => 'membre', 'parametres' => $plante],
             'GET /jardins/nouveau' => ['nature' => 'liste', 'role' => 'membre'],

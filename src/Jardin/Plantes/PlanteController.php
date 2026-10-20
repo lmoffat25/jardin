@@ -2,22 +2,30 @@
 
 namespace Src\Jardin\Plantes;
 
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
 use LogicException;
+use Src\Bibliotheque\Especes\RechercheEspece;
 use Src\Comptes\Domaine\Jardin;
 use Src\Echeances\Calcul\EcheanceCalculee;
 use Src\Echeances\Domaine\EcheanceMaterialisee;
 use Src\Echeances\TableauDeBord\RegrouperEcheances;
 use Src\Jardin\Domaine\Plante;
+use Src\Jardin\Zones\ZoneDuJardin;
 use Src\Support\Jardin\JardinCourant;
 
 /**
  * La fiche d'une plante (B6 au bureau, T5 au terrain) : la plante, les
  * échéances à venir de ses règles et ses manquées (RG-07, critère 6, V78).
- * Son historique se charge à part (`HistoriqueController`).
+ * Son historique se charge à part (`HistoriqueController`). Et la création
+ * d'une plante (B7, T3, V83, V84).
+ *
+ * @phpstan-import-type Saisie from CreerPlante
  */
 final class PlanteController
 {
@@ -25,6 +33,18 @@ final class PlanteController
         private readonly RegrouperEcheances $regrouper,
         private readonly JardinCourant $jardinCourant,
     ) {}
+
+    /** Un jour et un mois, « JJ/MM », qui existent une année bissextile. */
+    private const JOUR_MOIS = 'date_format:d/m';
+
+    public function creer(Request $request, CreerPlante $creer, RechercheEspece $recherche): JsonResponse|RedirectResponse
+    {
+        $plante = $creer->executer($this->valider($request, $recherche));
+
+        return $request->wantsJson()
+            ? response()->json(['id' => $plante->id, 'code_court' => $plante->code_court], 201)
+            : redirect("/plantes/{$plante->id}");
+    }
 
     public function afficher(Request $request, string $plante): Response
     {
@@ -73,6 +93,61 @@ final class PlanteController
             'echeances' => $echeances,
             'manquees' => $manquees,
         ]);
+    }
+
+    /**
+     * La saisie d'une plante. Le nom est unique dans sa zone, plantes
+     * archivées comprises (contrainte `(zone_id, nom)`) ; la variante est
+     * exigée pour une espèce à variantes, refusée sinon (RG-51). Les clés des
+     * règles écartées et ajustées sont vérifiées à la copie.
+     *
+     * @return Saisie
+     */
+    private function valider(Request $request, RechercheEspece $recherche): array
+    {
+        $zone = $request->input('zone_id');
+        $sansEspece = fn (): bool => $request->input('espece_id') === null;
+        /** @var Saisie $saisie */
+        $saisie = $request->validate([
+            'zone_id' => ['bail', 'required', new ZoneDuJardin],
+            'nom' => ['required', 'string', 'max:120', ...(is_string($zone) && Str::isUuid($zone) ? [Rule::unique('plantes', 'nom')->where('zone_id', $zone)] : [])],
+            'espece_id' => ['nullable', 'integer', 'exists:especes,id'],
+            'repere' => ['nullable', 'string', 'max:200'],
+            'variete' => ['nullable', 'string', 'max:120'],
+            'plantee_le' => ['nullable', 'date_format:Y-m-d'],
+            'regles_ecartees' => [Rule::prohibitedIf($sansEspece), 'array'],
+            'regles_ecartees.*' => ['string', 'distinct'],
+            'ajustements' => [Rule::prohibitedIf($sansEspece), 'array'],
+            'ajustements.*' => ['array'],
+            'ajustements.*.periodicite_annees' => ['integer', 'between:1,50'],
+            'ajustements.*.intervalle_jours' => ['integer', 'between:1,365'],
+            'ajustements.*.fenetres' => ['array'],
+            'ajustements.*.fenetres.*' => ['array'],
+            'ajustements.*.fenetres.*.debut' => ['string', self::JOUR_MOIS],
+            'ajustements.*.fenetres.*.fin' => ['string', self::JOUR_MOIS],
+            'ajustements.*.intervalles' => ['array', 'list', 'min:1'],
+            'ajustements.*.intervalles.*.mois_debut' => ['required', 'integer', 'between:1,12'],
+            'ajustements.*.intervalles.*.mois_fin' => ['required', 'integer', 'between:1,12'],
+            'ajustements.*.intervalles.*.jours' => ['required', 'integer', 'between:0,365'],
+        ], [
+            'nom.required' => 'Donnez un nom à la plante.',
+            'nom.unique' => 'Une plante de cette zone porte déjà ce nom.',
+            'zone_id.required' => 'Choisissez une zone.',
+            'espece_id.exists' => 'Espèce inconnue.',
+        ]);
+
+        $variantes = isset($saisie['espece_id']) ? ($recherche->variantes([(int) $saisie['espece_id']])[(int) $saisie['espece_id']] ?? []) : [];
+        /** @var array{variante?: string|null} $variante */
+        $variante = $request->validate(
+            ['variante' => $variantes === [] ? ['prohibited'] : ['required', 'string', Rule::in($variantes)]],
+            [
+                'variante.prohibited' => 'Cette espèce n\'a pas de variante de conduite.',
+                'variante.required' => 'Choisissez la variante de conduite.',
+                'variante.in' => 'Variante de conduite inconnue pour cette espèce.',
+            ],
+        );
+
+        return [...$saisie, ...$variante, 'espece_id' => isset($saisie['espece_id']) ? (int) $saisie['espece_id'] : null];
     }
 
     private static function jour(mixed $date): ?string
