@@ -485,22 +485,22 @@ Chaque sprint, en plus de sa propre porte :
 
 ### 1a.1 Migrations
 
-- [ ] Modifier la migration du squelette `database/migrations/0001_01_01_000000_create_users_table.php` : retirer `users` et `password_reset_tokens` (remplacées par `utilisateurs`, chapitre 4) ; garder `sessions`, avec `user_id` en `uuid` nullable indexé ; `cache` et `jobs` restent (tables techniques).
-- [ ] Créer `database/migrations/2026_10_20_000001_creer_utilisateurs_profils_familles.php` : `utilisateurs`, `profils_climatiques` (id smallint fourni), `familles_botaniques`, au SQL du chapitre 4.
-- [ ] Créer `database/migrations/2026_10_20_000002_creer_jardins_especes.php` : `jardins` (`profil_climatique_id NOT NULL`, `quota_photos_mo` 2048), `especes`.
-- [ ] Créer `database/migrations/2026_10_20_000003_creer_adhesions_types_zones_regles_reference.php` : `adhesions` (CHECK rôle, UNIQUE), `types_intervention` (`jardin_id` nullable ; index unique partiel `(libelle) WHERE jardin_id IS NULL` et `UNIQUE (jardin_id, libelle)`, D-38), `zones` **plus `archivee_le timestamptz NULL`** (D-04), `regles_reference` (`confiance NOT NULL` sans défaut ; **sans** `source_url`, `source_libelle` ni CHECK de source : les sources ont leur table au 4a, D-39).
-- [ ] Créer `database/migrations/2026_10_20_000004_creer_plantes_compteurs.php` : `plantes` au SQL du chapitre 4 (UNIQUE `(jardin_id, code_court)`, UNIQUE `(zone_id, nom)`) **et** `compteurs_codes_courts (jardin_id uuid NOT NULL REFERENCES jardins ON DELETE CASCADE, prefixe varchar(4) NOT NULL, dernier integer NOT NULL, PRIMARY KEY (jardin_id, prefixe))` (D-03). La FK `photo_couverture_id` attend la migration 7.
+- [x] Modifier la migration du squelette `database/migrations/0001_01_01_000000_create_users_table.php` : retirer `users` et `password_reset_tokens` (remplacées par `utilisateurs`, chapitre 4) ; garder `sessions`, avec `user_id` en `uuid` nullable indexé ; `cache` et `jobs` restent (tables techniques).
+- [x] Créer `database/migrations/2026_10_20_000001_creer_utilisateurs_profils_familles.php` : `utilisateurs`, `profils_climatiques` (id smallint fourni), `familles_botaniques`, au SQL du chapitre 4.
+- [x] Créer `database/migrations/2026_10_20_000002_creer_jardins_especes.php` : `jardins` (`profil_climatique_id NOT NULL`, `quota_photos_mo` 2048), `especes`.
+- [x] Créer `database/migrations/2026_10_20_000003_creer_adhesions_types_zones_regles_reference.php` : `adhesions` (CHECK rôle, UNIQUE), `types_intervention` (`jardin_id` nullable ; index unique partiel `(libelle) WHERE jardin_id IS NULL` et `UNIQUE (jardin_id, libelle)`, D-38), `zones` **plus `archivee_le timestamptz NULL`** (D-04), `regles_reference` (`confiance NOT NULL` sans défaut ; **sans** `source_url`, `source_libelle` ni CHECK de source : les sources ont leur table au 4a, D-39).
+- [x] Créer `database/migrations/2026_10_20_000004_creer_plantes_compteurs.php` : `plantes` au SQL du chapitre 4 (UNIQUE `(jardin_id, code_court)`, UNIQUE `(zone_id, nom)`) **et** `compteurs_codes_courts (jardin_id uuid NOT NULL REFERENCES jardins ON DELETE CASCADE, prefixe varchar(4) NOT NULL, dernier integer NOT NULL, PRIMARY KEY (jardin_id, prefixe))` (D-03). La FK `photo_couverture_id` attend la migration 7.
 
 ### 1a.2 Référence
 
-- [ ] Implémenter `database/seeders/ReferenceSeeder.php` en `DB::table` (les modèles naissent aux 2b et 4a ; `database/` n'est pas sous la frontière V11, D-38) : 5 profils (libellés, `decalage_jours` −15, −7, 0, +7, +21, ordre) par `upsert` sur `id` ; les types fournis du CDC §3.7 par `updateOrInsert(['jardin_id' => null, 'libelle' => …], […])`, l'`upsert` de Laravel ne sachant pas viser un index partiel.
-- [ ] Modifier `database/seeders/DatabaseSeeder.php` : appelle `ReferenceSeeder` seul (le compte témoin du squelette disparaît).
+- [x] Implémenter `database/seeders/ReferenceSeeder.php` en `DB::table` (les modèles naissent aux 2b et 4a ; `database/` n'est pas sous la frontière V11, D-38) : 5 profils (libellés, `decalage_jours` −15, −7, 0, +7, +21, ordre) par `upsert` sur `id` ; les types fournis du CDC §3.7 par `updateOrInsert(['jardin_id' => null, 'libelle' => …], […])`, l'`upsert` de Laravel ne sachant pas viser un index partiel.
+- [x] Modifier `database/seeders/DatabaseSeeder.php` : appelle `ReferenceSeeder` seul (le compte témoin du squelette disparaît).
 
 ### 1a.3 Tests
 
-- [ ] `tests/Persistance/MigrationsTest.php` : `migrate:fresh` deux fois ; les tables existent (V23).
-- [ ] `tests/Persistance/ReferenceSeederTest.php` : décalages exacts ; deux passages → mêmes lignes, mêmes `id` ; un second type fourni de même libellé est refusé ; deux jardins peuvent créer un même libellé, un même jardin non (V23).
-- [ ] `tests/Persistance/ContraintesSocleTest.php` : jardin sans profil refusé ; rôle inconnu et adhésion double refusés ; codes courts et noms (V24, V25) ; règle de référence sans confiance refusée. Chaque cas attend une `QueryException` dont le `SQLSTATE` est `23xxx`.
+- [x] `tests/Persistance/MigrationsTest.php` : `migrate:fresh` deux fois ; les tables existent (V23).
+- [x] `tests/Persistance/ReferenceSeederTest.php` : décalages exacts ; deux passages → mêmes lignes, mêmes `id` ; un second type fourni de même libellé est refusé ; deux jardins peuvent créer un même libellé, un même jardin non (V23).
+- [x] `tests/Persistance/ContraintesSocleTest.php` : jardin sans profil refusé ; rôle inconnu et adhésion double refusés ; codes courts et noms (V24, V25) ; règle de référence sans confiance refusée. Chaque cas attend une `QueryException` dont le `SQLSTATE` est `23xxx`.
 
 ---
 
@@ -732,7 +732,7 @@ Chaque sprint, en plus de sa propre porte :
 **Fin :** une commune saisie rend un profil proposé, sa raison, et la liste des cinq en repli.
 
 - [ ] Écrire `scripts/climat/generer-communes.py` : base officielle des codes postaux (La Poste), COG de l'Insee, liste et fiches climatologiques Météo-France (période 1991-2020 complète seulement), altitude du chef-lieu par le service altimétrique de l'IGN ; calcul de RG-52 avec `parametres.yaml` ; écrit `communes.csv` et la date de chaque source. Le lancer une fois, hors CI, et commiter le CSV.
-- [ ] Implémenter la migration, `ImporterCommunes.php` (idempotent, transaction, aucun réseau), `ProposerProfil.php` (profil le plus proche, montagne au-dessus de 600 m, `demander_altitude` entre 400 et 800 m) et `CommuneController.php` ; modifier `routes.php` ; inscrire les routes au registre (référence partagée, comme la bibliothèque).
+- [ ] Implémenter la migration (table `communes`, puis la clé `jardins.commune_insee → communes`, absente depuis le 1a, D-78), `ImporterCommunes.php` (idempotent, transaction, aucun réseau), `ProposerProfil.php` (profil le plus proche, montagne au-dessus de 600 m, `demander_altitude` entre 400 et 800 m) et `CommuneController.php` ; modifier `routes.php` ; inscrire les routes au registre (référence partagée, comme la bibliothèque).
 - [ ] `tests/Persistance/ImportCommunesTest.php` : V135, sur un témoin de 12 communes et 4 stations inventées, dont une à période incomplète.
 - [ ] `tests/Routes/ProfilCommuneTest.php` : V136, les quatre cas.
 
