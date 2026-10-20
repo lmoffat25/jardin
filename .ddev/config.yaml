@@ -9,7 +9,7 @@ additional_fqdns: []
 database:
     type: postgres
     version: "17"
-webimage_extra_packages: [make]
+webimage_extra_packages: [make, 'php${DDEV_PHP_VERSION}-pcov']
 use_dns_when_possible: true
 composer_version: "2"
 web_environment: []

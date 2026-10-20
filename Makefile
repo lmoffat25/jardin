@@ -10,18 +10,22 @@ endif
 # Échec forcé d'une cible, pour le test de l'enchaînement (V5) : ECHEC=<cible>.
 echec = @if [ "$(ECHEC)" = "$(1)" ]; then echo "échec forcé : $(1)"; exit 1; fi
 
-.PHONY: setup crochets formater moteur statique test balayage e2e mutation criteres verifier
+.PHONY: setup installer crochets formater moteur statique test balayage e2e mutation criteres verifier
 
 setup:
 ifeq ($(X),ddev exec)
 	ddev start
 endif
+	$(MAKE) installer
+	$(X) php artisan migrate --force --no-interaction
+	$(MAKE) crochets
+
+# Dépendances et .env, sans base : ce dont les jobs statique et mutation ont besoin.
+installer:
 	$(X) composer install --no-interaction --prefer-dist
 	$(X) npm ci --no-audit --no-fund
 	$(X) sh -c '[ -f .env ] || cp .env.example .env'
 	$(X) php artisan key:generate --no-interaction
-	$(X) php artisan migrate --force --no-interaction
-	$(MAKE) crochets
 
 # Crochets git copiés là où git les lit, worktrees compris : `git rev-parse
 # --git-common-dir`, jamais un test `-d .git` (dans un worktree, .git est un fichier, C17).
@@ -63,9 +67,11 @@ e2e:
 	$(call echec,e2e)
 	@echo "(vide)"
 
+# Le moteur seul (C9) : les tests de tests/Moteur déclarent par mutates() la classe
+# qu'ils gardent. Pas de seuil avant le premier moteur complet (C10, sprint 3e).
 mutation:
 	$(call echec,mutation)
-	@echo "(vide)"
+	$(X) vendor/bin/pest tests/Moteur --mutate --no-cache
 
 # Informatif pendant un jalon, bloquant à sa livraison : LIVRAISON=1 (C12).
 criteres:

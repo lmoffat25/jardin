@@ -312,26 +312,26 @@ Chaque sprint, en plus de sa propre porte :
 
 ### 0e.0 Précondition
 
-- [ ] Vérifier la fin de 0a comme au 0b.0 ; sinon `ARRET:` (D-32).
+- [x] Vérifier la fin de 0a comme au 0b.0 ; sinon `ARRET:` (D-32).
 
 ### 0e.1 Mutation, essai d'abord
 
-- [ ] Installer `pestphp/pest-plugin-mutate` (`composer.json`) et un pilote de couverture (`pcov` dans DDEV par `webimage_extra_packages` de `.ddev/config.yaml`, `coverage: pcov` dans la CI). Créer la classe témoin `src/Echeances/Moteur/Temoin/Parite.php` (une méthode `estPaire(int): bool`, sans rien du framework) et `tests/Moteur/Temoin/PariteTest.php` ; modifier `Makefile` (`mutation` sur `src/Echeances/Moteur/`) ; `make mutation` rapporte une mutation tuée et, avec un test volontairement faible, une survivante (V13). Écrire le temps mesuré dans `decisions-agents.md`. La classe est dans le filtre `moteur` : la demande de fusion de ce sprint fait travailler le job `mutation` (V13 et V14, versant « avec changement »). Elle est retirée au 3a (D-37).
+- [x] Installer `pestphp/pest-plugin-mutate` (`composer.json`) et un pilote de couverture (`pcov` dans DDEV par `webimage_extra_packages` de `.ddev/config.yaml`, `coverage: pcov` dans la CI). Créer la classe témoin `src/Echeances/Moteur/Temoin/Parite.php` (une méthode `estPaire(int): bool`, sans rien du framework) et `tests/Moteur/Temoin/PariteTest.php` ; modifier `Makefile` (`mutation` sur `src/Echeances/Moteur/`) ; `make mutation` rapporte une mutation tuée et, avec un test volontairement faible, une survivante (V13). Écrire le temps mesuré dans `decisions-agents.md`. La classe est dans le filtre `moteur` : la demande de fusion de ce sprint fait travailler le job `mutation` (V13 et V14, versant « avec changement »). Elle est retirée au 3a (D-37).
 
 ### 0e.2 Workflow
 
-- [ ] Modifier `.github/workflows/verifier.yml` : job `changements` (`dorny/paths-filter`, sorties `moteur`, `front`) ; `statique` (`make statique`, `make criteres`) ; `tests` (`make test`, `make balayage`) ; `e2e` et `mutation` qui démarrent toujours et sortent en succès quand leur filtre est faux ; `timeout-minutes` sur chaque job ; `concurrency: { group: verifier-${{ github.head_ref }}, cancel-in-progress: true }` ; aucun `schedule`.
-- [ ] `tests/Architecture/WorkflowTest.php` : parse le YAML (`symfony/yaml`), vérifie jobs, `timeout-minutes`, `concurrency`, absence de `schedule`, et que chaque étape `run:` commence par `make ` (V6, V14, V15).
+- [x] Modifier `.github/workflows/verifier.yml` : job `changements` (`dorny/paths-filter`, sorties `moteur`, `front`) ; `statique` (`make statique`, `make criteres`) ; `tests` (`make test`, `make balayage`) ; `e2e` et `mutation` qui démarrent toujours et sortent en succès quand leur filtre est faux ; `timeout-minutes` sur chaque job ; `concurrency: { group: verifier-${{ github.head_ref }}, cancel-in-progress: true }` ; aucun `schedule`.
+- [x] `tests/Architecture/WorkflowTest.php` : parse le YAML (`symfony/yaml`), vérifie jobs, `timeout-minutes`, `concurrency`, absence de `schedule`, et que chaque étape `run:` commence par `make ` (V6, V14, V15).
 
 ### 0e.3 Fusion automatique
 
-- [ ] Modifier `.github/ruleset-main.json` : `required_status_checks` (les cinq jobs), `strict_required_status_checks_policy: true` ; l'appliquer par `scripts/depot/appliquer-ruleset.sh` (PUT, relecture). Activer `allow_auto_merge` par `gh api --method PATCH repos/<nom> -F allow_auto_merge=true` et relire.
-- [ ] Ouvrir la demande de fusion du sprint avec `gh pr merge --auto --squash` ; relever qu'elle est fusionnée sans geste (V16).
+- [x] Modifier `.github/ruleset-main.json` : `required_status_checks` (les cinq jobs), `strict_required_status_checks_policy: true` ; l'appliquer par `scripts/depot/appliquer-ruleset.sh` (PUT, relecture). Activer `allow_auto_merge` par `gh api --method PATCH repos/<nom> -F allow_auto_merge=true` et relire.
+- [x] Ouvrir la demande de fusion du sprint avec `gh pr merge --auto --squash` ; relever qu'elle est fusionnée sans geste (V16).
 
 ### 0e.4 Consignes
 
-- [ ] Créer `AGENTS.md` (produit en trois lignes, carte des documents, commandes `make`, les neuf règles du chapitre 6 §10, l'arrêt du README §3), `.claude/rules/git.md`, `.claude/rules/tests.md`, `.claude/rules/documentation.md`, `.github/pull_request_template.md` (six titres du chapitre 6 §10), `.github/dependabot.yml` (composer, npm, github-actions ; hebdomadaire ; groupés).
-- [ ] `tests/Architecture/ConsignesTest.php` : les six titres du modèle, la périodicité et les trois écosystèmes de dependabot, la présence des fichiers de règles (V17).
+- [x] Créer `AGENTS.md` (produit en trois lignes, carte des documents, commandes `make`, les neuf règles du chapitre 6 §10, l'arrêt du README §3), `.claude/rules/git.md`, `.claude/rules/tests.md`, `.claude/rules/documentation.md`, `.github/pull_request_template.md` (six titres du chapitre 6 §10), `.github/dependabot.yml` (composer, npm, github-actions ; hebdomadaire ; groupés).
+- [x] `tests/Architecture/ConsignesTest.php` : les six titres du modèle, la périodicité et les trois écosystèmes de dependabot, la présence des fichiers de règles (V17).
 
 ---
 
