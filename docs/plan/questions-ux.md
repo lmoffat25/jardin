@@ -244,6 +244,21 @@ de conduite d'une espèce qui en a (RG-51, framboisier remontant ou non) ?
 2. Une liste déroulante « Variante ».
 3. Deux entrées dans la recherche d'espèce (« Framboisier — remontant »).
 
-**Ce qui attend :** rien ne bloque ; l'état B7 · 05 est à dessiner dans la
-maquette.
+**Ce qui attend :** rien ne bloque ; l'état B7 · 05 est dessiné.
+**Réponse :**
+
+## Q-UX-15 — Saisir les plantes zone par zone
+
+**Question :** à la mise en route (B3), saisit-on toutes les plantes dans un seul
+tableau avec une colonne « Zone », ou une zone à la fois ?
+**Concerne :** B3 · 02 à B3 · 04 (vague 2), B5 « Ajouter des plantes ».
+**Options :**
+1. **Recommandé, dessiné — une zone à la fois** : une pastille par zone (avec
+   le nombre de plantes saisies), un tableau sans colonne « Zone », « Zone
+   suivante » pour avancer, chaque pastille pour sauter. On pense à ce qu'on a
+   devant soi, sans passer d'un coin à l'autre à chaque ligne. Le collage depuis
+   un tableur garde une colonne de zone facultative.
+2. Un seul tableau avec une colonne « Zone » (version précédente).
+
+**Ce qui attend :** rien ne bloque. Proposé par Léon le 20/10/2026.
 **Réponse :**

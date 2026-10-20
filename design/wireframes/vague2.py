@@ -114,18 +114,20 @@ ZONES = ["Verger haut", "Verger bas", "Haies", "Pelouse", "Massif d'entrée"]
 
 b3z = ecran("B3 · 01 · Les zones")
 entete(b3z, 1, "Le Clos")
-d.texte(b3z, CX, 112, COL, "Les coins de votre terrain", 32, gras=True)
+d.texte(b3z, CX, 112, COL, "Les zones de votre terrain", 32, gras=True)
 d.texte(b3z, CX, 160, COL, "Une zone groupe le travail : « ce matin, je fais le verger ». Cinq à dix "
-        "suffisent. Leur ordre est celui de votre tour du jardin.", 17, couleur=SECOND)
+        "suffisent. Rangez-les dans l'ordre où vous passez de l'une à l'autre : la liste du "
+        "jour suivra cet ordre.", 17, couleur=SECOND)
 for i, z in enumerate(ZONES):
     r = d.cadre(f"Zone · {z}", b3z, CX, 236 + i * 58, COL, 50, fond=FOND, rayon=8, trait=TRAIT)
     for k in range(3):  # poignée de glisser
         d.cadre("Poignée", r, 18, 18 + k * 6, 16, 2, fond=TRAIT)
     d.texte(r, 52, 13, 420, z, 17)
     # Monter/descendre : l'équivalent au glisser, exigé par WCAG 2.5.7.
-    for j, s in enumerate(["↑", "↓"]):
-        d.bouton(r, COL - 194 + j * 42, 7, 36, 36, s)
-    d.bouton(r, COL - 104, 7, 96, 36, "Retirer")
+    # Icônes : leur nom accessible (« Monter », « Descendre », « Retirer ») est le libellé
+    # du composant Icône/* à l'étape 2.
+    for j, s in enumerate(["↑", "↓", "×"]):
+        d.bouton(r, COL - 136 + j * 44, 7, 36, 36, s)
 nouvelle = d.cadre("Zone · nouvelle", b3z, CX, 236 + 5 * 58, COL, 50, fond=FOND, rayon=8,
                    trait=FORT)
 d.texte(nouvelle, 52, 13, 500, "Ajouter une zone, puis Entrée", 17, couleur=TRAIT)
@@ -137,21 +139,19 @@ b3z_suite = d.bouton(b3z, CX + COL - 260, BH - 112, 260, 56, "Continuer : les pl
 
 # --- B3 · Les plantes ---------------------------------------------------------
 TX, TW = 80, BW - 160
-COLONNES = [("Nb", 64), ("Nom", 300), ("Espèce", 260), ("Zone", 170), ("Repère (facultatif)", 210),
-            ("Ce que l'outil en fait", TW - 64 - 300 - 260 - 170 - 210)]
+# Une zone à la fois : la zone n'est pas une colonne, c'est l'écran (Q-UX-15).
+COLONNES = [("Nb", 64), ("Nom", 320), ("Espèce", 300), ("Repère (facultatif)", 260),
+            ("Ce que l'outil en fait", TW - 64 - 320 - 300 - 260)]
 
-LIGNES = [  # nb, nom, espèce, zone, repère, résultat, gras ?
-    ("1", "Pommier 'Reine des reinettes'", "Pommier", "Verger haut", "3e du rang, côté route",
-     "FRU-001 · taille, à faire avant le 31 mars", False),
-    ("12", "Pommier", "Pommier", "Verger bas", "",
+LIGNES = [  # nb, nom, espèce, repère, résultat, gras ? (zone « Verger bas »)
+    ("12", "Pommier", "Pommier", "",
      "12 plantes : Pommier 1 à Pommier 12 · FRU-002 à FRU-013", True),
-    ("1", "Haie de charmilles — côté route", "Charme (charmille)", "Haies", "",
-     "HAI-001 · taille, fenêtre du 1er nov. au 15 mars", False),
-    ("1", "Pelouse devant la maison", "Pelouse", "Pelouse", "",
-     "PEL-001 · tonte, tous les 7 à 10 jours en saison", False),
-    ("1", "Figuier", "Figuier — absent de la bibliothèque", "Massif d'entrée", "près du mur",
-     "ARB-001 · aucune règle : rien ne sera proposé tant qu'il n'en a pas", True),
+    ("1", "Néflier", "Néflier — absent de la bibliothèque", "près du mur",
+     "FRU-014 · aucune règle : rien ne sera proposé tant qu'il n'en a pas", True),
+    ("1", "Pommier 'Calville blanc'", "Pommier", "au bout du rang",
+     "FRU-015 · taille, à faire avant le 31 mars", False),
 ]
+COMPTES = {"Verger haut": 2, "Verger bas": 14}
 
 
 def tableau(f, y, lignes, saisie=None):
@@ -159,7 +159,7 @@ def tableau(f, y, lignes, saisie=None):
         "fills": [FOND], "layout": "vertical", "sizingV": "hug", "stroke": TRAIT,
         "strokeWeight": 1, "strokeAlign": "inside", "cornerRadius": 8, "clip": True})
     rangs = [[(lib, True) for lib, _ in COLONNES]] + [
-        [(c, False) for c in ligne[:6]] for ligne in lignes]
+        [(c, False) for c in ligne[:5]] for ligne in lignes]
     for i, cellules in enumerate(rangs):
         entete_ = i == 0
         r = d.noeud("frame", name="Ligne" if not entete_ else "Ligne · titres", parent=t, props={
@@ -169,8 +169,8 @@ def tableau(f, y, lignes, saisie=None):
             c = d.noeud("frame", name=COLONNES[j][0], parent=r, width=w, props={
                 "fills": [], "layout": "vertical", "padding": [12, 12, 12, 12],
                 "sizingH": "fixed", "sizingV": "hug"})
-            gras = entete_ or j == 1 or (j == 5 and lignes[i - 1][6])
-            couleur = SECOND if entete_ or j in (4, 5) and not gras else TEXTE
+            gras = entete_ or j == 1 or (j == 4 and lignes[i - 1][5])
+            couleur = SECOND if entete_ or j in (3, 4) and not gras else TEXTE
             texte_flux(c, texte_ or "—", 13 if entete_ else 15, gras=gras,
                        couleur=TRAIT if not texte_ else couleur)
     if saisie is not None:  # la ligne en cours de saisie, avec la bibliothèque ouverte
@@ -194,51 +194,66 @@ def tableau(f, y, lignes, saisie=None):
     return t
 
 
-def barre_plantes(f, compte):
-    d.texte(f, TX, 104, 700, "Ce qui pousse", 32, gras=True)
-    d.texte(f, TX, 150, 900, "Une ligne = un nom et une espèce : la bibliothèque propose les "
-            "règles. Mettez 12 dans « Nb » pour créer 12 pommiers d'un coup.", 17, couleur=SECOND)
-    coller = d.bouton(f, BW - 80 - 260, 104, 260, 48, "Coller depuis un tableur")
+def barre_plantes(f, zone, compte):
+    """Titre de la zone en cours, puis une pastille par zone : on saute de l'une à l'autre."""
+    d.texte(f, TX, 96, 900, f"Ce qui pousse dans « {zone} »", 32, gras=True)
+    d.texte(f, TX, 142, 980, "Une ligne = un nom et une espèce, la bibliothèque propose les "
+            "règles. « Nb » à 12 crée 12 pommiers d'un coup.", 17, couleur=SECOND)
+    coller = d.bouton(f, BW - 80 - 260, 96, 260, 48, "Coller depuis un tableur")
+    x, pastilles = TX, {}
+    for z in ZONES:
+        n = COMPTES.get(z, 0) if compte else 0
+        lib = f"{z} · {n}" if n else z
+        w = 28 + 7 * len(lib)
+        courant = z == zone
+        p = d.cadre(f"Zone · {z}", f, x, 184, w, 36, fond=SURFACE if courant else FOND, rayon=18,
+                    trait=FORT if courant else TRAIT)
+        d.texte(p, 12, 8, w - 24, lib, 14, gras=courant, couleur=TEXTE if courant or n else SECOND)
+        pastilles[z] = p
+        x += w + 8
     if compte:
-        d.texte(f, TX, 196, 900, compte, 15, gras=True)
-    return coller
+        d.texte(f, BW - 80 - 400, 192, 400, compte, 14, couleur=SECOND, align="right")
+    return coller, pastilles
 
 
-def pied_plantes(f):
-    d.texte(f, TX, BH - 96, 700, "Chaque ligne est enregistrée dès qu'elle est complète. Vous "
+def pied_plantes(f, suivante):
+    d.texte(f, TX, BH - 96, 620, "Chaque ligne est enregistrée dès qu'elle est complète. Vous "
             "pouvez partir et revenir : rien n'oblige à tout saisir aujourd'hui.", 14, couleur=SECOND)
-    return d.bouton(f, BW - 80 - 300, BH - 112, 300, 56, "J'ai fini pour aujourd'hui",
-                    principal=True)
+    fini = d.bouton(f, BW - 80 - 620, BH - 112, 280, 56, "J'ai fini pour aujourd'hui")
+    suite = d.bouton(f, BW - 80 - 320, BH - 112, 320, 56, f"Zone suivante : {suivante}",
+                     principal=True)
+    return fini, suite
 
 
 # Premier passage : le tableau est vide.
 b3v = ecran("B3 · 02 · Les plantes — vide")
 entete(b3v, 2, "Le Clos")
-b3v_coller = barre_plantes(b3v, None)
-tableau(b3v, 236, [], saisie=["1", "", "", "Verger haut", "", ""])
-d.texte(b3v, TX, 400, TW, "Pas de liste sous la main ? Commencez par les arbres : ce sont eux qui "
-        "ont les dates les plus strictes.", 15, couleur=SECOND)
-pied_plantes(b3v)
+b3v_coller, _ = barre_plantes(b3v, "Verger haut", None)
+tableau(b3v, 244, [], saisie=["1", "", "", "", ""])
+d.texte(b3v, TX, 408, TW, "Une zone vide ? Passez à la suivante, vous y reviendrez. Les arbres "
+        "d'abord : ce sont eux qui ont les dates les plus strictes.", 15, couleur=SECOND)
+_, b3v_suite = pied_plantes(b3v, "Verger bas")
 
 # En cours : la bibliothèque propose une espèce sur la ligne en saisie.
 b3p = ecran("B3 · 03 · Les plantes — en cours")
 entete(b3p, 2, "Le Clos")
-b3p_coller = barre_plantes(b3p, "16 plantes saisies · 15 échéances déjà calculées")
-tableau(b3p, 236, LIGNES, saisie=["1", "Cerisier du fond", "ceri", "Verger bas", "", ""])
-liste = d.cadre("Bibliothèque · suggestions", b3p, TX + 64 + 300 + 6, 236 + 404, 300, 152,
+b3p_coller, b3p_pastilles = barre_plantes(b3p, "Verger bas",
+                                          "16 plantes saisies · 15 échéances déjà calculées")
+tableau(b3p, 244, LIGNES, saisie=["1", "Cerisier du fond", "ceri", "", ""])
+liste = d.cadre("Bibliothèque · suggestions", b3p, TX + 64 + 320 + 6, 244 + 264, 300, 152,
                 fond=FOND, rayon=8, trait=FORT)
 for i, (s, n) in enumerate([("Cerisier", "Prunus avium"), ("Cerisier acide (griottier)",
                             "Prunus cerasus"), ("Sans espèce", "aucune règle proposée")]):
     o = d.cadre(f"Suggestion · {s}", liste, 1, 1 + i * 50, 298, 50, fond=SURFACE if i == 0 else FOND)
     d.texte(o, 12, 6, 270, s, 15, gras=True)
     d.texte(o, 12, 27, 270, n, 13, couleur=SECOND)
-b3p_fini = pied_plantes(b3p)
+b3p_fini, _ = pied_plantes(b3p, "Haies")
 
 # Coller une liste depuis un tableur (superposition).
 col = ecran("B3 · 04 · Coller depuis un tableur", 760)
 d.texte(col, 48, 40, 900, "Coller depuis un tableur", 28, gras=True)
 d.texte(col, 48, 84, 1200, "Copiez les colonnes dans votre tableur, collez-les ici. Une ligne = une "
-        "plante.", 16, couleur=SECOND)
+        "plante. Sans colonne de zone, tout va dans « Verger bas ».", 16, couleur=SECOND)
 zone_texte = d.cadre("Champ · collage", col, 48, 124, 520, 380, fond=SURFACE, rayon=8, trait=TRAIT)
 d.texte(zone_texte, 16, 14, 490, "Prunier n°1\tPrunier\tVerger haut\nPrunier n°2\tPrunier\tVerger "
         "haut\nPrunier n°3\tPrunier\tVerger haut\nCognassier\tCognassier\tFond du jardin\nRosier "
@@ -269,13 +284,12 @@ entete(pause, 2, "Le Clos")
 d.texte(pause, CX, 200, COL, "27 plantes saisies, 24 échéances déjà calculées.", 32, gras=True,
         align="center")
 d.texte(pause, CX, 300, COL, "L'outil sert dès maintenant, même si l'inventaire n'est pas complet. "
-        "Vous reprendrez la saisie ici quand vous voudrez : Inventaire → Ajouter des plantes.",
+        "Vous reprendrez la saisie ici quand vous voudrez : Plantes → Ajouter des plantes.",
         17, couleur=SECOND, align="center")
 voir = d.bouton(pause, CX + (COL - 320) // 2, 400, 320, 56, "Voir ce qu'il y a à faire",
                 principal=True)
 reprendre = d.bouton(pause, CX + (COL - 320) // 2, 468, 320, 56, "Continuer la saisie")
-d.texte(pause, CX, 560, COL, "Placer ces plantes sur le plan du terrain : se dessine en vague 6 "
-        "(B13).", 14, couleur=TRAIT, align="center")
+carte = d.bouton(pause, CX + (COL - 320) // 2, 536, 320, 56, "Placer les zones sur la carte")
 
 # Le cadre de B4 naît ici pour que le parcours P0 y aboutisse ; vague4.py le remplit.
 b4 = ecran("B4 · 01 · À faire")
@@ -288,6 +302,7 @@ for c in b2c_cartes:
 d.lien(b2a_suite, b2c, "instant")
 d.lien(b2b_suite, b3z)
 d.lien(b3z_suite, b3v)
+d.lien(b3v_suite, b3p)
 for bouton in (b3v_coller, b3p_coller):
     d.cmd("proto.interaction.add", id=bouton, trigger={"type": "onClick"}, action={
         "type": "openOverlay", "dest": col, "position": "center", "close_on_outside": True,
@@ -307,7 +322,8 @@ d.noeud("text", x=-680, y=120, text=(
     "B2 · Deux questions : le nom et le climat. Le climat n'est pas présélectionné : un choix par "
     "défaut passerait sans être lu, et donnerait des dates fausses sans que rien ne proteste "
     "(RG-23). Chaque climat dit ce qu'il change (« 7 jours plus tard »), pas un chiffre brut.\n\n"
-    "B3 · Les zones d'abord (5 à 10 lignes), puis les plantes dans un tableau : une ligne = un "
+    "B3 · Les zones d'abord (5 à 10 lignes), puis les plantes zone par zone : une pastille par "
+    "zone, un tableau par zone, « Zone suivante » pour avancer (Q-UX-15). Une ligne = un "
     "nom et une espèce. La colonne « Nb » fait la duplication (12 pommiers numérotés d'un coup). "
     "La dernière colonne montre ce que l'outil en tire tout de suite : c'est la preuve que la "
     "saisie sert (RG-27).\n\n"
@@ -315,7 +331,8 @@ d.noeud("text", x=-680, y=120, text=(
     "bloquer le reste.\n\n"
     "Pas de bouton « Enregistrer » : chaque ligne complète est gardée. « J'ai fini pour "
     "aujourd'hui » n'est qu'une sortie.\n\n"
-    "Plus tard : placer les plantes sur le plan (vague 6), B4 (vague 4).\n\n"
+    "La carte est facultative à la mise en route : on y arrive depuis la fin de la saisie "
+    "(B13, vague 6).\n\n"
     "Prototype : cliquez « Continuer » sans climat pour voir l'erreur. Données fictives."),
     name="Notes · vague 2", props={"width": 560, "textAutoResize": "height", "fontFamily": "Inter",
                                    "fontSize": 16, "fills": [TEXTE]})

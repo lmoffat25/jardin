@@ -262,7 +262,7 @@ def creer(nom, valeurs: dict, panneau: str, erreur_nom=None):
                      pointille=True)
     d.texte(zone_p, 0, 36, FG, "Glissez une photo ici, ou choisissez un fichier", 15,
             couleur=SECOND, align="center")
-    d.texte(f, CX0, y + 140, FG, "Le code court (FRU-015) est attribué à l'enregistrement.", 14,
+    d.texte(f, CX0, y + 140, FG, "Le code court (FRU-031) est attribué à l'enregistrement.", 14,
             couleur=SECOND)
 
     pan = d.cadre("Règles proposées", f, XR, 120, FD, 560, fond=SURFACE, rayon=12)
