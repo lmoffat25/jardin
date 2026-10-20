@@ -9,7 +9,7 @@ use Symfony\Component\Yaml\Exception\ParseException;
 use Symfony\Component\Yaml\Yaml;
 
 /**
- * Lit et valide les fichiers de la bibliothèque (D-19, D-92) : un fichier YAML
+ * Lit et valide les fichiers de la bibliothèque (D-19, D-93) : un fichier YAML
  * par catégorie dans le dossier, plus `sources-exclues.yaml` (B3). Rien n'est
  * écrit : la lecture rend les espèces prêtes à charger, ou lève une
  * RuntimeException qui nomme le fichier et le chemin de la clé en cause.
@@ -36,7 +36,7 @@ final class LireBibliotheque
 
     /**
      * B-T11 : les catégories auxquelles un type s'applique, par libellé, sinon
-     * par famille ; un type absent d'ici s'applique à toutes (D-92).
+     * par famille ; un type absent d'ici s'applique à toutes (D-93).
      */
     private const APPLICABLES = [
         'Tonte' => ['gazon'],

@@ -6,7 +6,7 @@ use Symfony\Component\Yaml\Yaml;
 
 /**
  * Une bibliothèque témoin (V62 à V64) au format de `bibliotheque/` (D-19,
- * D-92) : des espèces et des valeurs inventées (RG-28), qui ne disent rien
+ * D-93) : des espèces et des valeurs inventées (RG-28), qui ne disent rien
  * de l'agronomie et passent les contrôles de structure. Chaque test part
  * d'une espèce valide et en fausse une seule clé.
  */

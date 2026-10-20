@@ -5,7 +5,7 @@ un fichier par catégorie (D-19). **Aucune valeur ne s'écrit ici sans source** 
 le protocole est `docs/protocole-bibliotheque.md` (B1 à B8).
 
 - `<categorie>.yaml` : les espèces de la catégorie et leurs règles ; le schéma
-  est dans `docs/plan/tasks.md`, sprint 4a, et dans `docs/plan/decisions-agents.md` (D-92).
+  est dans `docs/plan/tasks.md`, sprint 4a, et dans `docs/plan/decisions-agents.md` (D-93).
 - `sources-exclues.yaml` : les domaines refusés comme sources (B3, D-52).
 - `retraits.yaml` (4c) : les espèces et règles écartées faute de source, avec leur raison.
 - `climat/` : le référentiel des communes (D-86), lu par `jardin:importer-communes`.

@@ -14,7 +14,7 @@ use Src\Bibliotheque\Domaine\TypeIntervention;
 
 /**
  * Charge les fichiers de la bibliothèque en base (RG-24, chapitre 4 §5, D-39,
- * D-92), tout ou rien : un fichier mal formé n'écrit rien.
+ * D-93), tout ou rien : un fichier mal formé n'écrit rien.
  *
  * Idempotent, ligne à ligne : une famille, une espèce ou une source identique
  * n'est pas réécrite. Une règle dont les paramètres, la confiance, le type ou
