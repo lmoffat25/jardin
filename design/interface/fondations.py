@@ -12,7 +12,11 @@ de PRIMITIVES : `python3 -I design/interface/fondations.py`.
 """
 from __future__ import annotations
 
-from icones import ICONES
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))  # -I retire ce dossier du chemin
+from icones import ICONES  # noqa: E402
 
 # --- Primitives : la marque, et rien d'autre (M3) ------------------------------
 PRIMITIVES_COULEURS = {
@@ -57,7 +61,11 @@ CONTRASTES_7 = [("texte/principal", "fond/page"), ("texte/secondaire", "fond/pag
                 ("texte/inverse", "etat/en-retard")] + [
     (f"etat/{e}", f"etat/{e}-fond") for e in ("en-retard", "a-faire", "fait", "hors-saison",
                                               "non-envoye", "erreur", "attention")] + [
-    (f"etat/{e}", "fond/surface") for e in ("en-retard", "a-faire", "fait", "non-envoye")]
+    (f"etat/{e}", "fond/surface") for e in ("en-retard", "a-faire", "fait", "non-envoye")] + [
+    # Le détail d'un bandeau sur sa teinte, le texte d'une pastille forte sur sa couleur.
+    ("texte/secondaire", f"etat/{e}-fond") for e in ("fait", "non-envoye", "attention", "erreur")] + [
+    ("texte/inverse", f"etat/{e}") for e in ("a-faire", "fait", "hors-saison", "non-envoye")] + [
+    ("texte/inverse", "action/principale")]
 CONTRASTES_3 = [("bordure/defaut", "fond/surface"), ("focus", "fond/surface")]
 
 # --- Densité : deux modes, Bureau et Terrain (A23) -----------------------------
@@ -148,61 +156,143 @@ def poser(d, pages: dict) -> None:
     _planche(d)
 
 
-def _jeu(d, nom: str, propriete: str, variantes: list, x0: int, y0: int, dessiner) -> dict:
-    """Un composant à variantes : une variante par valeur, combinées en un jeu.
-    `dessiner(cadre, valeur)` pose le contenu et rend le calque texte à lier à
-    `libelle` (ou None). Toutes les variantes ont les mêmes calques."""
-    ids, textes = [], []
+def _jeu(d, nom: str, variantes: list[dict], x0: int, y0: int, dessiner, pas: int = 72,
+         textes: dict | None = None, booleens: dict | None = None,
+         permutations: dict | None = None) -> dict:
+    """Un composant à variantes : une variante par combinaison ({propriété: valeur}),
+    combinées en un jeu. `dessiner(cadre, v)` pose le contenu et rend ses calques nommés
+    ({nom: id}). Toutes les variantes ont les mêmes calques, dans le même ordre : changer
+    de variante recrée les calques de l'instance, et seuls des calques identiques gardent
+    leurs identifiants (essai du 20/10/2026).
+
+    `textes`, `booleens`, `permutations` : {propriété: (calque, défaut)}, liées au calque
+    nommé de chaque variante (texte, visibilité, composant de l'instance). Le résultat
+    donne le nombre de calques d'une instance et la place de chaque calque nommé
+    (`parties`), pour viser un bouton à l'intérieur d'une instance."""
+    ids, calques, nb = [], [], None
     for k, v in enumerate(variantes):
-        c = d.noeud("frame", roles={}, name=f"{propriete}={v}", x=x0, y=y0 + k * 72,
-                    width=160, height=48, props={"fills": []})
-        textes.append(dessiner(c, v))
+        depart = d.suivant
+        c = d.noeud("frame", roles={}, name=", ".join(f"{p}={x}" for p, x in v.items()),
+                    x=x0, y=y0 + k * pas, width=160, height=48, props={"fills": []})
+        cal = dessiner(c, v)
+        decal = {cle: i - c for cle, i in cal.items()}
+        if calques and (d.suivant - depart - 1 != nb or decal != calques[0][1]):
+            raise SystemExit(f"ECHOUE {nom} : les variantes n'ont pas les mêmes calques")
+        nb = d.suivant - depart - 1
         d.cmd("component.create", ids=[c])
         ids.append(c)
-    d.cmd("component.combineVariants", ids=ids)
-    jeu = d._id()
+        calques.append((cal, decal))
+    if len(ids) > 1:
+        d.cmd("component.combineVariants", ids=ids)
+        jeu = d._id()
+    else:
+        jeu = ids[0]
     d.cmd("node.set", ids=[jeu], name=nom)
-    if textes[0] is not None:
-        d.cmd("component.addProperty", id=jeu, name="libelle", type="text", default="Fait",
-              layer=textes[0])
-        for t in textes[1:]:
-            d.cmd("component.bindProperty", layer=t, property="libelle", field="characters")
-    return {"id": jeu, "calques": 1}   # chaque variante : le cadre et un calque
+    for sorte, champ, table in (("text", "characters", textes), ("boolean", "visible", booleens),
+                                ("instanceSwap", "mainComponent", permutations)):
+        for prop, (calque, defaut) in (table or {}).items():
+            d.cmd("component.addProperty", id=jeu, name=prop, type=sorte, default=defaut,
+                  layer=calques[0][0][calque])
+            for cal, _ in calques[1:]:
+                d.cmd("component.bindProperty", layer=cal[calque], property=prop, field=champ)
+            if sorte == "boolean" and not defaut:   # le maître montre l'état par défaut
+                d.cmd("node.set", ids=[cal[calque] for cal, _ in calques], visible=False)
+    return {"id": jeu, "calques": nb, "parties": calques[0][1]}
+
+
+# Le rôle du texte de chaque variante de bouton : son icône le reprend.
+BOUTON_TEXTE = {"principale": "action/principale-texte", "secondaire": "texte/principal",
+                "inactif": "texte/desactive"}
+# Ce que dit un bandeau : le rôle d'état qui le colore, et son icône.
+BANDEAUX = {"succes": ("fait", "circle-check"), "non-envoye": ("non-envoye", "wifi-off"),
+            "attention": ("attention", "triangle-alert"), "erreur": ("erreur", "circle-alert")}
+PASTILLES = ["en-retard", "a-faire", "fait", "hors-saison", "non-envoye", "neutre"]
+
+
+def _cadre(d, c, roles: dict, **reglages) -> None:
+    """Règle le cadre d'une variante et lie son remplissage, son contour et son rayon."""
+    if "fill" in roles:
+        reglages["fills"] = ["#000000"]
+    if "stroke" in roles:
+        reglages.update(stroke="#000000", strokeAlign="inside")
+        if "strokeBottomWeight" not in reglages:   # un trait du bas seul, comme `boite`
+            reglages.setdefault("strokeWeight", 1.5)
+    d.cmd("node.set", ids=[c], **reglages)
+    for champ, variable in roles.items():
+        d.lier(c, champ, variable)
+
+
+def _boite(d, parent, nom: str, sens: str, **props) -> int:
+    """Un cadre sans fond en mise en page automatique, qui prend la largeur."""
+    return d.noeud("frame", roles={}, parent=parent, name=nom, props={
+        "fills": [], "layout": sens, "sizingH": "fill", "sizingV": "hug", **props})
+
+
+def _texte(d, parent, nom: str, s: str, role: str, style: str, flux: bool = True) -> int:
+    props = {"fills": ["#000000"]}
+    if flux:
+        props.update(sizingH="fill", textAutoResize="height")
+    return d.noeud("text", roles={"fill": role, "style": style}, parent=parent, text=s, name=nom,
+                   props=props)
+
+
+def _icone(d, parent, nom: str, cote: int, role: str, calque: str) -> int:
+    i = d.instance(f"Icône/{nom}", parent, w=cote, h=cote, calque=calque)
+    d.lier(i + 1, "stroke", role)   # le trait, seul calque de l'icône
+    return i
 
 
 def _composants(d) -> None:
     d.noeud("text", x=0, y=-80, text="Composants — les props portent les noms des props React (§3)",
             name="Titre", props={"fontSize": 24, "fontStyle": "Bold", "fills": ["#1A1A1A"]})
 
+    # Icônes Lucide (O25), posées d'abord : les autres composants en contiennent. Un trait
+    # de 2 px lié à texte/principal, que l'instance relie à un autre rôle ; il suit la
+    # taille de l'instance (contrainte « scale »).
+    for k, (nom, trace) in enumerate(ICONES.items()):
+        c = d.noeud("frame", roles={}, name=f"Icône/{nom}", x=600 + (k % 7) * 48,
+                    y=(k // 7) * 48, width=24, height=24, props={"fills": []})
+        d.noeud("vector", roles={"stroke": "texte/principal"}, parent=c, path=trace, name="trait",
+                props={"fills": [], "stroke": "#000000", "strokeWeight": 2, "strokeCap": "round",
+                       "strokeJoin": "round",
+                       "constraints": {"horizontal": "scale", "vertical": "scale"}})
+        d.cmd("component.create", ids=[c])
+        d.composants[f"Icône/{nom}"] = {"id": c, "calques": 1}
+    icone = {nom: d.composants[f"Icône/{nom}"]["id"] for nom in ICONES}
+
+    # Bouton : une icône peut accompagner le libellé, avant ou après ; l'icône seule
+    # (avecLibelle = faux) garde son libellé comme nom accessible (§2, icônes).
     def bouton(c, v):
+        v = v["variante"]
         fond = {"principale": "action/principale", "secondaire": "fond/surface",
                 "inactif": "fond/sourdine"}[v]
-        texte = {"principale": "action/principale-texte", "secondaire": "texte/principal",
-                 "inactif": "texte/desactive"}[v]
-        d.cmd("node.set", ids=[c], layout="horizontal", mainAlign="center", crossAlign="center",
-              padding=[0, 12, 0, 12], fills=["#000000"])
-        d.lier(c, "fill", fond)
-        d.lier(c, "cornerRadius", "forme/rayon-controle")
+        roles = {"fill": fond, "cornerRadius": "forme/rayon-controle"}
         if v == "secondaire":
-            d.cmd("node.set", ids=[c], stroke="#000000", strokeWeight=1.5, strokeAlign="inside")
-            d.lier(c, "stroke", "bordure/defaut")
-        return d.noeud("text", roles={"fill": texte, "style": "Corps fort"}, parent=c,
-                       text="Fait", name="libelle", props={"fills": ["#000000"]})
-    d.composants["Bouton"] = _jeu(d, "Bouton", "variante", ["principale", "secondaire", "inactif"],
-                                  0, 0, bouton)
+            roles["stroke"] = "bordure/defaut"
+        _cadre(d, c, roles, layout="horizontal", mainAlign="center", crossAlign="center",
+               padding=[0, 12, 0, 12], gap=8)
+        avant = _icone(d, c, "plus", 24, BOUTON_TEXTE[v], "icone")
+        lib = _texte(d, c, "libelle", "Fait", BOUTON_TEXTE[v], "Corps fort", flux=False)
+        apres = _icone(d, c, "chevron-right", 24, BOUTON_TEXTE[v], "iconeApres")
+        return {"icone": avant, "libelle": lib, "iconeApres": apres}
+    d.composants["Bouton"] = _jeu(
+        d, "Bouton", [{"variante": v} for v in BOUTON_TEXTE], 0, 0, bouton,
+        textes={"libelle": ("libelle", "Fait")},
+        booleens={"avecIcone": ("icone", False), "avecLibelle": ("libelle", True),
+                  "avecIconeApres": ("iconeApres", False)},
+        permutations={"icone": ("icone", icone["plus"]),
+                      "iconeApres": ("iconeApres", icone["chevron-right"])})
 
     def case(c, v):
-        d.cmd("node.set", ids=[c], width=20, height=20, fills=["#000000"], stroke="#000000",
-              strokeWeight=1.5, strokeAlign="inside")
-        d.lier(c, "fill", "action/principale" if v == "cochee" else "fond/surface")
-        d.lier(c, "stroke", "action/principale" if v == "cochee" else "bordure/forte")
-        d.lier(c, "cornerRadius", "forme/rayon-case")
-        d.noeud("text", roles={"fill": "texte/inverse", "style": "Petit fort"}, parent=c,
-                        x=0, y=1, text="✓", name="coche",
-                        props={"width": 20, "textAlign": "center", "fills": ["#000000"],
-                               "visible": v == "cochee"})
-        return None
-    d.composants["Case"] = _jeu(d, "Case", "etat", ["vide", "cochee"], 240, 0, case)
+        cochee = v["etat"] == "cochee"
+        couleur = "action/principale" if cochee else "fond/surface"
+        _cadre(d, c, {"fill": couleur, "stroke": "action/principale" if cochee else "bordure/forte",
+                      "cornerRadius": "forme/rayon-case"},
+               width=20, height=20, layout="horizontal", mainAlign="center", crossAlign="center")
+        coche = _icone(d, c, "check", 14, "texte/inverse", "coche")
+        d.cmd("node.set", ids=[coche], visible=cochee)
+        return {"coche": coche}
+    d.composants["Case"] = _jeu(d, "Case", [{"etat": "vide"}, {"etat": "cochee"}], 240, 0, case)
 
     logo = d.noeud("frame", roles={}, name="Marque/Logo", x=400, y=0, width=112, height=32,
                    props={"fills": [], "layout": "horizontal", "gap": 8, "crossAlign": "center",
@@ -216,16 +306,86 @@ def _composants(d) -> None:
     d.cmd("component.create", ids=[logo])
     d.composants["Marque/Logo"] = {"id": logo, "calques": 2}
 
-    # Icônes Lucide (O25) : un trait de 2 px lié à texte/principal, que l'instance relie
-    # à un autre rôle (texte/inverse sur un bouton principal, texte/desactive s'il est inactif).
-    for k, (nom, trace) in enumerate(ICONES.items()):
-        c = d.noeud("frame", roles={}, name=f"Icône/{nom}", x=600 + (k % 7) * 48,
-                    y=(k // 7) * 48, width=24, height=24, props={"fills": []})
-        d.noeud("vector", roles={"stroke": "texte/principal"}, parent=c, path=trace, name="trait",
-                props={"fills": [], "stroke": "#000000", "strokeWeight": 2, "strokeCap": "round",
-                       "strokeJoin": "round"})
-        d.cmd("component.create", ids=[c])
-        d.composants[f"Icône/{nom}"] = {"id": c, "calques": 1}
+    # Pastille d'état : le mot dit l'état, la couleur le redouble (charte §5).
+    def pastille(c, v):
+        e, forte = v["etat"], v["forte"] == "oui"
+        couleur = "action/principale" if e == "neutre" else f"etat/{e}"
+        if forte:
+            fond, trait, texte = couleur, couleur, "texte/inverse"
+        elif e == "neutre":
+            fond, trait, texte = "fond/surface", "bordure/forte", "texte/principal"
+        else:
+            fond, trait, texte = f"etat/{e}-fond", couleur, couleur
+        _cadre(d, c, {"fill": fond, "stroke": trait, "cornerRadius": "forme/rayon-pastille"},
+               width=96, height=26, layout="horizontal", mainAlign="center", crossAlign="center",
+               padding=[0, 8, 0, 8])
+        return {"libelle": _texte(d, c, "libelle", "à faire", texte, "Légende forte", flux=False)}
+    d.composants["Pastille"] = _jeu(
+        d, "Pastille", [{"etat": e, "forte": f} for e in PASTILLES for f in ("non", "oui")],
+        0, 320, pastille, pas=40, textes={"libelle": ("libelle", "à faire")})
+
+    # Champ : la valeur saisie, ou l'indication en texte/desactive ; `liste` montre le
+    # chevron d'une liste de choix.
+    def champ(c, v):
+        e = v["etat"]
+        _cadre(d, c, {"fill": "fond/surface", "cornerRadius": "forme/rayon-controle",
+                      "stroke": "etat/erreur" if e == "erreur" else "bordure/defaut"},
+               width=320, height=48, layout="horizontal", crossAlign="center",
+               padding=[0, 14, 0, 14], gap=8, strokeWeight=2 if e == "erreur" else 1.5)
+        val = _texte(d, c, "valeur", "Valeur", "texte/desactive" if e == "vide" else
+                     "texte/principal", "Corps")
+        return {"valeur": val, "chevron": _icone(d, c, "chevron-down", 20, "texte/secondaire",
+                                                 "chevron")}
+    d.composants["Champ"] = _jeu(
+        d, "Champ", [{"etat": e} for e in ("vide", "rempli", "erreur")], 240, 320, champ,
+        textes={"valeur": ("valeur", "Valeur")}, booleens={"liste": ("chevron", False)})
+
+    # Bandeau de message : un titre, un détail facultatif, une action facultative.
+    def bandeau(c, v):
+        e, nom_icone = BANDEAUX[v["sorte"]]
+        _cadre(d, c, {"fill": f"etat/{e}-fond", "stroke": f"etat/{e}",
+                      "cornerRadius": "forme/rayon-controle"},
+               width=358, height=72, layout="horizontal", crossAlign="center",
+               padding=[12, 14, 12, 14], gap=12)
+        corps = _boite(d, c, "Corps", "vertical", gap=4)
+        ligne = _boite(d, corps, "Titre", "horizontal", gap=8)
+        _icone(d, ligne, nom_icone, 20, f"etat/{e}", "icone")
+        titre = _texte(d, ligne, "titre", "Enregistré", f"etat/{e}", "Corps fort")
+        detail = _texte(d, corps, "detail", "Détail", "texte/secondaire", "Petit")
+        action = d.instance("Bouton", c, proprietes={"variante": "secondaire",
+                                                     "libelle": "Annuler"}, calque="action")
+        return {"titre": titre, "detail": detail, "action": action}
+    d.composants["Bandeau"] = _jeu(
+        d, "Bandeau", [{"sorte": s} for s in BANDEAUX], 640, 320, bandeau, pas=100,
+        textes={"titre": ("titre", "Enregistré"), "detail": ("detail", "Détail")},
+        booleens={"avecDetail": ("detail", True), "avecAction": ("action", False)})
+
+    # Ligne d'échéance (terrain) : la liste du jour (T1, T4) et la tournée (T7, avecNumero).
+    def ligne(c, v):
+        retard = v["etat"] == "en-retard"
+        _cadre(d, c, {"stroke": "bordure/discrete"}, width=390, height=72, layout="horizontal",
+               crossAlign="center", padding=[12, 16, 12, 16], gap=12, sizingV="hug",
+               strokeBottomWeight=1, fills=[])
+        numero = d.noeud("frame", roles={"fill": "action/principale"}, parent=c, name="numero",
+                         width=28, height=28, props={"fills": ["#000000"], "layout": "horizontal",
+                                                     "mainAlign": "center", "crossAlign": "center"})
+        d.lier(numero, "cornerRadius", "forme/rayon-pastille")
+        rang = _texte(d, numero, "rang", "1", "texte/inverse", "Petit fort", flux=False)
+        col = _boite(d, c, "Texte", "vertical", gap=2)
+        plante = _texte(d, col, "plante", "Poirier 'Conférence'", "texte/principal", "Corps fort")
+        det = _boite(d, col, "Détail", "horizontal", gap=6, crossAlign="center")
+        alerte = _icone(d, det, "triangle-alert", 16, "etat/en-retard", "alerte")
+        d.cmd("node.set", ids=[alerte], visible=retard)
+        detail = _texte(d, det, "detail", "Taille · à faire", "etat/en-retard" if retard else
+                        "texte/secondaire", "Petit fort" if retard else "Petit")
+        fait = d.instance("Bouton", c, w=88, h=48, proprietes={"variante": "secondaire",
+                                                               "libelle": "Fait"}, calque="fait")
+        return {"numero": numero, "rang": rang, "plante": plante, "detail": detail, "fait": fait}
+    d.composants["Échéance/Ligne"] = _jeu(
+        d, "Échéance/Ligne", [{"etat": "a-faire"}, {"etat": "en-retard"}], 1100, 320, ligne,
+        pas=100, textes={"plante": ("plante", "Poirier 'Conférence'"),
+                         "detail": ("detail", "Taille · à faire"), "rang": ("rang", "1")},
+        booleens={"avecNumero": ("numero", False)})
 
 
 def _planche(d) -> None:

@@ -25,9 +25,12 @@ def connexion(nom, erreur=None):
     d.texte(c, 40, 96, 360, "Se connecter", 26, gras=True)
     y = 148
     if erreur:
-        with d.etat("erreur"):
-            e = d.cadre("Erreur", c, 40, y, 360, 44, fond=FOND, rayon=8, trait=FORT)
-            d.texte(e, 14, 12, 332, "⚠ " + erreur, 14, gras=True)
+        if vague3.vague1.INTERFACE:
+            d.bandeau(c, 40, y, 360, 44, "erreur", erreur)
+        else:
+            with d.etat("erreur"):
+                e = d.cadre("Erreur", c, 40, y, 360, 44, fond=FOND, rayon=8, trait=FORT)
+                d.texte(e, 14, 12, 332, "⚠ " + erreur, 14, gras=True)
         y += 60
     champ(c, 40, y, 360, "Adresse électronique", "leon@exemple.fr")
     champ(c, 40, y + 100, 360, "Mot de passe", "••••••••••" if not erreur else "•••••••")
@@ -181,12 +184,17 @@ def export(nom, pret=False):
                 "pouvez quitter la page : le lien sera ici.", 13, couleur=SECOND)
     else:
         go = None
-        z = d.cadre("Export prêt", f, CX0, 612, W2, 132, fond=SURFACE, rayon=10, trait=FORT)
-        d.texte(z, 20, 16, W2 - 40, "✓ Export prêt · le-clos-2026-10-21.zip · 380 Mo", 16,
-                gras=True)
-        d.texte(z, 20, 42, W2 - 40, "Contient un fichier LISEZMOI qui décrit chaque colonne. "
-                "Lien valable 7 jours.", 13, couleur=SECOND)
-        d.bouton(z, 20, 72, 200, 48, "Télécharger", principal=True)
+        if vague3.vague1.INTERFACE:
+            d.bandeau(f, CX0, 612, W2, 132, "succes", "Export prêt · le-clos-2026-10-21.zip · "
+                      "380 Mo", "Contient un fichier LISEZMOI qui décrit chaque colonne. Lien "
+                      "valable 7 jours.", "Télécharger", principal=True, largeur_action=200)
+        else:
+            z = d.cadre("Export prêt", f, CX0, 612, W2, 132, fond=SURFACE, rayon=10, trait=FORT)
+            d.texte(z, 20, 16, W2 - 40, "✓ Export prêt · le-clos-2026-10-21.zip · 380 Mo", 16,
+                    gras=True)
+            d.texte(z, 20, 42, W2 - 40, "Contient un fichier LISEZMOI qui décrit chaque colonne. "
+                    "Lien valable 7 jours.", 13, couleur=SECOND)
+            d.bouton(z, 20, 72, 200, 48, "Télécharger", principal=True)
     XH = CX0 + W2 + 64
     d.texte(f, XH, 150, CW - W2 - 64, "Derniers exports", 15, gras=True)
     for k, (q, s) in enumerate([("21/10/2026", "photos 1 200 px · 380 Mo")] * pret

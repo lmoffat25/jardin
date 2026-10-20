@@ -140,8 +140,13 @@ def passee(nom, choisies: int, enregistre=False):
 
     pan = d.cadre("Plantes concernées", f, XR, 120, FD, 630, fond=SURFACE, rayon=12)
     d.texte(pan, 24, 20, FD - 48, f"Plantes concernées · {choisies} cochées", 18, gras=True)
-    rech = d.cadre("Champ · filtre", pan, 24, 56, FD - 48, 40, fond=FOND, rayon=8, trait=TRAIT)
-    d.texte(rech, 12, 10, FD - 72, "Filtrer par nom ou code", 14, couleur=TRAIT)
+    if vague3.vague1.INTERFACE:
+        d.instance("Champ", pan, 24, 56, FD - 48, 40, {"etat": "vide",
+                   "valeur": "Filtrer par nom ou code"}, calque="Champ · filtre")
+    else:
+        rech = d.cadre("Champ · filtre", pan, 24, 56, FD - 48, 40, fond=FOND, rayon=8,
+                       trait=TRAIT)
+        d.texte(rech, 12, 10, FD - 72, "Filtrer par nom ou code", 14, couleur=TRAIT)
     y = 112
     n = 0
     lignes_zone = {}
