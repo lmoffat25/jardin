@@ -176,7 +176,7 @@ src/
   Echeances/
     Moteur/                             ← LA FRONTIÈRE STRICTE (§6)
       Moteur, Regle, Fenetre, IntervalleSaisonnier, Historique,
-      Echeance, Etat, Decalage, Calendrier
+      Echeance, Etat, Decalage, Calendrier, Periode, JourMois
     Domaine/            Regle, Fenetre, IntervalleSaisonnier, Echeance (Eloquent)
     Calcul/             CalculEcheances.php (le pont)
     Reglages/           ModifierRegle.php, RegleController.php

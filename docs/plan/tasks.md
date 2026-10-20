@@ -742,7 +742,7 @@ Chaque sprint, en plus de sa propre porte :
 ---
 
 ## Sprint 3a — Projection, décalage, butoirs
-<!-- taille : 4 assertions, 5 fichiers, 4 classes de test -->
+<!-- taille : 4 assertions, 7 fichiers, 4 classes de test -->
 
 **Objectif :** une fenêtre jour/mois se projette sur la bonne année, se décale selon le profil et se rogne à ses butoirs, sans aucune dépendance au framework.
 **Constructeur :** back
@@ -756,16 +756,16 @@ Chaque sprint, en plus de sa propre porte :
 **Vérification en marche :** sans objet
 **Question UX possible :** aucune
 **Assertions :** V42, V43, V44, V45
-**Fichiers :** `src/Echeances/Moteur/Calendrier.php`, `src/Echeances/Moteur/Decalage.php`, `src/Echeances/Moteur/Periode.php`, `src/Echeances/Moteur/Fenetre.php`, `src/Echeances/Moteur/Temoin/Parite.php`
+**Fichiers :** `src/Echeances/Moteur/Calendrier.php`, `src/Echeances/Moteur/Decalage.php`, `src/Echeances/Moteur/Periode.php`, `src/Echeances/Moteur/Fenetre.php`, `src/Echeances/Moteur/JourMois.php`, `src/Echeances/Moteur/Temoin/Parite.php`, `Makefile`
 **Classes de test :** `tests/Moteur/ProjectionTest.php`, `tests/Moteur/DecalageTest.php`, `tests/Moteur/ButoirsTest.php`, `tests/Moteur/Temoin/PariteTest.php`
 **Fin :** les projections de V42 à V45 sont exactes, en moins d'une seconde.
 
 ### 3a.1 Classes
 
-- [ ] Créer le dossier `src/Echeances/Moteur/` et le dossier `tests/Moteur/`.
-- [ ] Implémenter `src/Echeances/Moteur/Calendrier.php` : `date()` ramène le 29/02 au 28/02 des années ordinaires (D-09) ; aucune autre date impossible n'est acceptée (`\InvalidArgumentException`) ; tout en `\DateTimeImmutable` à minuit, fuseau `Europe/Paris` fixé à la construction (le moteur ne lit jamais l'horloge).
-- [ ] Implémenter `src/Echeances/Moteur/Decalage.php` (`jours()`, `appliquer()`, `valeur()`), `src/Echeances/Moteur/Periode.php`, `src/Echeances/Moteur/Fenetre.php` (`traverseAnnee()`, `projeter()`).
-- [ ] Retirer `src/Echeances/Moteur/Temoin/Parite.php` et `tests/Moteur/Temoin/PariteTest.php` (créés au 0e, D-37).
+- [x] Créer le dossier `src/Echeances/Moteur/` et le dossier `tests/Moteur/`.
+- [x] Implémenter `src/Echeances/Moteur/Calendrier.php` : `date()` ramène le 29/02 au 28/02 des années ordinaires (D-09) ; aucune autre date impossible n'est acceptée (`\InvalidArgumentException`) ; tout en `\DateTimeImmutable` à minuit, fuseau `Europe/Paris` fixé à la construction (le moteur ne lit jamais l'horloge).
+- [x] Implémenter `src/Echeances/Moteur/Decalage.php` (`jours()`, `appliquer()`, `valeur()`), `src/Echeances/Moteur/Periode.php`, `src/Echeances/Moteur/Fenetre.php` (`traverseAnnee()`, `projeter()`).
+- [x] Retirer `src/Echeances/Moteur/Temoin/Parite.php` et `tests/Moteur/Temoin/PariteTest.php` (créés au 0e, D-37).
 
 **Cible — projection et rognage aux butoirs** (`Fenetre::projeter`) :
 
@@ -814,9 +814,9 @@ public static function prochaineFenetre(Fenetre $f, Decalage $d, \DateTimeImmuta
 
 ### 3a.2 Tests
 
-- [ ] `tests/Moteur/ProjectionTest.php` : V42 (15/01/2027 et 15/06/2027) ; V45 (29/02 en 2028 et en 2027, fenêtre `01/02 → 29/02`).
-- [ ] `tests/Moteur/DecalageTest.php` : V43, les cinq profils sur une même fenêtre, écart Nord–Midi = 22 jours sur les bornes et l'optimale. Groupe `critere-13`.
-- [ ] `tests/Moteur/ButoirsTest.php` : V44, avec et sans butoir, Montagne et Midi ; optimale rognée. Groupe `critere-4`.
+- [x] `tests/Moteur/ProjectionTest.php` : V42 (15/01/2027 et 15/06/2027) ; V45 (29/02 en 2028 et en 2027, fenêtre `01/02 → 29/02`).
+- [x] `tests/Moteur/DecalageTest.php` : V43, les cinq profils sur une même fenêtre, écart Nord–Midi = 22 jours sur les bornes et l'optimale. Groupe `critere-13`.
+- [x] `tests/Moteur/ButoirsTest.php` : V44, avec et sans butoir, Montagne et Midi ; optimale rognée. Groupe `critere-4`.
 
 ---
 

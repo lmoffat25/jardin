@@ -42,7 +42,7 @@ formater:
 
 moteur:
 	$(call echec,moteur)
-	@echo "(vide)"
+	$(X) vendor/bin/pest tests/Moteur
 
 # Types TypeScript générés depuis les classes PHP #[TypeScript] (V8, D-77). Les tests
 # désignent d'autres sources et sorties : TYPES_SOURCES, TYPES_SORTIE, TYPES.
