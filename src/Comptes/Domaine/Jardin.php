@@ -6,6 +6,7 @@ use Database\Factories\JardinFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Src\Jardin\Domaine\Zone;
 
@@ -30,6 +31,18 @@ class Jardin extends Model
     protected $table = 'jardins';
 
     protected $guarded = ['id'];
+
+    /** @return BelongsTo<ProfilClimatique, $this> */
+    public function profilClimatique(): BelongsTo
+    {
+        return $this->belongsTo(ProfilClimatique::class);
+    }
+
+    /** @return HasMany<Adhesion, $this> */
+    public function adhesions(): HasMany
+    {
+        return $this->hasMany(Adhesion::class);
+    }
 
     /** @return HasMany<Zone, $this> */
     public function zones(): HasMany

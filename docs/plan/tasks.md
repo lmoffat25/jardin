@@ -577,7 +577,7 @@ Chaque sprint, en plus de sa propre porte :
 ---
 
 ## Sprint 2b — Comptes, adhésions, profils, jobs de jardin
-<!-- taille : 1 assertion, 7 fichiers, 1 classe de test -->
+<!-- taille : 1 assertion, 8 fichiers, 2 classes de test -->
 
 **Objectif :** les comptes, les adhésions et les profils climatiques ont leurs modèles, et un job ne tourne que dans son jardin.
 **Constructeur :** back
@@ -591,19 +591,20 @@ Chaque sprint, en plus de sa propre porte :
 **Vérification en marche :** sans objet
 **Question UX possible :** aucune
 **Assertions :** V35
-**Fichiers :** `src/Comptes/Domaine/Utilisateur.php`, `config/auth.php`, `app/Models/User.php`, `src/Comptes/Domaine/Adhesion.php`, `src/Comptes/Domaine/ProfilClimatique.php`, `src/Comptes/Domaine/Jardin.php`, `src/Support/Jardin/JobDeJardin.php`
-**Classes de test :** `tests/Persistance/JobDeJardinTest.php`
+**Fichiers :** `src/Comptes/Domaine/Utilisateur.php`, `config/auth.php`, `app/Models/User.php`, `src/Comptes/Domaine/Adhesion.php`, `src/Comptes/Domaine/ProfilClimatique.php`, `src/Comptes/Domaine/Jardin.php`, `src/Support/Jardin/JobDeJardin.php`, `phpstan.neon` (D-81)
+**Classes de test :** `tests/Persistance/JobDeJardinTest.php`, `tests/Persistance/ComptesTest.php` (D-81)
 **Fin :** un job témoin portant A n'écrit que dans A ; l'authentification lit `utilisateurs`.
 
 ### 2b.1 Comptes
 
-- [ ] Implémenter `src/Comptes/Domaine/Utilisateur.php` (Authenticatable, table `utilisateurs`, uuid) ; modifier `config/auth.php` (fournisseur `Src\Comptes\Domaine\Utilisateur`) ; supprimer `app/Models/User.php` et `database/factories/UserFactory.php` ; ajouter `database/factories/UtilisateurFactory.php` (D-43).
-- [ ] Implémenter `src/Comptes/Domaine/Adhesion.php` (lue par utilisateur, sans le trait) et `src/Comptes/Domaine/ProfilClimatique.php` (référentiel, lecture seule) ; modifier `src/Comptes/Domaine/Jardin.php` (relations `profilClimatique()` et `adhesions()`).
+- [x] Implémenter `src/Comptes/Domaine/Utilisateur.php` (Authenticatable, table `utilisateurs`, uuid) ; modifier `config/auth.php` (fournisseur `Src\Comptes\Domaine\Utilisateur`) ; supprimer `app/Models/User.php` et `database/factories/UserFactory.php` ; ajouter `database/factories/UtilisateurFactory.php` (D-43).
+- [x] Implémenter `src/Comptes/Domaine/Adhesion.php` (lue par utilisateur, sans le trait) et `src/Comptes/Domaine/ProfilClimatique.php` (référentiel, lecture seule) ; modifier `src/Comptes/Domaine/Jardin.php` (relations `profilClimatique()` et `adhesions()`).
 
 ### 2b.2 Jobs
 
-- [ ] Implémenter `src/Support/Jardin/JobDeJardin.php` : trait de job avec propriété `public string $jardinId` et middleware de job qui appelle `positionner()` avant `handle()` ; un job sans `jardinId` échoue avant `handle()` (`\LogicException`), sans écrire.
-- [ ] `tests/Persistance/JobDeJardinTest.php` : un job témoin portant A n'écrit que dans A ; sans `jardinId`, il échoue sans rien écrire (V35).
+- [x] Implémenter `src/Support/Jardin/JobDeJardin.php` : trait de job avec propriété `public string $jardinId` et middleware de job qui appelle `positionner()` avant `handle()` ; un job sans `jardinId` échoue avant `handle()` (`\LogicException`), sans écrire.
+- [x] `tests/Persistance/JobDeJardinTest.php` : un job témoin portant A n'écrit que dans A ; sans `jardinId`, il échoue sans rien écrire (V35).
+- [x] `tests/Persistance/ComptesTest.php` : `Auth::attempt` lit `utilisateurs` (mot de passe haché dans `mot_de_passe_hache`) ; relations `profilClimatique()` et `adhesions()` ; un profil climatique refuse toute écriture (D-81).
 
 ---
 
