@@ -14,4 +14,6 @@ Route::middleware(['metier', 'role:proprietaire'])->group(function () {
     Route::post('/zones', [ZoneController::class, 'creer']);
     Route::put('/zones/{zone}', [ZoneController::class, 'renommer']);
     Route::post('/plantes', [PlanteController::class, 'creer']);
+    Route::put('/plantes/{plante}', [PlanteController::class, 'modifier']);
+    Route::post('/plantes/{plante}/archiver', [PlanteController::class, 'archiver']);
 });

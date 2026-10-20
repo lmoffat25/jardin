@@ -69,6 +69,18 @@ final class RegistreDesRoutes
             ],
             // Depuis A, la zone de B est refusée par `ZoneDuJardin` (CreerPlanteTest).
             'POST /plantes' => ['nature' => 'ecrit', 'role' => 'proprietaire', 'charge' => fn (string $id): array => ['nom' => 'Plante créée', 'zone_id' => $zone($id)]],
+            'PUT /plantes/{plante}' => [
+                'nature' => 'ecrit',
+                'role' => 'proprietaire',
+                'parametres' => $plante,
+                'charge' => fn (string $id): array => ['nom' => 'Plante renommée', 'zone_id' => $zone($id)],
+            ],
+            'POST /plantes/{plante}/archiver' => [
+                'nature' => 'ecrit',
+                'role' => 'proprietaire',
+                'parametres' => $plante,
+                'charge' => fn (string $id): array => ['motif' => 'Arrachée'],
+            ],
             'GET /plantes/{plante}' => ['nature' => 'lit', 'role' => 'membre', 'parametres' => $plante],
             'GET /plantes/{plante}/historique' => ['nature' => 'lit', 'role' => 'membre', 'parametres' => $plante],
             'GET /jardins/nouveau' => ['nature' => 'liste', 'role' => 'membre'],

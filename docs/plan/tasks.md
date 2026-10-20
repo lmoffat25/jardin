@@ -1336,17 +1336,17 @@ Fichier `src/Echeances/Calcul/CalculEcheances.php` (nom de la classe, PSR-4). `S
 
 ### 7b.1 Modification
 
-- [ ] Implémenter `src/Jardin/Plantes/ModifierPlante.php` : plante par le scope ; zone par `ZoneDuJardin` ; nom unique dans la zone d'arrivée (la plante elle-même exclue), sinon `422` ; code court, règles et géométrie inchangés (D-54).
+- [x] Implémenter `src/Jardin/Plantes/ModifierPlante.php` : plante par le scope ; zone par `ZoneDuJardin` ; nom unique dans la zone d'arrivée (la plante elle-même exclue), sinon `422` ; code court, règles et géométrie inchangés (D-54).
 
 ### 7b.2 Archivage
 
-- [ ] Implémenter `src/Jardin/Plantes/ArchiverPlante.php` : `etat = archivee`, `archivee_le`, motif ; règles `est_active = false` sans `remplacee_le` (D-22) ; code court conservé ; le calcul ignore les plantes archivées (déjà dans `chargerRegles`).
-- [ ] Implémenter `src/Jardin/Policies/PlantePolicy.php` (`archiver`, `modifier` : propriétaire) ; modifier `src/Jardin/Plantes/PlanteController.php` (`modifier`, `archiver`) et `src/Jardin/routes.php` (sous `role:proprietaire`) ; inscrire les routes au registre.
+- [x] Implémenter `src/Jardin/Plantes/ArchiverPlante.php` : `etat = archivee`, `archivee_le`, motif ; règles `est_active = false` sans `remplacee_le` (D-22) ; code court conservé ; le calcul ignore les plantes archivées (déjà dans `chargerRegles`).
+- [x] Implémenter `src/Jardin/Policies/PlantePolicy.php` (`archiver`, `modifier` : propriétaire) ; modifier `src/Jardin/Plantes/PlanteController.php` (`modifier`, `archiver`) et `src/Jardin/routes.php` (sous `role:proprietaire`) ; inscrire les routes au registre.
 
 ### 7b.3 Tests
 
-- [ ] `tests/Routes/ModifierPlanteTest.php` : V132 (nominal, nom pris dans la zone d'arrivée, plante de B → `404` et B intacte, membre → `403`).
-- [ ] `tests/Routes/ArchiverPlanteTest.php` : V88, les quatre cas.
+- [x] `tests/Routes/ModifierPlanteTest.php` : V132 (nominal, nom pris dans la zone d'arrivée, plante de B → `404` et B intacte, membre → `403`).
+- [x] `tests/Routes/ArchiverPlanteTest.php` : V88, les quatre cas.
 
 ---
 
