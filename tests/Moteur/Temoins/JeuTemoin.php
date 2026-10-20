@@ -53,6 +53,26 @@ final class JeuTemoin
         );
     }
 
+    /**
+     * Traitement en deux passages (RG-36) : chute des feuilles 01/11 → 30/11,
+     * fin d'hiver 01/02 → 28/02. `$fenetres` remplace les deux fenêtres.
+     *
+     * @param  list<Fenetre>|null  $fenetres
+     */
+    public static function deuxPassages(int $periodicite = 1, string $effetLe = '2026-06-01', ?array $fenetres = null): Regle
+    {
+        return self::regle(
+            'regle-deux-passages',
+            'plante-deux-passages',
+            $fenetres ?? [
+                new Fenetre(new JourMois(1, 11), new JourMois(30, 11), libelle: 'chute des feuilles', ordre: 1),
+                new Fenetre(new JourMois(1, 2), new JourMois(28, 2), libelle: 'fin d\'hiver', ordre: 2),
+            ],
+            $periodicite,
+            $effetLe,
+        );
+    }
+
     /** Une date du moteur, à minuit à Paris, depuis `AAAA-MM-JJ`. */
     public static function jour(string $iso): \DateTimeImmutable
     {
@@ -61,10 +81,11 @@ final class JeuTemoin
         return Calendrier::date($annee, $mois, $jour);
     }
 
+    /** @param  Fenetre|list<Fenetre>  $fenetres */
     private static function regle(
         string $id,
         string $planteId,
-        Fenetre $fenetre,
+        Fenetre|array $fenetres,
         int $periodicite = 1,
         string $effetLe = '2026-06-01',
         string $confiance = 'verifiee',
@@ -76,7 +97,7 @@ final class JeuTemoin
             typeId: 1,
             typeRegle: 'R2',
             periodiciteAnnees: $periodicite,
-            fenetres: [$fenetre],
+            fenetres: is_array($fenetres) ? $fenetres : [$fenetres],
             intervalles: [],
             confiance: $confiance,
             origine: $origine,

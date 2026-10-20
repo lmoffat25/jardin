@@ -7,6 +7,9 @@ namespace Src\Echeances\Moteur;
 /** Une règle active, telle que le pont la traduit pour le moteur (A5). */
 final readonly class Regle
 {
+    /** @var list<Fenetre> R2, triées par ordre déclaré (RG-36) */
+    public array $fenetres;
+
     /**
      * @param  list<Fenetre>  $fenetres  R2
      * @param  list<mixed>  $intervalles  R1, typés au sprint 3d
@@ -17,7 +20,7 @@ final readonly class Regle
         public int $typeId,
         public string $typeRegle,
         public int $periodiciteAnnees,
-        public array $fenetres,
+        array $fenetres,
         public array $intervalles,
         public string $confiance,
         public string $origine,
@@ -29,6 +32,12 @@ final readonly class Regle
         if ($periodiciteAnnees < 1) {
             throw new \InvalidArgumentException("Périodicité inférieure à un an : {$periodiciteAnnees}");
         }
+        if ($typeRegle === 'R2' && $fenetres === []) {
+            throw new \InvalidArgumentException('Règle R2 sans fenêtre');
+        }
+        // usort est stable : deux fenêtres de même ordre gardent leur ordre de déclaration.
+        usort($fenetres, fn (Fenetre $a, Fenetre $b) => $a->ordre <=> $b->ordre);
+        $this->fenetres = $fenetres;
     }
 
     /** @param  list<string>  $admises */

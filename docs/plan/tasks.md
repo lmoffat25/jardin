@@ -897,7 +897,7 @@ private static function etat(Periode $p, \DateTimeImmutable $j, bool $faiteDansL
 
 ### 3c.1 Choix de fenêtre
 
-- [ ] Implémenter `src/Echeances/Moteur/ChoixDeFenetre.php` ; modifier `Moteur.php` (appel), `Regle.php` (fenêtres triées par `ordre`), `Historique.php` (`estClose`).
+- [x] Implémenter `src/Echeances/Moteur/ChoixDeFenetre.php` ; modifier `Moteur.php` (appel), `Regle.php` (fenêtres triées par `ordre`), `Historique.php` (`estClose`).
 
 **Cible — choix parmi des fenêtres multiples** (A8) :
 
@@ -922,9 +922,9 @@ public static function prochaine(Regle $r, Historique $h, Decalage $d, \DateTime
 
 ### 3c.2 Tests
 
-- [ ] `tests/Moteur/FenetresMultiplesTest.php` : V51, V52 (fenêtres témoins novembre et février).
-- [ ] `tests/Moteur/OccurrencesClosesTest.php` : V53 (suspendue, puis manquée matérialisée).
-- [ ] `tests/Moteur/HorsFenetreTest.php` : V54 (taille de juin).
+- [x] `tests/Moteur/FenetresMultiplesTest.php` : V51, V52 (fenêtres témoins novembre et février).
+- [x] `tests/Moteur/OccurrencesClosesTest.php` : V53 (suspendue, puis manquée matérialisée).
+- [x] `tests/Moteur/HorsFenetreTest.php` : V54 (taille de juin).
 
 ---
 
