@@ -821,7 +821,7 @@ public static function prochaineFenetre(Fenetre $f, Decalage $d, \DateTimeImmuta
 ---
 
 ## Sprint 3b — Règle R2 : états, manquées, pluriannuel, explication
-<!-- taille : 5 assertions, 6 fichiers, 4 classes de test -->
+<!-- taille : 5 assertions, 7 fichiers, 4 classes de test -->
 
 **Objectif :** `Moteur::calculer` rend, pour une règle R2 à une fenêtre, l'échéance à venir, son état du jour, ses manquées et son explication, avec une identité stable.
 **Constructeur :** back
@@ -844,14 +844,14 @@ final class Moteur {
 **Vérification en marche :** sans objet
 **Question UX possible :** aucune bloquante — X = 15 jours pour « urgente » (D-18, provisoire) est posé en Q-UX-9, sans marqueur : le sprint construit avec 15, une autre réponse deviendra un sprint de correction
 **Assertions :** V46, V47, V48, V49, V50
-**Fichiers :** `src/Echeances/Moteur/Regle.php`, `src/Echeances/Moteur/Historique.php`, `src/Echeances/Moteur/Echeance.php`, `src/Echeances/Moteur/Etat.php`, `src/Echeances/Moteur/Explication.php`, `src/Echeances/Moteur/Moteur.php`
+**Fichiers :** `src/Echeances/Moteur/Regle.php`, `src/Echeances/Moteur/Historique.php`, `src/Echeances/Moteur/Echeance.php`, `src/Echeances/Moteur/Etat.php`, `src/Echeances/Moteur/Explication.php`, `src/Echeances/Moteur/Moteur.php`, `src/Echeances/Moteur/Periode.php`
 **Classes de test :** `tests/Moteur/EtatsTest.php`, `tests/Moteur/ManqueeTest.php`, `tests/Moteur/PluriannuelTest.php`, `tests/Moteur/IdentiteEtExplicationTest.php`
 **Fin :** les cas TS-6 n° 1, 2, 7 passent, chaque jour d'une saison a un seul état, et deux calculs rendent les mêmes identités.
 
 ### 3b.1 Classes
 
-- [ ] Implémenter `src/Echeances/Moteur/Regle.php`, `Historique.php` (objet interrogeable, A10, construit à partir de tableaux simples), `Echeance.php`, `Etat.php`, `Explication.php`.
-- [ ] Implémenter `src/Echeances/Moteur/Moteur.php` : pour chaque règle R2 active, `prochaineFenetre` ; si la dernière intervention tombe dans la période, la suivante ; périodicité `n > 1` : à partir de la fenêtre de la dernière intervention, sauter `n − 1` fenêtres, sans jamais les rendre manquées (V48) ; manquées : toute occurrence projetée dont la fin est passée, postérieure à `effetLe`, sans intervention dedans et non close dans l'historique (V47, D-05) ; `dueLe` = début de la période projetée, décalée et rognée (D-07) ; état par la cascade ordonnée du chapitre 3 §7. Les règles R1 lèvent `\LogicException('R1 au sprint 3d')` jusqu'au 3d.
+- [x] Implémenter `src/Echeances/Moteur/Regle.php`, `Historique.php` (objet interrogeable, A10, construit à partir de tableaux simples), `Echeance.php`, `Etat.php`, `Explication.php`.
+- [x] Implémenter `src/Echeances/Moteur/Moteur.php` : pour chaque règle R2 active, `prochaineFenetre` ; si la dernière intervention tombe dans la période, la suivante ; périodicité `n > 1` : à partir de la fenêtre de la dernière intervention, sauter `n − 1` fenêtres, sans jamais les rendre manquées (V48) ; manquées : toute occurrence projetée dont la fin est passée, postérieure à `effetLe`, sans intervention dedans et non close dans l'historique (V47, D-05) ; `dueLe` = début de la période projetée, décalée et rognée (D-07) ; état par la cascade ordonnée du chapitre 3 §7. Les règles R1 lèvent `\LogicException('R1 au sprint 3d')` jusqu'au 3d.
 
 **Cible — cascade d'état** (l'ordre est normatif) :
 
@@ -868,11 +868,11 @@ private static function etat(Periode $p, \DateTimeImmutable $j, bool $faiteDansL
 
 ### 3b.2 Tests
 
-- [ ] Créer `tests/Moteur/Temoins/JeuTemoin.php` : fabriques de règles témoins (pommier `01/12 → 31/03`, optimale `01/02 → 15/03` ; cerisier `01/08 → 30/09`, optimale jusqu'au 31/08 ; haie `16/08 → 15/03` avec butoirs `16/08` et `15/03`) — **jeux témoins, jamais copiés dans `bibliotheque/`**.
-- [ ] `tests/Moteur/EtatsTest.php` : V46, chaque jour du 01/09/2026 au 30/04/2027, un seul état et l'ordre de la cascade.
-- [ ] `tests/Moteur/ManqueeTest.php` : V47 (01/04/2027 ; règle créée en cours de fenêtre → aucune manquée). Groupe `critere-6`.
-- [ ] `tests/Moteur/PluriannuelTest.php` : V48.
-- [ ] `tests/Moteur/IdentiteEtExplicationTest.php` : V49 (deux calculs, mêmes couples) ; V50 (phrase avec décalage non nul, sans mention pour la plaine, caractère indicatif, origine portée par l'explication, ≤ 400 caractères). Groupes `critere-3`, `critere-13`.
+- [x] Créer `tests/Moteur/Temoins/JeuTemoin.php` : fabriques de règles témoins (pommier `01/12 → 31/03`, optimale `01/02 → 15/03` ; cerisier `01/08 → 30/09`, optimale jusqu'au 31/08 ; haie `16/08 → 15/03` avec butoirs `16/08` et `15/03`) — **jeux témoins, jamais copiés dans `bibliotheque/`**.
+- [x] `tests/Moteur/EtatsTest.php` : V46, chaque jour du 01/09/2026 au 30/04/2027, un seul état et l'ordre de la cascade.
+- [x] `tests/Moteur/ManqueeTest.php` : V47 (01/04/2027 ; règle créée en cours de fenêtre → aucune manquée). Groupe `critere-6`.
+- [x] `tests/Moteur/PluriannuelTest.php` : V48.
+- [x] `tests/Moteur/IdentiteEtExplicationTest.php` : V49 (deux calculs, mêmes couples) ; V50 (phrase avec décalage non nul, sans mention pour la plaine, caractère indicatif, origine portée par l'explication, ≤ 400 caractères). Groupes `critere-3`, `critere-13`.
 
 ---
 

@@ -297,3 +297,28 @@ bloquée jusqu'à la fin de la minute. Que dit l'écran ?
 **Ce qui attend :** rien ne bloque. Appliquée : la recommandation (sprint 2c,
 D-82), le 20/10/2026.
 **Réponse :**
+
+## Q-UX-18 — La phrase qui explique une échéance
+
+**Question :** chaque échéance dit d'où elle vient (RG-06). Le CDC donne
+« Taille du pommier, fenêtre déc.–mars décalée de 15 jours pour votre climat. »,
+mais l'outil ne connaît ni le genre ni l'article du nom que tu donnes à une
+plante (« Pommier 'Reine des reinettes' », « Haie du fond ») : « du » ne se
+calcule pas. Comment la phrase s'écrit-elle ?
+**Concerne :** B4 (tableau de bord), B6 (fiche plante, carte d'échéance), T1 ;
+la colonne `echeances.explication` (400 caractères).
+**Options :**
+1. **Recommandé — « Taille · Pommier : règle de la bibliothèque, fenêtre
+   déc.–mars, décalée de 15 jours pour votre climat. »**, puis « Règle
+   indicative. » quand elle l'est ; « règle ajustée » pour une règle modifiée ;
+   « avancée de 15 jours » pour un climat plus doux ; rien sur le climat en
+   plaine. Reprend la maquette B6 (« Règle de la bibliothèque : …, décalée de
+   7 jours pour votre climat »), sans article à deviner.
+2. « Taille de Pommier, fenêtre déc.–mars… » : plus proche du CDC, mais
+   « de Pommier », « de Haie du fond » sonnent faux.
+3. Ne pas nommer la plante dans la phrase (la carte la nomme déjà) :
+   « Règle de la bibliothèque : fenêtre déc.–mars, … ».
+
+**Ce qui attend :** rien ne bloque. Appliquée : la recommandation (sprint 3b,
+D-88), le 20/10/2026. Une autre réponse ne change que `Explication::enPhrase`.
+**Réponse :**
