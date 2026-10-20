@@ -1003,15 +1003,15 @@ private static function prochaineR1(Regle $r, ?\DateTimeImmutable $derniere, Dec
 
 ### 3e.1 Balayages
 
-- [ ] `tests/Moteur/Balayage/BalayageAnnuelTest.php` : les cinq invariants de V59, chaque jour de 2027 et 2028, cinq profils, règles du jeu témoin. Groupe `balayage`.
-- [ ] `tests/Moteur/NidificationTest.php` : V60, cinq profils, 16/03 → 15/08. Groupe `critere-4` (dans `make test`, il est court).
-- [ ] Modifier `tests/Pest.php` et `phpunit.xml` (groupe `balayage` exclu par défaut), `Makefile` (`balayage`, `moteur` = `tests/Moteur` sans `balayage`, avec mesure du temps : échec au-delà d'une seconde).
+- [x] `tests/Moteur/Balayage/BalayageAnnuelTest.php` : les cinq invariants de V59, chaque jour de 2027 et 2028, cinq profils, règles du jeu témoin. Groupe `balayage`.
+- [x] `tests/Moteur/NidificationTest.php` : V60, cinq profils, 16/03 → 15/08. Groupe `critere-4` (dans `make test`, il est court).
+- [x] Modifier `tests/Pest.php` et `phpunit.xml` (groupe `balayage` exclu par défaut), `Makefile` (`balayage`, `moteur` = `tests/Moteur` sans `balayage`, avec mesure du temps : échec au-delà d'une seconde).
 
 ### 3e.2 Mutation
 
-- [ ] Lancer `make mutation` sur `src/Echeances/Moteur/` et relever le score. Puis **au plus trois** cycles complets : tuer des survivantes par des tests réunis dans `tests/Moteur/MutationsTest.php` (pas par des exclusions) ; ce qui survit après le troisième cycle est listé en tête de ce fichier, avec sa raison. Écrire la valeur finale dans `tests/mutation-seuil.txt` et dans `decisions-agents.md` (O16, D-50).
-- [ ] Modifier `Makefile` : `mutation` passe `--min=$$(cat tests/mutation-seuil.txt)`.
-- [ ] `tests/Architecture/SeuilMutationTest.php` : le seuil versionné est ≥ à celui de `main` (lu par `git show origin/main:tests/mutation-seuil.txt`) ; `origin/main` introuvable → échec qui le dit ; fichier absent de `main` → 0 (V61). Modifier `.github/workflows/verifier.yml` : `fetch-depth: 0` sur le `checkout` du job qui lance ce test.
+- [x] Lancer `make mutation` sur `src/Echeances/Moteur/` et relever le score. Puis **au plus trois** cycles complets : tuer des survivantes par des tests réunis dans `tests/Moteur/MutationsTest.php` (pas par des exclusions) ; ce qui survit après le troisième cycle est listé en tête de ce fichier, avec sa raison. Écrire la valeur finale dans `tests/mutation-seuil.txt` et dans `decisions-agents.md` (O16, D-50).
+- [x] Modifier `Makefile` : `mutation` passe `--min=$$(cat tests/mutation-seuil.txt)`.
+- [x] `tests/Architecture/SeuilMutationTest.php` : le seuil versionné est ≥ à celui de `main` (lu par `git show origin/main:tests/mutation-seuil.txt`) ; `origin/main` introuvable → échec qui le dit ; fichier absent de `main` → 0 (V61). Modifier `.github/workflows/verifier.yml` : `fetch-depth: 0` sur le `checkout` du job qui lance ce test.
 
 ---
 

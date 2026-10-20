@@ -36,6 +36,7 @@ jobs:
             moteur:
               - 'src/Echeances/Moteur/**'
               - 'tests/Moteur/**'
+              - 'tests/mutation-seuil.txt'
             front:
               - 'resources/**'
               - 'src/**/routes.php'
@@ -86,7 +87,10 @@ jobs:
           --health-timeout 5s
           --health-retries 10
     steps:
+      # Tout l'historique : SeuilMutationTest lit le seuil de origin/main (V61, D-50).
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: shivammathur/setup-php@v2
         with:
           php-version: "8.4"
