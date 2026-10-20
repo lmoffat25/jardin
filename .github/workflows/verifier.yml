@@ -1,21 +1,70 @@
 name: verifier
 
+# Chapitre 6 §8. Chaque commande passe par `make` (C6) ; `e2e` et `mutation`
+# démarrent toujours et ne travaillent que si `changements` le dit : un job
+# requis sauté par un filtre resterait « en attente » et bloquerait la fusion.
+
 on:
   pull_request:
+  push:
+    branches: [main]
 
 concurrency:
-  group: verifier-${{ github.ref }}
+  group: verifier-${{ github.head_ref || github.ref }}
   cancel-in-progress: true
 
 permissions:
   contents: read
+  pull-requests: read
+
+env:
+  DANS_CI: 1
 
 jobs:
+  changements:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    outputs:
+      moteur: ${{ steps.filtre.outputs.moteur }}
+      front: ${{ steps.filtre.outputs.front == 'true' || contains(github.event.pull_request.labels.*.name, 'e2e') }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filtre
+        with:
+          filters: |
+            moteur:
+              - 'src/Echeances/Moteur/**'
+              - 'tests/Moteur/**'
+            front:
+              - 'resources/**'
+              - 'src/**/routes.php'
+              - 'tests/e2e/**'
+              - 'package-lock.json'
+
+  statique:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.4"
+          extensions: pdo_pgsql
+          coverage: none
+          tools: composer:v2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - run: make installer
+      - run: make statique
+      - run: make criteres
+
   tests:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     env:
-      DANS_CI: 1
       DB_CONNECTION: pgsql
       DB_HOST: 127.0.0.1
       DB_PORT: 5432
@@ -46,5 +95,52 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
+          cache: npm
       - run: make setup
       - run: make test
+      - run: make balayage
+
+  e2e:
+    needs: changements
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - if: needs.changements.outputs.front == 'true'
+        uses: actions/checkout@v4
+      - if: needs.changements.outputs.front == 'true'
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.4"
+          extensions: pdo_pgsql
+          coverage: none
+      - if: needs.changements.outputs.front == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - if: needs.changements.outputs.front == 'true'
+        run: make installer
+      - if: needs.changements.outputs.front == 'true'
+        run: make e2e
+
+  mutation:
+    needs: changements
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - if: needs.changements.outputs.moteur == 'true'
+        uses: actions/checkout@v4
+      - if: needs.changements.outputs.moteur == 'true'
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.4"
+          coverage: pcov
+      - if: needs.changements.outputs.moteur == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - if: needs.changements.outputs.moteur == 'true'
+        run: make installer
+      - if: needs.changements.outputs.moteur == 'true'
+        run: make mutation
