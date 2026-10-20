@@ -897,7 +897,7 @@ private static function etat(Periode $p, \DateTimeImmutable $j, bool $faiteDansL
 
 ### 3c.1 Choix de fenêtre
 
-- [ ] Implémenter `src/Echeances/Moteur/ChoixDeFenetre.php` ; modifier `Moteur.php` (appel), `Regle.php` (fenêtres triées par `ordre`), `Historique.php` (`estClose`).
+- [x] Implémenter `src/Echeances/Moteur/ChoixDeFenetre.php` ; modifier `Moteur.php` (appel), `Regle.php` (fenêtres triées par `ordre`), `Historique.php` (`estClose`).
 
 **Cible — choix parmi des fenêtres multiples** (A8) :
 
@@ -922,14 +922,14 @@ public static function prochaine(Regle $r, Historique $h, Decalage $d, \DateTime
 
 ### 3c.2 Tests
 
-- [ ] `tests/Moteur/FenetresMultiplesTest.php` : V51, V52 (fenêtres témoins novembre et février).
-- [ ] `tests/Moteur/OccurrencesClosesTest.php` : V53 (suspendue, puis manquée matérialisée).
-- [ ] `tests/Moteur/HorsFenetreTest.php` : V54 (taille de juin).
+- [x] `tests/Moteur/FenetresMultiplesTest.php` : V51, V52 (fenêtres témoins novembre et février).
+- [x] `tests/Moteur/OccurrencesClosesTest.php` : V53 (suspendue, puis manquée matérialisée).
+- [x] `tests/Moteur/HorsFenetreTest.php` : V54 (taille de juin).
 
 ---
 
 ## Sprint 3d — Règle R1 saisonnière et report hors saison
-<!-- taille : 4 assertions, 4 fichiers, 3 classes de test -->
+<!-- taille : 4 assertions, 5 fichiers, 3 classes de test -->
 
 **Objectif :** une tonte suit l'intervalle de sa saison, ne tombe jamais hors saison, et le décalage déplace la saison sans toucher l'intervalle.
 **Constructeur :** back
@@ -943,13 +943,13 @@ public static function prochaine(Regle $r, Historique $h, Decalage $d, \DateTime
 **Vérification en marche :** sans objet
 **Question UX possible :** aucune
 **Assertions :** V55, V56, V57, V58
-**Fichiers :** `src/Echeances/Moteur/IntervalleSaisonnier.php`, `src/Echeances/Moteur/Regle.php`, `src/Echeances/Moteur/Calendrier.php`, `src/Echeances/Moteur/Moteur.php`
+**Fichiers :** `src/Echeances/Moteur/IntervalleSaisonnier.php`, `src/Echeances/Moteur/Regle.php`, `src/Echeances/Moteur/Calendrier.php`, `src/Echeances/Moteur/Moteur.php`, `src/Echeances/Moteur/Explication.php`
 **Classes de test :** `tests/Moteur/TonteTest.php`, `tests/Moteur/HorsSaisonTest.php`, `tests/Moteur/DecalageSaisonTest.php`
 **Fin :** les cas TS-6 n° 5 et 9 passent ; aucune tonte n'est due en janvier.
 
 ### 3d.1 R1
 
-- [ ] Implémenter `src/Echeances/Moteur/IntervalleSaisonnier.php` ; modifier `Regle.php` (`intervalleDe`, `ouvertureSuivante`, garde : une règle R1 sans aucune période d'intervalle > 0 lève `\InvalidArgumentException` à la construction), `Calendrier.php` (dernier jour du mois), `Moteur.php` (branche R1 ; `dueLe` = date due ; état : `AVenir` avant, `Ouverte` le jour même et après — la cascade R2 ne s'applique pas).
+- [x] Implémenter `src/Echeances/Moteur/IntervalleSaisonnier.php` ; modifier `Regle.php` (`intervalleDe`, `ouvertureSuivante`, garde : une règle R1 sans aucune période d'intervalle > 0 lève `\InvalidArgumentException` à la construction), `Calendrier.php` (dernier jour du mois), `Moteur.php` (branche R1 ; `dueLe` = date due ; état : `AVenir` avant, `Ouverte` le jour même et après — la cascade R2 ne s'applique pas).
 
 **Cible — report hors saison** (`Moteur::prochaineR1`, chapitre 3 §7, étapes 1 à 4, avec D-10) :
 
@@ -975,9 +975,9 @@ private static function prochaineR1(Regle $r, ?\DateTimeImmutable $derniere, Dec
 
 ### 3d.2 Tests
 
-- [ ] `tests/Moteur/TonteTest.php` : V55 (jeu témoin 7 / 10 / 0). Groupe `critere-5`.
-- [ ] `tests/Moteur/HorsSaisonTest.php` : V56 (15/11, 15/12, aucune tonte en janvier) ; V58 (en retard, saison ouverte puis fermée). Groupe `critere-15`.
-- [ ] `tests/Moteur/DecalageSaisonTest.php` : V57 (Midi : saison ouverte quinze jours plus tôt, intervalle 7 inchangé).
+- [x] `tests/Moteur/TonteTest.php` : V55 (jeu témoin 7 / 10 / 0). Groupe `critere-5`.
+- [x] `tests/Moteur/HorsSaisonTest.php` : V56 (15/11, 15/12, aucune tonte en janvier) ; V58 (en retard, saison ouverte puis fermée). Groupe `critere-15`.
+- [x] `tests/Moteur/DecalageSaisonTest.php` : V57 (Midi : saison ouverte quinze jours plus tôt, intervalle 7 inchangé).
 
 ---
 
@@ -1003,15 +1003,15 @@ private static function prochaineR1(Regle $r, ?\DateTimeImmutable $derniere, Dec
 
 ### 3e.1 Balayages
 
-- [ ] `tests/Moteur/Balayage/BalayageAnnuelTest.php` : les cinq invariants de V59, chaque jour de 2027 et 2028, cinq profils, règles du jeu témoin. Groupe `balayage`.
-- [ ] `tests/Moteur/NidificationTest.php` : V60, cinq profils, 16/03 → 15/08. Groupe `critere-4` (dans `make test`, il est court).
-- [ ] Modifier `tests/Pest.php` et `phpunit.xml` (groupe `balayage` exclu par défaut), `Makefile` (`balayage`, `moteur` = `tests/Moteur` sans `balayage`, avec mesure du temps : échec au-delà d'une seconde).
+- [x] `tests/Moteur/Balayage/BalayageAnnuelTest.php` : les cinq invariants de V59, chaque jour de 2027 et 2028, cinq profils, règles du jeu témoin. Groupe `balayage`.
+- [x] `tests/Moteur/NidificationTest.php` : V60, cinq profils, 16/03 → 15/08. Groupe `critere-4` (dans `make test`, il est court).
+- [x] Modifier `tests/Pest.php` et `phpunit.xml` (groupe `balayage` exclu par défaut), `Makefile` (`balayage`, `moteur` = `tests/Moteur` sans `balayage`, avec mesure du temps : échec au-delà d'une seconde).
 
 ### 3e.2 Mutation
 
-- [ ] Lancer `make mutation` sur `src/Echeances/Moteur/` et relever le score. Puis **au plus trois** cycles complets : tuer des survivantes par des tests réunis dans `tests/Moteur/MutationsTest.php` (pas par des exclusions) ; ce qui survit après le troisième cycle est listé en tête de ce fichier, avec sa raison. Écrire la valeur finale dans `tests/mutation-seuil.txt` et dans `decisions-agents.md` (O16, D-50).
-- [ ] Modifier `Makefile` : `mutation` passe `--min=$$(cat tests/mutation-seuil.txt)`.
-- [ ] `tests/Architecture/SeuilMutationTest.php` : le seuil versionné est ≥ à celui de `main` (lu par `git show origin/main:tests/mutation-seuil.txt`) ; `origin/main` introuvable → échec qui le dit ; fichier absent de `main` → 0 (V61). Modifier `.github/workflows/verifier.yml` : `fetch-depth: 0` sur le `checkout` du job qui lance ce test.
+- [x] Lancer `make mutation` sur `src/Echeances/Moteur/` et relever le score. Puis **au plus trois** cycles complets : tuer des survivantes par des tests réunis dans `tests/Moteur/MutationsTest.php` (pas par des exclusions) ; ce qui survit après le troisième cycle est listé en tête de ce fichier, avec sa raison. Écrire la valeur finale dans `tests/mutation-seuil.txt` et dans `decisions-agents.md` (O16, D-50).
+- [x] Modifier `Makefile` : `mutation` passe `--min=$$(cat tests/mutation-seuil.txt)`.
+- [x] `tests/Architecture/SeuilMutationTest.php` : le seuil versionné est ≥ à celui de `main` (lu par `git show origin/main:tests/mutation-seuil.txt`) ; `origin/main` introuvable → échec qui le dit ; fichier absent de `main` → 0 (V61). Modifier `.github/workflows/verifier.yml` : `fetch-depth: 0` sur le `checkout` du job qui lance ce test.
 
 ---
 

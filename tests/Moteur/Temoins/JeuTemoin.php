@@ -6,6 +6,8 @@ namespace Tests\Moteur\Temoins;
 
 use Src\Echeances\Moteur\Calendrier;
 use Src\Echeances\Moteur\Fenetre;
+use Src\Echeances\Moteur\Historique;
+use Src\Echeances\Moteur\IntervalleSaisonnier;
 use Src\Echeances\Moteur\JourMois;
 use Src\Echeances\Moteur\Regle;
 
@@ -15,6 +17,29 @@ use Src\Echeances\Moteur\Regle;
  */
 final class JeuTemoin
 {
+    /** Les cinq profils climatiques et leur décalage en jours (RG-25). */
+    public const PROFILS = ['Très doux' => -15, 'Doux' => -7, 'Tempéré' => 0, 'Frais' => 7, 'Montagne' => 21];
+
+    /**
+     * Les règles témoins, une de chaque forme : R2 à une fenêtre (pommier,
+     * cerisier), à butoirs (haie), à deux fenêtres, et R1 (tonte).
+     *
+     * @return list<Regle>
+     */
+    public static function toutes(): array
+    {
+        return [self::pommier(), self::cerisier(), self::haie(), self::deuxPassages(), self::tonte()];
+    }
+
+    /** Une intervention le même jour sur chaque plante témoin, du type de sa règle. */
+    public static function toutesFaitesLe(\DateTimeImmutable $jour): Historique
+    {
+        return Historique::depuis(array_map(
+            fn (Regle $r) => ['plante_id' => $r->planteId, 'type_id' => $r->typeId, 'fait_le' => $jour],
+            self::toutes(),
+        ));
+    }
+
     /** Taille du pommier : fenêtre 01/12 → 31/03, optimale 01/02 → 15/03. */
     public static function pommier(
         int $periodicite = 1,
@@ -53,6 +78,62 @@ final class JeuTemoin
         );
     }
 
+    /**
+     * Traitement en deux passages (RG-36) : chute des feuilles 01/11 → 30/11,
+     * fin d'hiver 01/02 → 28/02. `$fenetres` remplace les deux fenêtres.
+     *
+     * @param  list<Fenetre>|null  $fenetres
+     */
+    public static function deuxPassages(int $periodicite = 1, string $effetLe = '2026-06-01', ?array $fenetres = null): Regle
+    {
+        return self::regle(
+            'regle-deux-passages',
+            'plante-deux-passages',
+            $fenetres ?? [
+                new Fenetre(new JourMois(1, 11), new JourMois(30, 11), libelle: 'chute des feuilles', ordre: 1),
+                new Fenetre(new JourMois(1, 2), new JourMois(28, 2), libelle: 'fin d\'hiver', ordre: 2),
+            ],
+            $periodicite,
+            $effetLe,
+        );
+    }
+
+    /**
+     * Tonte de la pelouse (R1) : 7 jours au printemps (mars–juin), 14 l'été
+     * (juillet–août), 10 à l'automne (septembre–novembre), 0 l'hiver
+     * (décembre–février). `$intervalles` remplace les quatre saisons.
+     *
+     * @param  list<IntervalleSaisonnier>|null  $intervalles
+     */
+    public static function tonte(?array $intervalles = null): Regle
+    {
+        return new Regle(
+            id: 'regle-tonte',
+            planteId: 'plante-pelouse',
+            typeId: 2,
+            typeRegle: 'R1',
+            periodiciteAnnees: 1,
+            fenetres: [],
+            intervalles: $intervalles ?? [
+                new IntervalleSaisonnier(3, 6, 7),
+                new IntervalleSaisonnier(7, 8, 14),
+                new IntervalleSaisonnier(9, 11, 10),
+                new IntervalleSaisonnier(12, 2, 0),
+            ],
+            confiance: 'indicative',
+            origine: 'bibliotheque',
+            effetLe: self::jour('2026-06-01'),
+        );
+    }
+
+    /** L'historique d'une seule tonte de la pelouse témoin, ou aucun. */
+    public static function tondueLe(?string $iso): Historique
+    {
+        return $iso === null
+            ? Historique::vide()
+            : Historique::depuis([['plante_id' => 'plante-pelouse', 'type_id' => 2, 'fait_le' => self::jour($iso)]]);
+    }
+
     /** Une date du moteur, à minuit à Paris, depuis `AAAA-MM-JJ`. */
     public static function jour(string $iso): \DateTimeImmutable
     {
@@ -61,10 +142,11 @@ final class JeuTemoin
         return Calendrier::date($annee, $mois, $jour);
     }
 
+    /** @param  Fenetre|list<Fenetre>  $fenetres */
     private static function regle(
         string $id,
         string $planteId,
-        Fenetre $fenetre,
+        Fenetre|array $fenetres,
         int $periodicite = 1,
         string $effetLe = '2026-06-01',
         string $confiance = 'verifiee',
@@ -76,7 +158,7 @@ final class JeuTemoin
             typeId: 1,
             typeRegle: 'R2',
             periodiciteAnnees: $periodicite,
-            fenetres: [$fenetre],
+            fenetres: is_array($fenetres) ? $fenetres : [$fenetres],
             intervalles: [],
             confiance: $confiance,
             origine: $origine,
