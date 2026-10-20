@@ -5,6 +5,8 @@
 // sauf la liste référentiel ci-dessous, fermée.
 
 use Illuminate\Database\Eloquent\Model;
+use Src\Bibliotheque\Domaine\TypeIntervention;
+use Src\Bibliotheque\TypesIntervention\TypesVisibles;
 use Src\Support\Jardin\AppartientAuJardin;
 
 /**
@@ -23,7 +25,7 @@ const MODELES_REFERENTIEL = [
     'Src\Bibliotheque\Domaine\Espece',
     'Src\Bibliotheque\Domaine\RegleReference',
     'Src\Bibliotheque\Domaine\SourceRegle',
-    // Fournis (jardin_id NULL) et propres au jardin : filtre global à part (7c).
+    // Fournis (jardin_id NULL) et propres au jardin : filtre global TypesVisibles (D-55).
     'Src\Bibliotheque\Domaine\TypeIntervention',
 ];
 
@@ -76,4 +78,10 @@ it('signale un modèle témoin sans le trait, et pas un modèle de la liste', fu
     });
 
     expect(modelesNonCloisonnes([$temoin, $cloisonne, 'Src\Comptes\Domaine\Jardin']))->toBe([$temoin]);
+});
+
+it('pose sur TypeIntervention le filtre global des types visibles', function () {
+    new TypeIntervention;
+
+    expect(TypeIntervention::hasGlobalScope(TypesVisibles::class))->toBeTrue();
 });

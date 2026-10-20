@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
 use LogicException;
@@ -17,18 +18,22 @@ use Src\Echeances\Calcul\EcheanceCalculee;
 use Src\Echeances\Domaine\EcheanceMaterialisee;
 use Src\Echeances\TableauDeBord\RegrouperEcheances;
 use Src\Jardin\Domaine\Plante;
+use Src\Jardin\Domaine\Zone;
 use Src\Jardin\Zones\ZoneDuJardin;
 use Src\Support\Jardin\JardinCourant;
 
 /**
+ * La liste des plantes (B5, V89) : 50 par page, cherchée et filtrée (RG-19).
  * La fiche d'une plante (B6 au bureau, T5 au terrain) : la plante, les
  * échéances à venir de ses règles et ses manquées (RG-07, critère 6, V78).
  * Son historique se charge à part (`HistoriqueController`). Et la création
  * d'une plante (B7, T3, V83, V84), sa modification (V132) et son archivage
- * (V88), réservés au propriétaire (`PlantePolicy`).
+ * (V88), réservés au propriétaire (`PlantePolicy`), comme la modification en
+ * masse (V90).
  *
  * @phpstan-import-type Saisie from CreerPlante
  * @phpstan-import-type Modification from ModifierPlante
+ * @phpstan-import-type Lot from ModifierEnMasse
  */
 final class PlanteController
 {
@@ -36,6 +41,9 @@ final class PlanteController
         private readonly RegrouperEcheances $regrouper,
         private readonly JardinCourant $jardinCourant,
     ) {}
+
+    /** Les lignes d'une page de la liste (RG-19, V89). */
+    private const PAR_PAGE = 50;
 
     /** Un jour et un mois, « JJ/MM », qui existent une année bissextile. */
     private const JOUR_MOIS = 'date_format:d/m';
@@ -46,6 +54,61 @@ final class PlanteController
         'nom.unique' => 'Une plante de cette zone porte déjà ce nom.',
         'zone_id.required' => 'Choisissez une zone.',
     ];
+
+    /**
+     * Recherche dans le nom (sans tenir compte de la casse, `%` et `_` pris à
+     * la lettre) ou par code court exact ; filtres par zone et par état, les
+     * plantes actives par défaut (D-103). La miniature reste nulle jusqu'aux
+     * photos (11b).
+     */
+    public function lister(Request $request): Response
+    {
+        /** @var array{q?: string|null, zone?: string|null, etat?: string|null, page?: int|string|null} $filtres */
+        $filtres = $request->validate([
+            'q' => ['nullable', 'string', 'max:120'],
+            'zone' => ['nullable', 'uuid'],
+            'etat' => ['nullable', Rule::in(['active', 'archivee', 'toutes'])],
+            'page' => ['nullable', 'integer', 'min:1'],
+        ]);
+        $q = $filtres['q'] ?? '';
+        $zone = $filtres['zone'] ?? null;
+        $etat = $filtres['etat'] ?? 'active';
+
+        $page = Plante::query()
+            ->with('zone:id,nom')
+            ->when($q !== '', fn ($r) => $r->where(fn ($r) => $r
+                ->where('nom', 'ilike', '%'.addcslashes($q, '\\%_').'%')
+                ->orWhereRaw('lower(code_court) = lower(?)', [$q])))
+            ->when($zone !== null, fn ($r) => $r->where('zone_id', $zone))
+            ->when($etat !== 'toutes', fn ($r) => $r->where('etat', $etat))
+            ->orderBy('nom')
+            ->orderBy('id')
+            ->paginate(self::PAR_PAGE, ['id', 'nom', 'code_court', 'repere', 'etat', 'zone_id'], 'page', (int) ($filtres['page'] ?? 1));
+
+        $plantes = collect($page->items())->map(function (Plante $p): array {
+            $zone = $p->zone ?? throw new LogicException("Plante {$p->id} sans zone.");
+
+            return [
+                'id' => $p->id,
+                'nom' => $p->nom,
+                'code_court' => $p->code_court,
+                'repere' => $p->getAttribute('repere'),
+                'etat' => $p->getAttribute('etat'),
+                'zone' => ['id' => $zone->id, 'nom' => $zone->nom],
+                'miniature' => null,
+            ];
+        });
+
+        return Inertia::render('Bureau/Plantes', [
+            'plantes' => $plantes->values()->all(),
+            'total' => $page->total(),
+            'page' => $page->currentPage(),
+            'pages' => $page->lastPage(),
+            'filtres' => ['q' => $q, 'zone' => $zone, 'etat' => $etat],
+            'zones' => Zone::query()->whereNull('archivee_le')->orderBy('nom')->get(['id', 'nom'])
+                ->map(fn (Zone $z) => ['id' => $z->id, 'nom' => $z->nom])->all(),
+        ]);
+    }
 
     public function creer(Request $request, CreerPlante $creer, RechercheEspece $recherche): JsonResponse|RedirectResponse
     {
@@ -79,6 +142,30 @@ final class PlanteController
         return $request->wantsJson()
             ? response()->json(['id' => $plante->id, 'code_court' => $plante->code_court])
             : redirect("/plantes/{$plante->id}");
+    }
+
+    public function modifierEnMasse(Request $request, ModifierEnMasse $modifier): JsonResponse|RedirectResponse
+    {
+        if ($request->missing('zone_id') && $request->missing('repere')) {
+            throw ValidationException::withMessages(['zone_id' => 'Choisissez une zone ou un repère.']);
+        }
+        /** @var Lot $saisie */
+        $saisie = $request->validate([
+            'ids' => ['required', 'array', 'list', 'max:500'],
+            'ids.*' => ['required', 'uuid', 'distinct'],
+            'zone_id' => ['sometimes', 'bail', 'required', new ZoneDuJardin],
+            'repere' => ['sometimes', 'nullable', 'string', 'max:200'],
+        ], [
+            'ids.required' => 'Choisissez au moins une plante.',
+            'ids.*.distinct' => 'Une plante est choisie deux fois.',
+            'zone_id.required' => 'Choisissez une zone.',
+        ]);
+
+        $modifiees = $modifier->executer($saisie);
+
+        return $request->wantsJson()
+            ? response()->json(['modifiees' => $modifiees])
+            : back();
     }
 
     public function archiver(Request $request, string $plante, ArchiverPlante $archiver): JsonResponse|RedirectResponse

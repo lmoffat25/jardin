@@ -46,6 +46,6 @@ class RegleFactory extends Factory
     /** L'id d'un type fourni du jeu de référence, par son libellé. */
     public static function typeFourni(string $libelle): int
     {
-        return TypeIntervention::query()->whereNull('jardin_id')->where('libelle', $libelle)->firstOrFail()->id;
+        return TypeIntervention::query()->withoutGlobalScopes()->whereNull('jardin_id')->where('libelle', $libelle)->firstOrFail()->id;
     }
 }

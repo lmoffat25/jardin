@@ -6,6 +6,7 @@ use Src\Jardin\Zones\ZoneController;
 
 Route::middleware('metier')->group(function () {
     Route::get('/zones', [ZoneController::class, 'lister']);
+    Route::get('/plantes', [PlanteController::class, 'lister']);
     Route::get('/plantes/{plante}', [PlanteController::class, 'afficher']);
 });
 
@@ -14,6 +15,8 @@ Route::middleware(['metier', 'role:proprietaire'])->group(function () {
     Route::post('/zones', [ZoneController::class, 'creer']);
     Route::put('/zones/{zone}', [ZoneController::class, 'renommer']);
     Route::post('/plantes', [PlanteController::class, 'creer']);
+    // Avant `/plantes/{plante}`, qui prendrait « lot » pour un identifiant.
+    Route::put('/plantes/lot', [PlanteController::class, 'modifierEnMasse']);
     Route::put('/plantes/{plante}', [PlanteController::class, 'modifier']);
     Route::post('/plantes/{plante}/archiver', [PlanteController::class, 'archiver']);
 });

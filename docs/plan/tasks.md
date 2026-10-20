@@ -1371,21 +1371,21 @@ Fichier `src/Echeances/Calcul/CalculEcheances.php` (nom de la classe, PSR-4). `S
 
 ### 7c.1 Plantes
 
-- [ ] Modifier `src/Jardin/Plantes/PlanteController.php` (`lister`) : recherche par nom (`ILIKE`) ou code court exact (insensible à la casse), filtres, pagination, miniature de couverture (nulle avant 11b).
-- [ ] Implémenter `src/Jardin/Plantes/ModifierEnMasse.php` : charge les `ids` par le scope ; un id absent → `422`, rien ne change ; zone par `ZoneDuJardin` ; transaction ; noms uniques dans la zone d'arrivée vérifiés avant écriture.
+- [x] Modifier `src/Jardin/Plantes/PlanteController.php` (`lister`) : recherche par nom (`ILIKE`) ou code court exact (insensible à la casse), filtres, pagination, miniature de couverture (nulle avant 11b).
+- [x] Implémenter `src/Jardin/Plantes/ModifierEnMasse.php` : charge les `ids` par le scope ; un id absent → `422`, rien ne change ; zone par `ZoneDuJardin` ; transaction ; noms uniques dans la zone d'arrivée vérifiés avant écriture.
 
 ### 7c.2 Types
 
-- [ ] Implémenter `src/Bibliotheque/TypesIntervention/TypesVisibles.php` (filtre global : `jardin_id IS NULL OR jardin_id = JardinCourant::id()` ; sans jardin courant, `JardinCourantAbsent`) et modifier `src/Bibliotheque/Domaine/TypeIntervention.php` (`booted()` l'ajoute) ; le chargeur (4a) et le jeu de référence (1a) s'en passent déjà explicitement (D-55).
-- [ ] Implémenter `src/Bibliotheque/TypesIntervention/TypeInterventionController.php` (`lister`, `creer`) et `src/Bibliotheque/TypesIntervention/CatalogueTypes.php` : `recents` = les 5 types des interventions les plus récentes du jardin ; libellé unique parmi les visibles ; un type fourni n'est pas modifiable (aucune route de modification).
-- [ ] Modifier `src/Bibliotheque/routes.php` (ces routes ne sont **pas** dans les exceptions du cloisonnement) et `src/Jardin/routes.php` (`PUT /plantes/lot`) ; inscrire les routes au registre.
+- [x] Implémenter `src/Bibliotheque/TypesIntervention/TypesVisibles.php` (filtre global : `jardin_id IS NULL OR jardin_id = JardinCourant::id()` ; sans jardin courant, `JardinCourantAbsent`) et modifier `src/Bibliotheque/Domaine/TypeIntervention.php` (`booted()` l'ajoute) ; le chargeur (4a) et le jeu de référence (1a) s'en passent déjà explicitement (D-55).
+- [x] Implémenter `src/Bibliotheque/TypesIntervention/TypeInterventionController.php` (`lister`, `creer`) et `src/Bibliotheque/TypesIntervention/CatalogueTypes.php` : `recents` = les 5 types des interventions les plus récentes du jardin ; libellé unique parmi les visibles ; un type fourni n'est pas modifiable (aucune route de modification).
+- [x] Modifier `src/Bibliotheque/routes.php` (ces routes ne sont **pas** dans les exceptions du cloisonnement) et `src/Jardin/routes.php` (`PUT /plantes/lot`) ; inscrire les routes au registre.
 
 ### 7c.3 Tests
 
-- [ ] `tests/Routes/ListePlantesTest.php` : V89 (500 plantes, 50 lignes, total, code exact). Groupe `critere-11`.
-- [ ] `tests/Routes/MasseTest.php` : V90, les quatre cas.
-- [ ] `tests/Routes/TypesInterventionTest.php` : V91, les quatre cas, ordre des récents.
-- [ ] Modifier `tests/Architecture/ModelesCloisonnesTest.php` : `TypeIntervention` porte le filtre global `TypesVisibles` (V34).
+- [x] `tests/Routes/ListePlantesTest.php` : V89 (500 plantes, 50 lignes, total, code exact). Groupe `critere-11`.
+- [x] `tests/Routes/MasseTest.php` : V90, les quatre cas.
+- [x] `tests/Routes/TypesInterventionTest.php` : V91, les quatre cas, ordre des récents.
+- [x] Modifier `tests/Architecture/ModelesCloisonnesTest.php` : `TypeIntervention` porte le filtre global `TypesVisibles` (V34).
 
 ---
 
