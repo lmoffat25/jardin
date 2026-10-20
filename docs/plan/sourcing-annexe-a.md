@@ -370,7 +370,7 @@ précisé.
 ```yaml
 type_regle: R2
 fenetres: [{debut: 01/11, fin: 15/03, optimal: [01/11, 15/03], butoirs: [16/08, 15/03], libelle: "repos végétatif"}]
-periodicite_annees: 1        # à trancher : 1 (haie taillée de jardin, non sourcé) ou 2 à 3 (haie bocagère, sourcé)
+periodicite_annees: 1        # verifiee le 20/10/2026 (Q22) : H1 et H2 de recherche-q20-q22.md
 confiance: indicative
 ```
 
@@ -398,11 +398,12 @@ charme, https://www.aujardin.info/plantes/carpinus-betulus.php : aucune période
   taillée de jardin. Pour celle-ci, aucune source de rang supérieur ne donne de
   période ; la vulgarisation donne d'autres dates (février, ou deux tailles en
   végétation dont une en nidification).
-- Périodicité : K2 dit 2 à 3 ans (bocage) ; le « 1×/an » de l'annexe actuelle
-  n'est porté par aucune source. Les deux choix sont donnés à Léon ; la
-  proposition est 1 an marqué `indicative`, parce que la cadence bocagère
-  appliquée à une haie de jardin taillée serait un emploi de la source hors de son
-  objet.
+- Périodicité : K2 dit 2 à 3 ans, mais pour le bocage. **Complété le 20/10/2026
+  (Q22)** : deux sources de jardin indépendantes, Quimperlé Communauté (« une à
+  deux fois par an ») et le CAUE 76 (« 2 à 3 fois par an » pour une haie taillée,
+  charme et hêtre en exemple), donnent au moins une taille par an. Périodicité 1,
+  `verifiee` pour elle seule. Le modèle ne garde qu'une taille, celle qui respecte
+  les butoirs. Détail : `docs/plan/recherche-q20-q22.md`.
 
 **Statut proposé : `indicative`.** Climat : Bretagne (K1), Haute-Marne (K2), Tarn
 (K3).
@@ -587,7 +588,7 @@ Nord/altitude et Sud ; la plaine n'est pas nommée.
 
 ```yaml
 type_regle: R2
-fenetres: [{debut: 01/02, fin: 31/03, optimal: [01/03, 31/03], libelle: "fin d'hiver, au plus tard au début de la floraison"}]
+fenetres: [{debut: 01/03, fin: 31/03, optimal: [01/03, 31/03], libelle: "fin d'hiver, au plus tard au début de la floraison"}]   # 01/02 avant Q20
 periodicite_annees: 1
 confiance: indicative
 ```
@@ -617,8 +618,13 @@ Malin, taille en vert, « Mi-juin à fin août ». Non proposée.
   sourcée recouvre février. Même la seule optimale de mars passe en février au
   profil −15 j. Voir « Conséquences », point 4.
 
-**Statut proposé : `indicative`**, sous réserve de la décision sur B-T1 ; sans
-cette décision, le pêcher doit rester **écarté de la liste de départ**. Climat :
+**Décision du 20/10/2026 (Q20)** : B-T1 reçoit une exception nominative pour
+février (pêcher, nectarinier), jamais pour décembre ni janvier. La fenêtre
+commence au **01/03** (« en mars », Q1) : au profil −15 j elle s'ouvre le 14/02,
+admis par l'exception ; l'ancien 01/02 donnait le 17/01, refusé. Le 01/02 ne venait
+que de Q4. Sources complémentaires (RHS) : `docs/plan/recherche-q20-q22.md`.
+
+**Statut proposé : `indicative`**, dans la liste de départ. Climat :
 Q1 parle de régions « tempérées chaudes ».
 
 ---

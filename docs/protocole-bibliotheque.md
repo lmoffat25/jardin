@@ -85,7 +85,7 @@ référence.
 
 | # | Test | Ce qu'il attrape |
 |---|---|---|
-| B-T1 | Aucun fruitier à **noyau** n'a de fenêtre de taille recouvrant décembre → février | La confusion pépins/noyaux, l'erreur la plus coûteuse |
+| B-T1 | Aucun fruitier à **noyau** n'a de fenêtre de taille recouvrant le 01/12 → 31/01 ; hors **pêcher et nectarinier** (taille de fin d'hiver, Q20), aucun ne recouvre le 01/12 → fin février | La confusion pépins/noyaux, l'erreur la plus coûteuse |
 | B-T2 | Toute espèce de type **haie** a une fenêtre excluant le 16 mars → 15 août | RG-37, nidification |
 | B-T3 | Un arbuste à floraison **printanière** n'est pas taillé avant sa floraison | Suppression de la floraison de l'année |
 

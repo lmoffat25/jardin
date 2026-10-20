@@ -498,7 +498,8 @@ le test et recopiée dans `decisions-agents.md`. Aucune valeur n'est écrite de
 mémoire.
 
 **V68 — La cohérence agronomique tient** · base · B-T1, B-T2, B-T3
-Aucun fruitier à noyau n'a de fenêtre de taille qui recouvre décembre à février ;
+Aucun fruitier à noyau n'a de fenêtre de taille qui recouvre décembre ou janvier,
+et aucun, hors pêcher et nectarinier, ne recouvre février ;
 toute haie a une fenêtre qui exclut le 16/03 → 15/08 ; aucun arbuste à floraison
 printanière n'est taillé avant sa floraison.
 

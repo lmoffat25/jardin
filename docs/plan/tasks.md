@@ -1057,7 +1057,7 @@ especes:
 **Assertions :** V66, V68, V69
 **Fichiers :** `src/Bibliotheque/Console/VerifierSources.php`, `Makefile`
 **Classes de test :** `tests/Persistance/CoherenceBibliothequeTest.php`, `tests/Persistance/ClimatsBibliothequeTest.php`, `tests/Persistance/NidificationBoutEnBoutTest.php`, `tests/Architecture/WorkflowTest.php`
-**Fin :** pommier, poirier, prunier, cerisier, vigne, groseillier à grappes, cassissier, haie persistante, haie caduque, rosier, arbustes à floraison printanière et estivale et pelouse sont chargés ; les traitements fruitiers sont absents de la bibliothèque (Q23 du CDC, décision de Léon) ; tous avec deux sources par règle (URL, libellé, date de consultation), chaque valeur venant d'une source consultée dans la session (B4) ; rosier et arbuste à floraison estivale sont `verifiee` ou `indicative` selon ce que les sources permettent ; une espèce ou une règle sans source est absente des fichiers et inscrite dans `bibliotheque/retraits.yaml`.
+**Fin :** pommier, poirier, prunier, cerisier, vigne, groseillier à grappes, cassissier, haie persistante, haie caduque, rosier, arbustes à floraison printanière et estivale, pelouse et pêcher sont chargés ; les traitements fruitiers sont absents de la bibliothèque (Q23 du CDC, décision de Léon) ; tous avec deux sources par règle (URL, libellé, date de consultation), chaque valeur venant d'une source consultée dans la session (B4) ; rosier et arbuste à floraison estivale sont `verifiee` ou `indicative` selon ce que les sources permettent ; une espèce ou une règle sans source est absente des fichiers et inscrite dans `bibliotheque/retraits.yaml`.
 **Coût :** recherche documentaire lente et jugement de qualité, comportement jamais observé (la projection des cinq profils sur des valeurs réelles) → **couper** : les cinq espèces à sourcer passent au 4d ; ici, seules celles que le CDC dit déjà sourcées.
 
 ### 4c.1 Contenu
@@ -1080,12 +1080,12 @@ especes:
 ## Sprint 4d — Espèces à sourcer
 <!-- taille : 1 assertion, 0 fichier, 1 classe de test -->
 
-**Objectif :** le pêcher, sourcé le 19/10/2026 mais suspendu à la question Q20 du CDC, entre dans la bibliothèque selon la réponse de Léon, ou en sort avec la raison ; le framboisier entre avec ses deux variantes de conduite (RG-51).
+**Objectif :** le framboisier entre avec ses deux variantes de conduite (RG-51).
 **Constructeur :** back (recherche documentaire)
 **Risque :** léger (données et tests seuls)
 **Lecture :** protocole de bibliothèque ; CDC §5.1 (espèces à sourcer), annexe A ; décisions D-52, D-63.
 **Contrat :** ajouts dans `fruitiers.yaml` et `ornement.yaml` ; tableau de complétude B-T10.
-**Tests d'abord :** `tests/Persistance/CompletudeBibliothequeTest.php` ; premier rouge attendu : « pêcher sans règle ».
+**Tests d'abord :** `tests/Persistance/CompletudeBibliothequeTest.php` ; premier rouge attendu : « framboisier sans règle ».
 **Preuve :** rouge
 **Itérer sur / lancer une fois :** les tests de la bibliothèque / `make verifier`.
 **Porte :** `make verifier`, puis la CI de la demande de fusion.
@@ -1097,7 +1097,7 @@ especes:
 **Fin :** chaque espèce de la liste de départ a une règle sourcée, ou figure dans `bibliotheque/retraits.yaml` avec la raison de son retrait, recopiée dans `decisions-agents.md` (D-63).
 **Coût :** recherche documentaire, résultat incertain (l'espèce peut sortir) → **accepter**, le sprint est petit et n'en bloque aucun autre.
 
-- [ ] Reprendre les sources du pêcher et du framboisier dans `docs/plan/sourcing-annexe-a.md`, les rouvrir (B4), deux sources par règle et domaines commerciaux refusés comme au 4c (D-52) ; ajouter les règles : framboisier en une espèce, variantes `remontant` et `non-remontant` (RG-51, B-T7) ; pêcher selon la réponse à Q20 (B-T1), sans réponse retrait motivé.
+- [ ] Reprendre les sources du framboisier dans `docs/plan/sourcing-annexe-a.md`, les rouvrir (B4), deux sources par règle et domaines commerciaux refusés comme au 4c (D-52) ; ajouter les règles : framboisier en une espèce, variantes `remontant` et `non-remontant` (RG-51, B-T7).
 - [ ] `tests/Persistance/CompletudeBibliothequeTest.php` : la liste de départ, lue dans le test, a pour chaque espèce soit une règle chargée, soit une entrée `retiree:` dans `bibliotheque/retraits.yaml` avec sa raison (B-T10).
 
 ---

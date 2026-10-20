@@ -816,13 +816,11 @@ fertilisation) qui s'appliquent automatiquement à la création d'une plante.
 **Contenu de départ, sourcé et prêt** (annexe A, sourçage du 19/10/2026) :
 pommier, poirier, prunier, cerisier, vigne, groseillier à grappes, cassissier,
 haie persistante, haie caduque, rosier, arbuste à floraison printanière,
-arbuste à floraison estivale, pelouse.
+arbuste à floraison estivale, pelouse, pêcher (fenêtre en mars, exception
+nominative à B-T1, Q20).
 
 Le **framboisier** y entre aussi, en une espèce à deux variantes de conduite,
 remontant et non remontant (RG-51, Q21).
-
-**Sourcé, en attente d'une décision** : pêcher (incompatible avec B-T1 tel
-qu'il est écrit, Q20).
 
 **Hors de la liste de départ** : les traitements communs aux fruitiers (cuivre,
 huile blanche), non sourcés et écrits en R3 alors que le MVP n'a que R1 et R2
@@ -1657,9 +1655,9 @@ sont aussi :
 | Q17 | Serveur de production | Le CDC exige un serveur Linux ordinaire, mais ne dit pas lequel. Le déploiement automatique doit savoir où il va | **Ouverte** — à trancher avant le premier déploiement, pas avant de coder |
 | Q18 | Conditions d'usage des orthophotos IGN | Licence, attribution à afficher, limite de débit éventuelle : non relues à ce jour, seul l'accès sans clé a été vérifié | **Ouverte** — à lire avant de livrer la V1 ; le fond reste un agrément (RG-47) |
 | Q19 | Nature de la nidification pour une haie de jardin | Les sources la donnent comme une recommandation pour un particulier, une obligation pour un exploitant agricole. Le produit l'applique comme un butoir que rien ne franchit (RG-44) : dire « interdit » à un particulier est inexact, dire « déconseillé » affaiblit la règle | **Ouverte** — garder un butoir dur et formuler l'explication en « période de nidification, taille déconseillée », ou laisser l'utilisateur lever le butoir sur sa plante |
-| Q20 | Pêcher et B-T1 | B-T1 interdit à tout fruitier à noyau une fenêtre de taille qui recouvre décembre → février ; toutes les sources taillent le pêcher en février–mars. La bibliothèque ne se publie pas tant que les deux coexistent | **Ouverte** — exception nominative au pêcher dans B-T1, ou B-T1 restreint au cerisier et au prunier |
+| Q20 | Pêcher et B-T1 | B-T1 interdit à tout fruitier à noyau une fenêtre de taille qui recouvre décembre → février ; toutes les sources taillent le pêcher en février–mars. La bibliothèque ne se publie pas tant que les deux coexistent | **Tranchée le 20/10/2026** — Léon : « ça dépend de ce qui est la majorité ». Recherche faite : cerisier, prunier, reine-claude et abricotier évitent l'hiver, pêcher et nectarinier se taillent en fin d'hiver. B-T1 garde sa portée, avec une exception nominative pour février seulement ; la fenêtre du pêcher commence le 01/03 |
 | Q21 | Framboisier remontant et non remontant | Deux tailles différentes ; B-T7 interdit deux règles du même type sur une espèce | **Tranchée le 20/10/2026** — une espèce, deux variantes de conduite choisies à la création de la plante (RG-51) |
-| Q22 | Périodicité de la haie caduque | Une haie taillée de jardin se reprend chaque année (non sourcé), une haie bocagère tous les 2 à 3 ans (sourcé) | **Ouverte** — 1 an par défaut, ou 2 ans |
+| Q22 | Périodicité de la haie caduque | Une haie taillée de jardin se reprend chaque année (non sourcé), une haie bocagère tous les 2 à 3 ans (sourcé) | **Tranchée le 20/10/2026 par le sourçage** — 1 an : deux sources de jardin indépendantes (Quimperlé Communauté, CAUE 76) taillent la haie au moins une fois par an ; le « 2 à 3 ans » ne vaut que pour le bocage |
 | Q23 | Traitements fruitiers | Écrits en R3 (hors MVP) et non sourcés, alors que le plan les attend dans la bibliothèque du sprint 4b | **Tranchée le 20/10/2026** — retirés de la liste de départ |
 
 ---
@@ -1722,6 +1720,8 @@ Décisions actées, pour ne pas les rouvrir sans raison nouvelle.
 | 20/10/2026 | **L'annexe A prend les valeurs du sourçage**, avec leur niveau de confiance | Les valeurs de la v0.13 venaient de sources de vulgarisation. La haie persistante passe à une seule fenêtre (la seconde tombait en nidification), le rosier perd « jusqu'en novembre », la pelouse reçoit des intervalles mensuels. Vigne, groseillier à grappes, cassissier et arbuste à floraison printanière entrent dans la liste de départ ; le groseillier à maquereau en est écarté | Annexe A, §5.1 |
 | 20/10/2026 | **Les questions que le sourçage ne tranche pas sont posées à Léon**, pas résolues : nature de la nidification, pêcher, framboisier, haie caduque, traitements | Elles engagent le comportement du produit ou une règle de test, pas seulement une valeur | Q19 à Q23 |
 | 20/10/2026 | **Une espèce peut porter des variantes de conduite** ; le framboisier en a deux, remontant et non remontant, choisies à la création de la plante | Décision de Léon (Q21). Deux espèces auraient obligé l'utilisateur à savoir que « framboisier remontant » est une espèce à part ; une variante pose la question au moment où elle compte | RG-51, §5.1, annexe A |
+| 20/10/2026 | **B-T1 garde sa portée, avec une exception nominative : pêcher et nectarinier peuvent avoir une fenêtre en février, jamais en décembre ni en janvier** ; le pêcher entre dans la liste de départ, fenêtre 01/03 → 31/03 | Décision de Léon (Q20) : suivre la majorité. Sur les espèces à noyau établies par des sources de rang, quatre évitent l'hiver (cerisier, prunier, reine-claude, abricotier), deux se taillent en fin d'hiver. Décembre et janvier restent interdits à tous, ce qui continue d'attraper la confusion pépins/noyaux. Le 01/02 de l'ancienne fenêtre ne venait que de la vulgarisation ; « en mars » vient de la SNHF | B-T1, §5.1, annexe A, `docs/plan/recherche-q20-q22.md` |
+| 20/10/2026 | **La haie caduque se taille chaque année** | Q22 : deux sources de jardin indépendantes concordent sur au moins une taille annuelle. Elles en recommandent même deux ou trois ; le modèle n'en garde qu'une, celle qui respecte les butoirs de nidification | Annexe A, `docs/plan/recherche-q20-q22.md` |
 | 20/10/2026 | **Les traitements fruitiers sortent de la liste de départ** | Décision de Léon (Q23). Non sourcés, et écrits en R3 hors MVP. L'utilisateur crée les siens ; les types d'intervention restent au catalogue | §5.1, annexe A |
 ---
 
@@ -1739,14 +1739,14 @@ comme telle (§5.1).
 | Pommier, poirier (à pépins) | Taille d'hiver | R2 | Fenêtre 01/12 → 31/03, optimale 01/02 → 31/03, chaque année | vérifiée |
 | Cerisier | Taille | R2 | Après récolte, 01/08 → 30/09, chaque année. Pas de taille d'hiver (gommose, chancre) | vérifiée |
 | Prunier | Taille | R2 | Mêmes valeurs que le cerisier | indicative |
-| Pêcher | Taille de fructification | R2 | 01/02 → 31/03, optimale 01/03 → 31/03, chaque année. **Contredit B-T1** (Q20) | indicative |
+| Pêcher | Taille de fructification | R2 | 01/03 → 31/03, chaque année, au plus tard au début de la floraison. Exception nominative à B-T1 pour février (Q20) | indicative |
 | Vigne | Taille d'hiver | R2 | 01/12 → 31/03, optimale 01/02 → 31/03, chaque année | vérifiée |
 | Framboisier, variante non remontant (RG-51) | Taille | R2 | 01/02 → 31/03, chaque année | vérifiée |
 | Framboisier, variante remontant (récolte d'automne) | Taille | R2 | 01/11 → 28/02, chaque année | vérifiée |
 | Groseillier à grappes | Taille | R2 | 01/01 → 15/03, optimale 01/02 → 28/02, chaque année | vérifiée |
 | Cassissier | Taille | R2 | 01/11 → 28/02, chaque année | vérifiée |
 | Haie persistante | Taille | R2, **une** fenêtre | 16/08 → 30/09, chaque année. La taille de printemps des sources tombe en nidification : elle est retirée | vérifiée |
-| Haie caduque | Taille | R2 | 01/11 → 15/03 ; périodicité à trancher (Q22) | indicative |
+| Haie caduque | Taille | R2 | 01/11 → 15/03, chaque année (périodicité vérifiée, Q22) | indicative |
 | Toutes haies | Taille | **Butoirs** (RG-44) | Butoir de début 16/08, butoir de fin 15/03 : la période de nidification 16/03 → 15/08 borne la fenêtre après décalage climatique, sans mécanisme R5 | vérifiée |
 | Arbuste à floraison printanière | Taille | R2 (transposition de la règle R4 « après la fanaison ») | 01/04 → 31/07, optimale 01/05 → 30/06 | indicative |
 | Arbuste à floraison estivale | Taille | R2 | 01/02 → 31/03, optimale 01/03 → 31/03, chaque année | vérifiée |
