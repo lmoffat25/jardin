@@ -662,7 +662,7 @@ final class CalculEcheances
             regles: $regles->map->versDomaine()->all(),
             historique: $historique,
             decalage: Decalage::jours($jardin->profilClimatique->decalage_jours),
-            aujourdhui: CarbonImmutable::today()->toDateTimeImmutable(),
+            aujourdhui: $this->horloge->aujourdhui(),     // Src\Support\Horloge, D-42
         );
 
         return $this->rattacher($echeances, $regles);     // remet les modèles

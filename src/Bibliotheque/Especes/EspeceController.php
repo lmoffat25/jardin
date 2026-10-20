@@ -2,7 +2,6 @@
 
 namespace Src\Bibliotheque\Especes;
 
-use Carbon\CarbonImmutable;
 use DateTimeImmutable;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -17,6 +16,7 @@ use Src\Echeances\Moteur\Decalage;
 use Src\Echeances\Moteur\Fenetre;
 use Src\Echeances\Moteur\IntervalleSaisonnier;
 use Src\Echeances\Moteur\JourMois;
+use Src\Support\Horloge;
 use Src\Support\Jardin\JardinCourant;
 
 /**
@@ -28,7 +28,10 @@ use Src\Support\Jardin\JardinCourant;
  */
 final class EspeceController
 {
-    public function __construct(private readonly RechercheEspece $recherche) {}
+    public function __construct(
+        private readonly RechercheEspece $recherche,
+        private readonly Horloge $horloge,
+    ) {}
 
     public function rechercher(Request $request): JsonResponse
     {
@@ -68,7 +71,7 @@ final class EspeceController
 
         $jardin = Jardin::query()->findOrFail($jardinCourant->id());
         $decalage = Decalage::jours(ProfilClimatique::query()->findOrFail($jardin->profil_climatique_id)->decalage_jours);
-        $annee = CarbonImmutable::now('Europe/Paris')->year;
+        $annee = (int) $this->horloge->aujourdhui()->format('Y');
 
         $regles = $espece->reglesReference()
             ->with(['typeIntervention', 'sources' => fn ($s) => $s->orderBy('url')])
