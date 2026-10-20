@@ -120,7 +120,7 @@ it('n\'écrit pas encore la phrase d\'une règle libre (9b)', function () {
 })->throws(LogicException::class);
 
 it('refuse un type de règle, une confiance ou une origine inconnus', function (string $type, string $confiance, string $origine) {
-    new Regle('r', 'p', 1, $type, 1, [], [], $confiance, $origine, JeuTemoin::jour('2026-06-01'));
+    new Regle('r', 'p', 1, $type, 1, JeuTemoin::pommier()->fenetres, [], $confiance, $origine, JeuTemoin::jour('2026-06-01'));
 })->throws(InvalidArgumentException::class)->with([
     ['R3', 'verifiee', 'bibliotheque'],
     ['R2', 'certaine', 'bibliotheque'],
@@ -128,19 +128,17 @@ it('refuse un type de règle, une confiance ou une origine inconnus', function (
 ]);
 
 it('accepte chaque type, confiance et origine du contrat', function (string $type, string $confiance, string $origine) {
-    expect(new Regle('r', 'p', 1, $type, 1, [], [], $confiance, $origine, JeuTemoin::jour('2026-06-01')))->toBeInstanceOf(Regle::class);
+    $fenetres = $type === 'R2' ? JeuTemoin::pommier()->fenetres : [];
+
+    expect(new Regle('r', 'p', 1, $type, 1, $fenetres, [], $confiance, $origine, JeuTemoin::jour('2026-06-01')))->toBeInstanceOf(Regle::class);
 })->with([
     ['R1', 'verifiee', 'bibliotheque'],
     ['R2', 'indicative', 'ajustee'],
     ['R2', 'verifiee', 'libre'],
 ]);
 
-it('ne calcule pas encore une règle R1 (3d) ni une règle à plusieurs fenêtres (3c)', function (string $type, int $fenetres) {
-    $fenetre = JeuTemoin::pommier()->fenetres[0];
-    $regle = new Regle('r', 'p', 1, $type, 1, array_fill(0, $fenetres, $fenetre), [], 'verifiee', 'bibliotheque', JeuTemoin::jour('2026-06-01'));
+it('ne calcule pas encore une règle R1 (3d)', function () {
+    $regle = new Regle('r', 'p', 1, 'R1', 1, JeuTemoin::pommier()->fenetres, [], 'verifiee', 'bibliotheque', JeuTemoin::jour('2026-06-01'));
 
     Moteur::calculer([$regle], Historique::vide(), Decalage::jours(0), JeuTemoin::jour('2026-09-01'));
-})->throws(LogicException::class)->with([
-    'R1' => ['R1', 1],
-    'deux fenêtres' => ['R2', 2],
-]);
+})->throws(LogicException::class);

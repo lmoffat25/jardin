@@ -35,38 +35,14 @@ final class Moteur
         if ($regle->typeRegle === 'R1') {
             throw new \LogicException('R1 au sprint 3d');
         }
-        if (count($regle->fenetres) !== 1) {
-            throw new \LogicException('Fenêtres multiples au sprint 3c');
-        }
-        $fenetre = $regle->fenetres[0];
-        $effetLe = Calendrier::jour($regle->effetLe);
-        $derniere = $historique->derniere($regle->planteId, $regle->typeId);
 
-        // La fenêtre de la dernière intervention est soldée ; la périodicité saute
-        // les n − 1 suivantes, qui ne sont jamais manquées (V48). Sans intervention,
-        // on part de la fenêtre commencée à la date d'effet, ou juste avant.
-        $annee = $derniere === null
-            ? self::anneeDe($fenetre, $decalage, $effetLe)
-            : self::anneeDe($fenetre, $decalage, $derniere) + $regle->periodiciteAnnees;
-
+        // Les manquées, puis l'unique échéance à venir, toutes fenêtres confondues (A8).
         $echeances = [];
-        while (true) {
-            $periode = $fenetre->projeter($annee++, $decalage);
-            if ($periode->estVide()) {
-                // Refusée en amont, à la publication de la bibliothèque (B-T13, V104).
-                throw new \LogicException('Fenêtre vidée par ses butoirs');
-            }
-            $etat = self::etat($periode, $aujourdhui);
-            if ($etat !== Etat::Manquee) {
-                $echeances[] = self::echeance($regle, $fenetre, $periode, $etat, $decalage);
-
-                return $echeances;
-            }
-            // Une manquée : postérieure à la date d'effet, et pas déjà close (V47, D-05).
-            if ($periode->debut >= $effetLe && ! $historique->estClose($regle->id, $periode->debut)) {
-                $echeances[] = self::echeance($regle, $fenetre, $periode, $etat, $decalage);
-            }
+        foreach (ChoixDeFenetre::parcours($regle, $historique, $decalage, $aujourdhui) as [$fenetre, $periode]) {
+            $echeances[] = self::echeance($regle, $fenetre, $periode, self::etat($periode, $aujourdhui), $decalage);
         }
+
+        return $echeances;
     }
 
     /**
@@ -91,14 +67,6 @@ final class Moteur
         }
 
         return Etat::Ouverte;
-    }
-
-    /** L'année de début de la dernière fenêtre commencée à cette date : celle qui la contient, ou la précédente. */
-    private static function anneeDe(Fenetre $fenetre, Decalage $decalage, \DateTimeImmutable $date): int
-    {
-        $annee = (int) $date->format('Y');
-
-        return $fenetre->projeter($annee, $decalage)->debut <= $date ? $annee : $annee - 1;
     }
 
     /** `dueLe` est le début de la période projetée, décalée et rognée (D-07). */
