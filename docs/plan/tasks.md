@@ -1194,18 +1194,18 @@ Fichier `src/Echeances/Calcul/CalculEcheances.php` (nom de la classe, PSR-4). `S
 
 ### 5a.1 Modèles
 
-- [ ] Implémenter `src/Echeances/Domaine/Regle.php` (trait de jardin ; `fenetres()`, `intervalles()` ; `versDomaine(): Moteur\Regle`, `effetLe` = `cree_le` de la version), `Fenetre.php`, `IntervalleSaisonnier.php`, `EcheanceMaterialisee.php` (table `echeances`), `src/Journal/Domaine/Intervention.php`. Ajouter `RegleFactory`, `FenetreFactory`, `IntervalleSaisonnierFactory`, `InterventionFactory`, `EcheanceMaterialiseeFactory` (`database/factories/`, hors compte, D-43).
-- [ ] Implémenter `src/Support/Horloge.php` : `aujourdhui()` = `CarbonImmutable::today('Europe/Paris')` converti en `\DateTimeImmutable`, `maintenant()` de même ; seul lecteur de l'horloge pour une date métier, reçu par injection ; les tests figent le temps par `travelTo` (D-42).
+- [x] Implémenter `src/Echeances/Domaine/Regle.php` (trait de jardin ; `fenetres()`, `intervalles()` ; `versDomaine(): Moteur\Regle`, `effetLe` = `cree_le` de la version), `Fenetre.php`, `IntervalleSaisonnier.php`, `EcheanceMaterialisee.php` (table `echeances`), `src/Journal/Domaine/Intervention.php`. Ajouter `RegleFactory`, `FenetreFactory`, `IntervalleSaisonnierFactory`, `InterventionFactory`, `EcheanceMaterialiseeFactory` (`database/factories/`, hors compte, D-43).
+- [x] Implémenter `src/Support/Horloge.php` : `aujourdhui()` = `CarbonImmutable::today('Europe/Paris')` converti en `\DateTimeImmutable`, `maintenant()` de même ; seul lecteur de l'horloge pour une date métier, reçu par injection ; les tests figent le temps par `travelTo` (D-42).
 
 ### 5a.2 Pont
 
-- [ ] Implémenter `src/Echeances/Calcul/CalculEcheances.php` : `chargerRegles` (règles actives des plantes actives du jardin, avec fenêtres et intervalles par `with`) ; `chargerHistorique` : une requête `Intervention::query()->select(['plante_id','type_intervention_id','faite_le'])->distinct(['plante_id','type_intervention_id'])->orderBy('plante_id')->orderBy('type_intervention_id')->orderByDesc('faite_le')` (A9, `DISTINCT ON` par le grammaire PostgreSQL de Laravel, sans SQL brut), et une requête des échéances matérialisées (closes) ; le décalage vient de `profilClimatique->decalage_jours` ; `aujourdhui` = `Horloge::aujourdhui()`, reçue par injection (D-42).
+- [x] Implémenter `src/Echeances/Calcul/CalculEcheances.php` : `chargerRegles` (règles actives des plantes actives du jardin, avec fenêtres et intervalles par `with`) ; `chargerHistorique` : une requête `Intervention::query()->select(['plante_id','type_intervention_id','faite_le'])->distinct(['plante_id','type_intervention_id'])->orderBy('plante_id')->orderBy('type_intervention_id')->orderByDesc('faite_le')` (A9, `DISTINCT ON` par le grammaire PostgreSQL de Laravel, sans SQL brut), et une requête des échéances matérialisées (closes) ; le décalage vient de `profilClimatique->decalage_jours` ; `aujourdhui` = `Horloge::aujourdhui()`, reçue par injection (D-42).
 
 ### 5a.3 Tests
 
-- [ ] `tests/Persistance/CalculEcheancesTest.php` : V71 (`DB::enableQueryLog`, 5 puis 500 plantes à 3 règles, même nombre, au plus 10 ; la liste des requêtes attendues est écrite dans le test, D-44) ; V74 (deux jardins, même nom de plante, même type).
-- [ ] `tests/Persistance/DeuxClimatsTest.php` : V72. Groupe `critere-13`.
-- [ ] `tests/Persistance/IndexTest.php` : les trois index du chapitre 4 §4 commencent par `jardin_id` (`pg_indexes`) ; `EXPLAIN` de la requête d'historique de `CalculEcheances` (A9) sur 2 000 interventions de test, après `ANALYZE`, cite `idx_interventions_historique` (V31).
+- [x] `tests/Persistance/CalculEcheancesTest.php` : V71 (`DB::enableQueryLog`, 5 puis 500 plantes à 3 règles, même nombre, au plus 10 ; la liste des requêtes attendues est écrite dans le test, D-44) ; V74 (deux jardins, même nom de plante, même type).
+- [x] `tests/Persistance/DeuxClimatsTest.php` : V72. Groupe `critere-13`.
+- [x] `tests/Persistance/IndexTest.php` : les trois index du chapitre 4 §4 commencent par `jardin_id` (`pg_indexes`) ; `EXPLAIN` de la requête d'historique de `CalculEcheances` (A9) sur 2 000 interventions de test, après `ANALYZE`, cite `idx_interventions_historique` (V31).
 
 ---
 
