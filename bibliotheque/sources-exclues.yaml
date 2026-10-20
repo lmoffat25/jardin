@@ -1,0 +1,8 @@
+# Domaines refusés comme sources de la bibliothèque (B3, D-52) : sites qui
+# vendent ce dont ils parlent, contenus sans auteur ni date. Un domaine
+# couvre ses sous-domaines. Chaque entrée dit pourquoi, après avoir consulté
+# le site pendant la session (B4). Rempli au sprint 4c.
+#
+#   domaines:
+#     - {domaine: marchand.example, raison: "jardinerie : vend les plants dont elle parle"}
+domaines: []

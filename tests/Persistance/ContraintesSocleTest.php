@@ -69,9 +69,9 @@ it('accepte un même nom dans deux zones, et le refuse deux fois dans une zone',
 });
 
 it('refuse une règle de référence sans niveau de confiance', function () {
-    $espece = DB::table('especes')->insertGetId(['nom_commun' => 'Espèce témoin', 'categorie' => 'fruitier']);
+    $espece = DB::table('especes')->insertGetId(['cle' => 'espece-temoin', 'nom_commun' => 'Espèce témoin', 'categorie' => 'fruitier']);
     $type = DB::table('types_intervention')->insertGetId(['libelle' => 'Geste témoin', 'famille' => 'taille']);
-    $regle = ['espece_id' => $espece, 'type_intervention_id' => $type, 'type_regle' => 'R2', 'parametres' => '{}'];
+    $regle = ['espece_id' => $espece, 'type_intervention_id' => $type, 'type_regle' => 'R2', 'parametres' => '{}', 'cle' => 'regle-temoin'];
 
     refusee(fn () => DB::table('regles_reference')->insert($regle));
     DB::table('regles_reference')->insert($regle + ['confiance' => 'indicative']);
