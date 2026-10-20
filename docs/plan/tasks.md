@@ -1160,8 +1160,8 @@ especes:
 **Fin :** chaque espèce de la liste de départ a une règle sourcée, ou figure dans `bibliotheque/retraits.yaml` avec la raison de son retrait, recopiée dans `decisions-agents.md` (D-63).
 **Coût :** recherche documentaire, résultat incertain (l'espèce peut sortir) → **accepter**, le sprint est petit et n'en bloque aucun autre.
 
-- [ ] Reprendre les sources du framboisier dans `docs/plan/sourcing-annexe-a.md`, les rouvrir (B4), deux sources par règle et domaines commerciaux refusés comme au 4c (D-52) ; ajouter les règles : framboisier en une espèce, variantes `remontant` et `non-remontant` (RG-51, B-T7).
-- [ ] `tests/Persistance/CompletudeBibliothequeTest.php` : la liste de départ, lue dans le test, a pour chaque espèce soit une règle chargée, soit une entrée `retiree:` dans `bibliotheque/retraits.yaml` avec sa raison (B-T10).
+- [x] Reprendre les sources du framboisier dans `docs/plan/sourcing-annexe-a.md`, les rouvrir (B4), deux sources par règle et domaines commerciaux refusés comme au 4c (D-52) ; ajouter les règles : framboisier en une espèce, variantes `remontant` et `non-remontant` (RG-51, B-T7).
+- [x] `tests/Persistance/CompletudeBibliothequeTest.php` : la liste de départ, lue dans le test, a pour chaque espèce soit une règle chargée, soit une entrée `retiree:` dans `bibliotheque/retraits.yaml` avec sa raison (B-T10).
 
 ---
 
