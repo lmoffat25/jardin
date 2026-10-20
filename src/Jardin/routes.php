@@ -1,12 +1,16 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Src\Jardin\Localisation\ProchesController;
+use Src\Jardin\Plantes\GeometrieController;
 use Src\Jardin\Plantes\PlanteController;
 use Src\Jardin\Zones\ZoneController;
 
 Route::middleware('metier')->group(function () {
     Route::get('/zones', [ZoneController::class, 'lister']);
     Route::get('/plantes', [PlanteController::class, 'lister']);
+    // Avant `/plantes/{plante}`, qui prendrait « proches » pour un identifiant.
+    Route::get('/plantes/proches', [ProchesController::class, 'lister']);
     Route::get('/plantes/{plante}', [PlanteController::class, 'afficher']);
 });
 
@@ -19,4 +23,5 @@ Route::middleware(['metier', 'role:proprietaire'])->group(function () {
     Route::put('/plantes/lot', [PlanteController::class, 'modifierEnMasse']);
     Route::put('/plantes/{plante}', [PlanteController::class, 'modifier']);
     Route::post('/plantes/{plante}/archiver', [PlanteController::class, 'archiver']);
+    Route::put('/plantes/{plante}/geometrie', [GeometrieController::class, 'enregistrer']);
 });

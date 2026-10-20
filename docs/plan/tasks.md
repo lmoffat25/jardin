@@ -1655,7 +1655,7 @@ public function executer(SaisieIntervention $saisie, Utilisateur $auteur): Colle
 ---
 
 ## Sprint 10a — Géométries, priorité des sources, plantes proches
-<!-- taille : 5 assertions, 7 fichiers, 4 classes de test -->
+<!-- taille : 5 assertions, 8 fichiers, 4 classes de test -->
 
 **Objectif :** poser ou tracer une plante, garder la position la plus fiable, calculer les échéances des lignes et polygones, et proposer les plantes proches d'une position.
 **Constructeur :** back
@@ -1669,25 +1669,25 @@ public function executer(SaisieIntervention $saisie, Utilisateur $auteur): Colle
 **Vérification en marche :** sans objet
 **Question UX possible :** aucune
 **Assertions :** V107, V108, V109, V110, V111
-**Fichiers :** `src/Jardin/Domaine/GeoJson.php`, `src/Jardin/Plantes/GeometrieController.php`, `src/Jardin/Localisation/EnregistrerPosition.php`, `src/Jardin/Plantes/CreerPlante.php`, `src/Jardin/Localisation/PlantesProches.php`, `src/Jardin/Localisation/ProchesController.php`, `src/Jardin/routes.php`
+**Fichiers :** `src/Jardin/Domaine/GeoJson.php`, `src/Jardin/Plantes/GeometrieController.php`, `src/Jardin/Localisation/EnregistrerPosition.php`, `src/Jardin/Plantes/CreerPlante.php`, `src/Jardin/Localisation/PlantesProches.php`, `src/Jardin/Localisation/ProchesController.php`, `src/Jardin/routes.php`, `src/Jardin/Plantes/PlanteController.php` (validation de la position, D-107)
 **Classes de test :** `tests/Routes/GeometrieTest.php`, `tests/Persistance/PrioriteSourcesTest.php`, `tests/Persistance/LignesPolygonesTest.php`, `tests/Routes/ProchesTest.php`
 **Fin :** les critères 17, 18 et 24 sont vrais côté serveur ; le critère 9 l'est pour la liste des proches.
 
 ### 10a.1 Géométries
 
-- [ ] Implémenter `src/Jardin/Domaine/GeoJson.php` : validation (type, bornes WGS 84, ligne ≥ 2 points, polygone fermé ≥ 4 points, un seul anneau en V1) et point représentatif (le point ; le sommet médian d'une ligne ; le centre des sommets d'un polygone) (D-26).
-- [ ] Implémenter `src/Jardin/Plantes/GeometrieController.php` ; modifier `EnregistrerPosition` (`depuisPlan` : remplace toujours ; `depuisSaisie` : `manuel`, remplace `gps` et `manuel`, jamais `plan` ; `depuisCreation` : point `gps`) et `CreerPlante` (position facultative).
+- [x] Implémenter `src/Jardin/Domaine/GeoJson.php` : validation (type, bornes WGS 84, ligne ≥ 2 points, polygone fermé ≥ 4 points, un seul anneau en V1) et point représentatif (le point ; le sommet médian d'une ligne ; le centre des sommets d'un polygone) (D-26).
+- [x] Implémenter `src/Jardin/Plantes/GeometrieController.php` ; modifier `EnregistrerPosition` (`depuisPlan` : remplace toujours ; `depuisSaisie` : `manuel`, remplace `gps` et `manuel`, jamais `plan` ; `depuisCreation` : point `gps`) et `CreerPlante` (position facultative).
 
 ### 10a.2 Proches
 
-- [ ] Implémenter `src/Jardin/Localisation/PlantesProches.php` : géométries des plantes actives du jardin (une requête), distance haversine en PHP au point représentatif (D-26), 10 premières, puis les plantes de la zone courante, recherche par nom ou code ; jamais de présélection (aucun champ `choisie`). Implémenter `src/Jardin/Localisation/ProchesController.php` ; modifier `src/Jardin/routes.php` ; inscrire au registre.
+- [x] Implémenter `src/Jardin/Localisation/PlantesProches.php` : géométries des plantes actives du jardin (une requête), distance haversine en PHP au point représentatif (D-26), 10 premières, puis les plantes de la zone courante, recherche par nom ou code ; jamais de présélection (aucun champ `choisie`). Implémenter `src/Jardin/Localisation/ProchesController.php` ; modifier `src/Jardin/routes.php` ; inscrire au registre.
 
 ### 10a.3 Tests
 
-- [ ] `tests/Routes/GeometrieTest.php` : V107, quatre cas, et la source `manuel`.
-- [ ] `tests/Persistance/PrioriteSourcesTest.php` : V108, les neuf couples. Groupe `critere-17`.
-- [ ] `tests/Persistance/LignesPolygonesTest.php` : V109 (groupe `critere-18`), V110 (groupe `critere-24`).
-- [ ] `tests/Routes/ProchesTest.php` : V111 (création avec position ; 30 plantes témoins à coordonnées inventées). Groupe `critere-9`.
+- [x] `tests/Routes/GeometrieTest.php` : V107, quatre cas, et la source `manuel`.
+- [x] `tests/Persistance/PrioriteSourcesTest.php` : V108, les neuf couples. Groupe `critere-17`.
+- [x] `tests/Persistance/LignesPolygonesTest.php` : V109 (groupe `critere-18`), V110 (groupe `critere-24`).
+- [x] `tests/Routes/ProchesTest.php` : V111 (création avec position ; 30 plantes témoins à coordonnées inventées). Groupe `critere-09`.
 
 ---
 

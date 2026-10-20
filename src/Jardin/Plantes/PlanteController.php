@@ -27,7 +27,7 @@ use Src\Support\Jardin\JardinCourant;
  * La fiche d'une plante (B6 au bureau, T5 au terrain) : la plante, les
  * échéances à venir de ses règles et ses manquées (RG-07, critère 6, V78).
  * Son historique se charge à part (`HistoriqueController`). Et la création
- * d'une plante (B7, T3, V83, V84), sa modification (V132) et son archivage
+ * d'une plante (B7, T3, V83, V84, située par le téléphone en V111), sa modification (V132) et son archivage
  * (V88), réservés au propriétaire (`PlantePolicy`), comme la modification en
  * masse (V90).
  *
@@ -254,6 +254,11 @@ final class PlanteController
             'repere' => ['nullable', 'string', 'max:200'],
             'variete' => ['nullable', 'string', 'max:120'],
             'plantee_le' => ['nullable', 'date_format:Y-m-d'],
+            // La position du téléphone, relevée sans geste de plus (RG-15, T3).
+            'position' => ['nullable', 'array:lng,lat,precision_m'],
+            'position.lng' => ['required_with:position', 'numeric', 'between:-180,180'],
+            'position.lat' => ['required_with:position', 'numeric', 'between:-90,90'],
+            'position.precision_m' => ['nullable', 'numeric', 'min:0'],
             'regles_ecartees' => [Rule::prohibitedIf($sansEspece), 'array'],
             'regles_ecartees.*' => ['string', 'distinct'],
             'ajustements' => [Rule::prohibitedIf($sansEspece), 'array'],
