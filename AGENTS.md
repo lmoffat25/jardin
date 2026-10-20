@@ -25,7 +25,8 @@ Toutes passent par `make` (chapitre 6 §4), sur le poste comme en CI.
 |---|---|
 | `make setup` | Installation, base, crochets git — une fois par poste ou par worktree |
 | `make moteur` | Les tests du moteur seuls, sous la seconde |
-| `make statique` | PHPStan, Pint, tsc, ESLint, Prettier, audits des dépendances, puis `make plan` |
+| `make types` | Types TypeScript générés depuis les classes PHP `#[TypeScript]` ; à relancer après en avoir modifié une |
+| `make statique` | Types générés à jour, PHPStan, Pint, tsc, ESLint, Prettier, audits des dépendances, puis `make plan` |
 | `make plan` | Taille de chaque sprint du plan (P5) : une ligne par sprint, `1` au-delà du budget |
 | `make test` | Toute la suite Pest, et les tests des outils |
 | `make balayage` | Invariants calendaires sur toute l'année |

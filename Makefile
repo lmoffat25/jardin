@@ -10,7 +10,7 @@ endif
 # Échec forcé d'une cible, pour le test de l'enchaînement (V5) : ECHEC=<cible>.
 echec = @if [ "$(ECHEC)" = "$(1)" ]; then echo "échec forcé : $(1)"; exit 1; fi
 
-.PHONY: setup installer crochets formater moteur statique plan test balayage e2e mutation criteres verifier
+.PHONY: setup installer crochets formater moteur types statique plan test balayage e2e mutation criteres verifier
 
 setup:
 ifeq ($(X),ddev exec)
@@ -44,8 +44,16 @@ moteur:
 	$(call echec,moteur)
 	@echo "(vide)"
 
+# Types TypeScript générés depuis les classes PHP #[TypeScript] (V8, D-77). Les tests
+# désignent d'autres sources et sorties : TYPES_SOURCES, TYPES_SORTIE, TYPES.
+TYPES ?= resources/js/types/generes.d.ts
+TYPES_SOURCES ?= app src
+types:
+	$(X) bash scripts/types/types.sh ecrire $(or $(TYPES_SORTIE),$(TYPES)) $(TYPES_SOURCES)
+
 statique:
 	$(call echec,statique)
+	$(X) bash scripts/types/types.sh comparer $(TYPES) $(TYPES_SOURCES)
 	$(X) vendor/bin/phpstan analyse --no-progress --memory-limit=1G
 	$(X) vendor/bin/pint --test
 	$(X) npm run -s typecheck
