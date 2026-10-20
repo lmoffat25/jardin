@@ -177,6 +177,7 @@ Un `Makefile` porte toutes les commandes. L'intégration continue appelle les
 |---|---|---|
 | `make setup` | Installation, base, crochets git (§7) | Une fois par poste ou par worktree |
 | `make moteur` | N1 seul — doit rester sous la seconde (TS-8) | En continu, pendant qu'on écrit le moteur |
+| `make types` | Types TypeScript générés depuis les classes PHP `#[TypeScript]` (§5, D-77) | Après avoir modifié une classe annotée |
 | `make statique` | Formatage vérifié, analyse statique, typage TS, types générés à jour, audit des dépendances, taille des sprints (`make plan`) | Avant tout envoi |
 | `make plan` | Taille de chaque sprint du plan (`docs/plan/README.md` P5, décision D-75) | Quand le plan change |
 | `make test` | N1 à N3 et front (§6.4) | Avant tout envoi |
@@ -227,8 +228,10 @@ arch('le moteur ne dépend d\'aucune couche Laravel')
 > moteur deviendra intestable sans que personne l'ait décidé.
 
 **Types générés.** Les types TypeScript produits depuis PHP (chapitre 3) sont
-régénérés par `make statique`, qui échoue s'ils diffèrent de ceux du dépôt. Le
-générateur reste à choisir (O5, chapitre 3).
+régénérés par `make statique`, qui échoue s'ils diffèrent de ceux du dépôt.
+Le générateur est `spatie/laravel-typescript-transformer` (O5 tranchée, décision
+D-77) : les classes PHP marquées `#[TypeScript]` deviennent des types exportés de
+`resources/js/types/generes.d.ts`, écrit par `make types`.
 
 > **C8** — Le niveau de PHPStan est **le plus strict tenable dès le premier
 > commit**, et il ne baisse jamais. Monter le niveau sur une base existante

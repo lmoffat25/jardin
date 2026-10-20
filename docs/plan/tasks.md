@@ -438,7 +438,7 @@ Chaque sprint, en plus de sa propre porte :
 ---
 
 ## Sprint 0h — Types TypeScript générés depuis PHP
-<!-- taille : 1 assertion, 3 fichiers, 1 classe de test -->
+<!-- taille : 1 assertion, 6 fichiers, 1 classe de test -->
 
 **Objectif :** des types TypeScript générés depuis les classes PHP désignées, tenus à jour par `make statique`.
 **Constructeur :** front (générateur, TypeScript)
@@ -452,15 +452,15 @@ Chaque sprint, en plus de sa propre porte :
 **Vérification en marche :** sans objet
 **Question UX possible :** aucune
 **Assertions :** V8
-**Fichiers :** `composer.json`, `config/typescript-transformer.php`, `Makefile`
+**Fichiers :** `composer.json`, `config/typescript-transformer.php`, `Makefile`, `app/Providers/TypesServiceProvider.php`, `bootstrap/providers.php`, `scripts/types/types.sh`
 **Classes de test :** `tests/Architecture/TypesGeneresTest.php`
 **Fin :** une classe PHP annotée, modifiée sans régénération, fait échouer `make statique`.
 
 ### 0h.1 Générateur
 
-- [ ] Choisir le générateur (O5) — par défaut `spatie/laravel-typescript-transformer`, attribut `#[TypeScript]` sur les classes de données — l'ajouter à `composer.json`, le configurer dans `config/typescript-transformer.php` ; écrire le choix dans `decisions-agents.md`.
-- [ ] Modifier `Makefile` : cible `types` ; `statique` régénère dans un fichier temporaire et `diff` avec le versionné.
-- [ ] `tests/Architecture/TypesGeneresTest.php` : une classe témoin annotée produit le type attendu ; un fichier versionné périmé fait échouer la comparaison (V8).
+- [x] Choisir le générateur (O5) — par défaut `spatie/laravel-typescript-transformer`, attribut `#[TypeScript]` sur les classes de données — l'ajouter à `composer.json`, le configurer dans `config/typescript-transformer.php` ; écrire le choix dans `decisions-agents.md`. La version 3 se configure par un fournisseur : `app/Providers/TypesServiceProvider.php`, inscrit dans `bootstrap/providers.php` (D-77).
+- [x] Modifier `Makefile` : cible `types` ; `statique` régénère dans un fichier temporaire et `diff` avec le versionné, par `scripts/types/types.sh` (D-77).
+- [x] `tests/Architecture/TypesGeneresTest.php` : une classe témoin annotée produit le type attendu ; un fichier versionné périmé fait échouer la comparaison (V8).
 
 ---
 

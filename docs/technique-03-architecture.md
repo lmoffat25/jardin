@@ -1130,7 +1130,7 @@ inutilisables sur le terrain, et il sera trop tard pour les rattraper.
 
 | # | Question | Quand |
 |---|---|---|
-| O5 | Générateur de types PHP → TypeScript : lequel | À l'installation du projet |
+| O5 | Générateur de types PHP → TypeScript : lequel | **Tranchée** au sprint 0h : `spatie/laravel-typescript-transformer`, attribut `#[TypeScript]` (D-77) |
 | O6 | Seuil de l'état `urgente` : 15 jours avant la fin de fenêtre, ou proportionnel à sa durée | À l'usage — une fenêtre de 4 mois et une de 3 semaines n'ont pas la même urgence. La **priorité** entre `urgente` et `optimale` est tranchée (§7, cascade) ; seule la valeur de X reste ouverte |
 | O7 | Le tableau de bord recalcule tout à chaque affichage : acceptable jusqu'à quel volume | À mesurer à 500 plantes, pas à supposer |
 | O8 | Row Level Security PostgreSQL | Avant le lot Ouverture (§6) |
