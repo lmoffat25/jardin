@@ -163,7 +163,8 @@ src/
       ○ EncodeurQR.php                    lot 4 — étiquettes scannables
       ○ EncodeurNFC.php                   lot 4 — même dossier, sans rien renommer
     Localisation/
-      PlantesProches.php, EnregistrerPosition.php
+      PlantesProches.php, EnregistrerPosition.php, ProchesController.php
+      Tournee.php, TourneeController.php     lot 4 — ordre de tournée (D-65)
     routes.php
 
   Bibliotheque/

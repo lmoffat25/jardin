@@ -98,6 +98,8 @@ final class RegistreDesRoutes
             // Sans position ni zone, la liste est vide ; une zone de B ne rend
             // rien (ProchesTest).
             'GET /plantes/proches' => ['nature' => 'liste', 'role' => 'membre'],
+            // Les échéances de B, même posées au départ, n'y sont pas (TourneeTest).
+            'GET /tournee' => ['nature' => 'liste', 'role' => 'membre'],
             // Depuis A, la plante de B est introuvable : 404, sa géométrie
             // intacte (GeometrieTest).
             'PUT /plantes/{plante}/geometrie' => [

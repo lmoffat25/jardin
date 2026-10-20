@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Src\Jardin\Identification\CodeCourtController;
 use Src\Jardin\Identification\EtiquettesController;
 use Src\Jardin\Localisation\ProchesController;
+use Src\Jardin\Localisation\TourneeController;
 use Src\Jardin\Plantes\GeometrieController;
 use Src\Jardin\Plantes\PlanteController;
 use Src\Jardin\Zones\ZoneController;
@@ -17,6 +18,7 @@ Route::middleware('metier')->group(function () {
     // Avant `/plantes/{plante}`, qui prendrait « proches » pour un identifiant.
     Route::get('/plantes/proches', [ProchesController::class, 'lister']);
     Route::get('/plantes/{plante}', [PlanteController::class, 'afficher']);
+    Route::get('/tournee', [TourneeController::class, 'proposer']);
 });
 
 // L'inventaire ne s'écrit que par le propriétaire (CDC §2.1, D-49).
