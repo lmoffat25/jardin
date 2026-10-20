@@ -27,6 +27,7 @@ que la réponse arrive avant le sprint.
 - [Q-UX-11 — Une intervention saisie après coup](#q-ux-11--une-intervention-saisie-après-coup)
 - [Q-UX-12 — Mot de passe oublié](#q-ux-12--mot-de-passe-oublié)
 - [Q-UX-13 — Supprimer un type d'intervention déjà utilisé](#q-ux-13--supprimer-un-type-dintervention-déjà-utilisé)
+- [Q-UX-14 — Choisir la variante de conduite à la création](#q-ux-14--choisir-la-variante-de-conduite-à-la-création)
 
 ---
 
@@ -228,4 +229,21 @@ supprimé du catalogue ?
 
 **Ce qui attend :** rien ne bloque ; cohérent avec le filtre `TypesVisibles`
 (D-55).
+**Réponse :**
+
+## Q-UX-14 — Choisir la variante de conduite à la création
+
+**Question :** comment l'écran de création d'une plante demande-t-il la variante
+de conduite d'une espèce qui en a (RG-51, framboisier remontant ou non) ?
+**Concerne :** B7 (vague 4), T-création rapide si elle propose des règles.
+**Options :**
+1. **Recommandé — un choix à deux boutons sous l'espèce**, qui n'apparaît que
+   pour une espèce à variantes, chaque bouton portant une phrase qui aide à
+   reconnaître la plante (« donne en été seulement » / « donne aussi à
+   l'automne ») ; les règles proposées se mettent à jour au choix.
+2. Une liste déroulante « Variante ».
+3. Deux entrées dans la recherche d'espèce (« Framboisier — remontant »).
+
+**Ce qui attend :** rien ne bloque ; l'état B7 · 05 est à dessiner dans la
+maquette.
 **Réponse :**

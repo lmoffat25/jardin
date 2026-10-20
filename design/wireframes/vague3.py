@@ -75,7 +75,7 @@ PLANTES = [  # nom, code, espèce, zone, prochaine échéance, en retard ?
      "⚠ Taille manquée en sept. · suivante en août", True),
     ("Cerisier 'Burlat'", "FRU-022", "Cerisier", "Verger bas", "Taille · à venir, août", False),
     ("Haie de charmilles — côté route", "HAI-001", "Charme (charmille)", "Haies",
-     "Taille · avant le 31 mars", False),
+     "Taille · à venir, nov.", False),
     ("Pelouse devant la maison", "PEL-001", "Pelouse", "Pelouse", "Tonte · ven. 24 oct.", False),
     ("Rosier 'Pierre de Ronsard'", "ARB-004", "Rosier", "Massif d'entrée",
      "Taille · à venir, février", False),
@@ -191,7 +191,7 @@ for k, (lib, w) in enumerate([("Modifier", 120), ("Étiquette", 120), ("Archiver
 d.texte(b6, CX0, 236, 300, "À faire", 20, gras=True)
 _, b6_btn = carte_echeance(
     b6, CX0, 270, GAUCHE, "Taille d'entretien", "ouverte", False,
-    "Avant le 7 avril 2027 · moment idéal du 8 février au 22 mars",
+    "Avant le 7 avril 2027 · moment idéal du 8 février au 7 avril",
     "Règle de la bibliothèque : chaque hiver, fenêtre déc.–mars, décalée de 7 jours pour votre "
     "climat (Nord, Est, océanique frais).",
     [("Fait", 88), ("Reporter", 116), ("Sauter cette fois", 172), ("Modifier la règle", 176)])
@@ -279,7 +279,7 @@ def creer(nom, valeurs: dict, panneau: str, erreur_nom=None):
         case(r, 16, 18, True)
         d.texte(r, 48, 16, FD - 120, "Taille d'entretien · chaque hiver", 16, gras=True)
         d.texte(r, 48, 42, FD - 120, "Fenêtre du 1er déc. au 31 mars, moment idéal du 1er févr. "
-                "au 15 mars. Décalée de 7 jours pour votre climat.", 14, couleur=SECOND)
+                "au 31 mars. Décalée de 7 jours pour votre climat.", 14, couleur=SECOND)
         d.bouton(r, 48, 94, 120, 40, "Ajuster")
         d.texte(r, 180, 104, 300, "Règle indicative", 13, couleur=SECOND)
         d.bouton(pan, 24, 258, 220, 44, "+ Ajouter une règle")
@@ -287,6 +287,30 @@ def creer(nom, valeurs: dict, panneau: str, erreur_nom=None):
         d.texte(res, 16, 12, FD - 80, "Première échéance : taille, avant le 7 avril 2027.", 15,
                 gras=True)
         d.texte(res, 16, 36, FD - 80, "Elle apparaîtra dans « À faire » dès le 8 décembre.", 13,
+                couleur=SECOND)
+    elif panneau == "framboisier":   # espèce à variantes de conduite (RG-51, Q-UX-14)
+        d.texte(pan, 24, 56, FD - 48, "Comment votre framboisier donne-t-il ?", 15, gras=True)
+        for k, (titre, aide, choisie) in enumerate([
+                ("Non remontant", "Une récolte, en été", False),
+                ("Remontant", "Une récolte en été, une autre à l'automne", True)]):
+            v = d.cadre(f"Variante · {titre}", pan, 24 + k * ((FD - 48) // 2 + 8), 86,
+                        (FD - 48) // 2 - 8, 76, fond=FOND, rayon=10,
+                        trait=FORT if choisie else TRAIT)
+            case(v, 14, 16, choisie)
+            d.texte(v, 44, 14, (FD - 48) // 2 - 64, titre, 16, gras=True)
+            d.texte(v, 44, 40, (FD - 48) // 2 - 64, aide, 13, couleur=SECOND)
+        d.texte(pan, 24, 182, FD - 48, "La bibliothèque propose 1 règle pour le framboisier "
+                "remontant :", 15, couleur=SECOND)
+        r = d.cadre("Règle · taille", pan, 24, 214, FD - 48, 150, fond=FOND, rayon=10, trait=TRAIT)
+        case(r, 16, 18, True)
+        d.texte(r, 48, 16, FD - 120, "Taille · chaque année", 16, gras=True)
+        d.texte(r, 48, 42, FD - 120, "Fenêtre du 1er nov. au 28 févr. Décalée de 7 jours pour "
+                "votre climat.", 14, couleur=SECOND)
+        d.bouton(r, 48, 94, 120, 40, "Ajuster")
+        res = d.cadre("Résultat", pan, 24, 470, FD - 48, 66, fond=FOND, rayon=10)
+        d.texte(res, 16, 12, FD - 80, "Première échéance : taille, avant le 7 mars 2027.", 15,
+                gras=True)
+        d.texte(res, 16, 36, FD - 80, "Elle apparaîtra dans « À faire » dès le 8 novembre.", 13,
                 couleur=SECOND)
     else:  # espèce absente de la bibliothèque
         d.texte(pan, 24, 56, FD - 48, "« Néflier » n'est pas dans la bibliothèque. La plante "
@@ -314,6 +338,9 @@ creer("B7 · 04 · Nouvelle plante — nom déjà pris",
       {"nom": "Pommier 'Belle de Boskoop'", "espece": "Pommier", "zone": "Verger haut"}, "pommier",
       erreur_nom="Un « Pommier 'Belle de Boskoop' » existe déjà dans Verger haut (FRU-014). "
                  "Changez le nom ou la zone.")
+creer("B7 · 05 · Nouvelle plante — espèce à variantes",
+      {"nom": "Framboisiers du potager", "espece": "Framboisier", "zone": "Potager"},
+      "framboisier")
 
 # --- T5 · Fiche plante (terrain) ----------------------------------------------
 d.cmd("page.select", id=ids_pages["3 · Wireframes terrain"])
@@ -325,7 +352,7 @@ d.texte(t5, M, 340, W - 2 * M, "Pommier 'Reine des reinettes'", 24, gras=True)
 d.texte(t5, M, 378, W - 2 * M, "FRU-001 · Verger haut · 3e du rang, côté route", 15, couleur=SECOND)
 a_faire = d.cadre("Échéance · taille", t5, M, 440, W - 2 * M, 132, fond=FOND, rayon=10, trait=TRAIT)
 d.texte(a_faire, 16, 14, 230, "Taille d'entretien", 17, gras=True)
-d.texte(a_faire, 16, 40, 230, "Avant le 7 avril · idéal du 8 févr. au 22 mars", 14, couleur=SECOND)
+d.texte(a_faire, 16, 40, 230, "Avant le 7 avril · idéal du 8 févr. au 7 avril", 14, couleur=SECOND)
 t5_fait = d.bouton(a_faire, W - 2 * M - 104, 14, 88, 48, "Fait")
 d.texte(a_faire, 16, 88, W - 2 * M - 32, "Bibliothèque · décalée de 7 jours pour votre climat",
         13, couleur=SECOND)

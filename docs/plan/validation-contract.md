@@ -476,11 +476,13 @@ une règle `verifiee` qui cite moins de deux sources (B2), une source sans URL,
 libellé ou date de consultation, et une source dont le domaine figure dans
 `bibliotheque/sources-exclues.yaml` (B3) échouent.
 
-**V65 — Chercher une espèce, et ses règles proposées arrivent déjà calées** · API · CDC §5.1, RG-25, RG-31 · écran B7
+**V65 — Chercher une espèce, et ses règles proposées arrivent déjà calées** · API · CDC §5.1, RG-25, RG-31, RG-51 · écran B7
 La recherche trouve une espèce par son nom commun ou latin, sans égard à la
 casse ni aux accents, 20 résultats au plus. La route des règles proposées d'une
 espèce rend ses règles de référence en vigueur, avec les fenêtres projetées
-pour le profil du jardin courant, la confiance et les sources de chacune. Les
+pour le profil du jardin courant, la confiance et les sources de chacune. Pour
+une espèce à variantes de conduite, elle rend les règles communes et celles de
+la variante demandée, et refuse (`422`) une demande sans variante. Les
 deux routes sont dans la liste d'exceptions du test de cloisonnement (lecture
 seule, partagée) ; aucune route n'écrit dans la bibliothèque.
 

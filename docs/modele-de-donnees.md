@@ -198,6 +198,7 @@ erDiagram
 | `repere` | non | 0 | La réponse la moins chère au besoin « retrouver » |
 | `espece_id` | non | 0 | Une plante « libre » reste possible, avec ses propres règles |
 | `variete` | non | 0 | Texte libre : la bibliothèque ne descend pas au niveau variétal |
+| `variante` | non | 0 | **RG-51** — variante de conduite choisie à la création (`remontant`), obligatoire si l'espèce en a. Elle dit quelles règles de la bibliothèque ont été proposées ; ce n'est pas la variété |
 | `age_estime_ans` | non | 0 | Pour les plantes trouvées sur place, dont on ignore la date |
 | `cycle`, `fin_le` | oui / non | 0 / **3** | RG-18 — le champ existe au MVP, le potager non |
 | `plante_origine_id` | non | 0 | **RG-12** — scission sans perte d'historique |
@@ -269,6 +270,7 @@ d'une plante.
 | Attribut | Type | Note |
 |---|---|---|
 | `espece_id` | entier · FK | |
+| `variante` | texte | **RG-51** — nul : la règle vaut pour toute l'espèce ; renseigné (`remontant`) : pour cette seule variante de conduite. Les variantes d'une espèce sont celles que portent ses règles |
 | `type_intervention_id` | entier · FK | |
 | `type_regle` | énum | `R1` · `R2` au MVP |
 | `parametres` | json | Donnée d'import, écrite par le curateur |

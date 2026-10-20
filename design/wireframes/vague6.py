@@ -136,7 +136,7 @@ bulle = d.cadre("Bulle · Poirier 'Conférence'", b13_carte, px + 20, py - 150, 
 d.texte(bulle, 16, 14, 298, "Poirier 'Conférence' · FRU-030", 16, gras=True)
 pastille(bulle, 16, 44, "ouverte")
 d.texte(bulle, 106, 48, 210, "Traitement cuivre", 14)
-d.texte(bulle, 16, 80, 298, "Jusqu'au 15 nov. · règle de la bibliothèque, décalée de 7 jours. "
+d.texte(bulle, 16, 80, 298, "Jusqu'au 15 nov. · règle que vous avez définie. "
         "Position : relevé GPS, ± 6 m.", 13, couleur=SECOND)
 b13_fait = d.bouton(bulle, 16, 132, 88, 44, "Fait", principal=True)
 b13_fiche = d.bouton(bulle, 112, 132, 150, 44, "Ouvrir la fiche")

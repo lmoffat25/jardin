@@ -276,7 +276,7 @@ LIGNES = [  # zone, plante, intervention, état, en retard ?
     ("Verger haut", "Prunier n°3", "Traitement cuivre", "urgent · avant le 24 oct.", True),
     ("Verger bas", "Poirier 'Conférence'", "Traitement cuivre", "à faire jusqu'au 15 nov.", False),
     ("Pelouse", "Pelouse devant la maison", "Tonte", "à faire d'ici ven. 24 oct.", False),
-    ("Haies", "Haie de charmilles — côté route", "Taille", "à faire jusqu'au 31 mars", False),
+    ("Haies", "Haie de charmilles — côté route", "Taille", "à venir · dès le 8 nov.", False),
 ]
 TYPES_RECENTS = ["Taille", "Tonte", "Traitement cuivre", "Arrosage", "Récolte", "Autre…"]
 
@@ -466,7 +466,7 @@ entete_aujourdhui(charge, "mar. 21 oct. · 17 à faire")
 BEAUCOUP = [(z, f"{p} n°{i}", inter, "en retard de 2 jours" if i % 5 == 0 else etat, i % 5 == 0) for i, (z, p, inter, etat) in enumerate(
     [("Verger haut", "Pommier", "Traitement cuivre", "à faire jusqu'au 15 nov.")] * 6
     + [("Verger bas", "Poirier 'Conférence'", "Traitement cuivre", "à faire jusqu'au 15 nov.")] * 5
-    + [("Haies", "Haie de charmilles — tronçon", "Taille", "à faire jusqu'au 31 mars")] * 4
+    + [("Haies", "Haie de charmilles — tronçon", "Taille", "à venir · dès le 8 nov.")] * 4
     + [("Pelouse", "Pelouse", "Tonte", "à faire aujourd'hui")] * 2, start=1)]
 fait_charge: dict = {}
 liste_du_jour(charge, 130, BEAUCOUP, fait_charge)

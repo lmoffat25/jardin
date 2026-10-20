@@ -146,7 +146,7 @@ LIGNES = [  # nb, nom, espèce, zone, repère, résultat, gras ?
     ("12", "Pommier", "Pommier", "Verger bas", "",
      "12 plantes : Pommier 1 à Pommier 12 · FRU-002 à FRU-013", True),
     ("1", "Haie de charmilles — côté route", "Charme (charmille)", "Haies", "",
-     "HAI-001 · taille, fenêtre du 1er août au 31 mars", False),
+     "HAI-001 · taille, fenêtre du 1er nov. au 15 mars", False),
     ("1", "Pelouse devant la maison", "Pelouse", "Pelouse", "",
      "PEL-001 · tonte, tous les 7 à 10 jours en saison", False),
     ("1", "Figuier", "Figuier — absent de la bibliothèque", "Massif d'entrée", "près du mur",

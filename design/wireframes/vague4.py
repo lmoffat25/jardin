@@ -2,8 +2,8 @@
 
 Le tableau « À faire » (P3), l'intervention passée sur plusieurs plantes (P5) et
 la correction d'une règle (P7). Données fictives ; seules les valeurs des
-exemples du CDC apparaissent (taille du pommier déc.–mars, haie 1er août →
-31 mars, tonte tous les 7 jours, « moi, je tonds tous les 10 jours »).
+exemples du CDC apparaissent (taille du pommier déc.–mars, haie 1er nov. →
+15 mars, tonte tous les 7 jours, « moi, je tonds tous les 10 jours »).
 """
 from __future__ import annotations
 
@@ -18,17 +18,14 @@ N0 = len(vague3.LIENS_NAV)   # les coquilles de cette vague s'ajoutent après
 ECHEANCES = [  # zone, plante, geste, état, fort, quand, explication
     ("Verger haut", "Prunier n°3", "Traitement cuivre", "urgente", True,
      "avant le 24 oct. · dans 3 jours",
-     "Règle de la bibliothèque, à la chute des feuilles · décalée de 7 jours."),
+     "Règle que vous avez définie, à la chute des feuilles."),
     ("Verger haut", "Pommier 'Reine des reinettes'", "Traitement cuivre", "ouverte", False,
-     "jusqu'au 15 nov.", "Règle de la bibliothèque · décalée de 7 jours."),
+     "jusqu'au 15 nov.", "Règle que vous avez définie."),
     ("Verger bas", "Poirier 'Conférence'", "Traitement cuivre", "ouverte", False,
-     "jusqu'au 15 nov.", "Règle de la bibliothèque · décalée de 7 jours."),
+     "jusqu'au 15 nov.", "Règle que vous avez définie."),
     ("Pelouse", "Pelouse devant la maison", "Tonte", "ouverte", False,
      "d'ici ven. 24 oct.", "Règle de la bibliothèque · 7 jours après la dernière tonte "
      "(17 oct.)."),
-    ("Haies", "Haie de charmilles — côté route", "Taille", "ouverte", False,
-     "jusqu'au 31 mars", "Fenêtre 1er août → 31 mars, hors nidification · décalée de 7 jours, "
-     "sans franchir le butoir."),
 ]
 COLS = [("", 44), ("Plante", 330), ("Geste", 190), ("État", 120), ("Quand", 260),
         ("", CW - 44 - 330 - 190 - 120 - 260)]
@@ -37,7 +34,7 @@ COLS = [("", 44), ("Plante", 330), ("Geste", 190), ("État", 120), ("Quand", 260
 def a_faire(f, periode: str, groupe: bool, cochees=0):
     coquille(f, "À faire")
     d.texte(f, CX0, 40, 500, "À faire", 32, gras=True)
-    d.texte(f, CX0, 86, 700, "Le Clos · 1 urgente · 4 ouvertes", 16,
+    d.texte(f, CX0, 86, 700, "Le Clos · 1 urgente · 3 ouvertes", 16,
             couleur=SECOND)
     passee = d.bouton(f, CX0 + CW - 520, 40, 300, 48, "Ajouter une intervention passée")
     imprimer = d.bouton(f, CX0 + CW - 208, 40, 208, 48, "Imprimer la liste")
@@ -80,8 +77,8 @@ def a_faire(f, periode: str, groupe: bool, cochees=0):
 
 
 b4_passee, b4_imprimer, b4_onglets, b4_fait = a_faire(b4, "15 prochains jours", True)
-d.texte(b4, CX0, 818, CW, "Ce qui est à venir au-delà de 15 jours (taille du pommier, à partir "
-        "du 8 déc.) est dans « Tout ».", 14, couleur=SECOND)
+d.texte(b4, CX0, 818, CW, "Ce qui est à venir au-delà de 15 jours (taille de la haie dès le 8 nov., "
+        "du pommier dès le 8 déc.) est dans « Tout ».", 14, couleur=SECOND)
 
 b4s = ecran("B4 · 02 · À faire — 3 cochées")
 a_faire(b4s, "15 prochains jours", True, cochees=3)
@@ -97,7 +94,7 @@ imp = ecran("B4 · 03 · Liste imprimée (aperçu)")
 d.cadre("Fond", imp, 0, 0, BW, BH, fond=SURFACE)
 feuille = d.cadre("Feuille A4", imp, (BW - 600) // 2, 40, 600, 820, fond=FOND, trait=TRAIT)
 d.texte(feuille, 48, 44, 504, "Le Clos — à faire du 21 oct. au 4 nov.", 20, gras=True)
-d.texte(feuille, 48, 76, 504, "Imprimée le 21 oct. · 5 échéances", 13, couleur=SECOND)
+d.texte(feuille, 48, 76, 504, "Imprimée le 21 oct. · 4 échéances", 13, couleur=SECOND)
 y = 120
 prec = None
 for zone, plante, geste, etat, fort, quand, _ in ECHEANCES:

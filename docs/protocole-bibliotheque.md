@@ -96,7 +96,7 @@ référence.
 | B-T4 | Toute fenêtre dure entre **14 jours et 5 mois** — sauf celle qui porte un **butoir d'interdiction**, tolérée jusqu'à **9 mois** | Une fenêtre de 11 mois = une valeur non renseignée déguisée. L'exception couvre une fenêtre de haie qui irait d'un butoir à l'autre, `16/08 → 15/03` = 7 mois (critère 4 du CDC) |
 | B-T5 | Tout intervalle de tonte **non nul** est entre **5 et 21 jours** | Un `90` saisi pour `9`. Le `0` est une valeur légitime : il marque le hors-saison (RG-40), il n'est pas une saisie manquante |
 | B-T6 | La période optimale est **incluse** dans sa fenêtre | Incohérence de saisie |
-| B-T7 | Une espèce n'a **pas deux règles** du même type d'intervention | Doublon d'import |
+| B-T7 | Une espèce n'a **pas deux règles** du même type d'intervention pour une même variante de conduite, et une règle de variante ne double pas une règle commune du même type (RG-51) | Doublon d'import |
 | B-T8 | Toute règle `verifiee` a une `source_url` **non nulle** | B1, vérifié par la machine |
 | B-T9 | Toute règle a une `confiance` explicite | S9 |
 

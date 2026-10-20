@@ -189,6 +189,7 @@ CREATE TABLE plantes (
     repere               varchar(200),
     espece_id            integer REFERENCES especes(id),   -- créée en §3.3, migration 2
     variete              varchar(120),
+    variante             varchar(60),                      -- RG-51, variante de conduite
     plantee_le           date,
     age_estime_ans       smallint,
     cycle                varchar(12) NOT NULL DEFAULT 'perenne'
@@ -289,6 +290,7 @@ ALTER TABLE types_intervention ADD UNIQUE (jardin_id, libelle);
 CREATE TABLE regles_reference (
     id                    integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     espece_id             integer NOT NULL REFERENCES especes(id),
+    variante              varchar(60),                  -- RG-51 ; nul = toute l'espèce
     type_intervention_id  integer NOT NULL REFERENCES types_intervention(id),
     type_regle            varchar(4) NOT NULL CHECK (type_regle IN ('R1','R2')),
     parametres            jsonb NOT NULL,

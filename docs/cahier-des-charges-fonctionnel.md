@@ -805,19 +805,29 @@ fertilisation) qui s'appliquent automatiquement à la création d'une plante.
 > **RG-09** — Une règle de la bibliothèque est une **proposition**, jamais une
 > contrainte. La plante fait foi.
 
+> **RG-51** — Une espèce peut porter des **variantes de conduite** quand sa
+> façon d'être conduite change ses règles (framboisier : remontant ou non
+> remontant). Une règle de la bibliothèque vaut pour toute l'espèce ou pour une
+> seule variante. À la création d'une plante d'une espèce à variantes,
+> l'utilisateur choisit la variante, et seules les règles communes et celles de
+> cette variante lui sont proposées. Changer de variante plus tard, c'est
+> corriger les règles de la plante (RG-08) : rien ne bascule en silence.
+
 **Contenu de départ, sourcé et prêt** (annexe A, sourçage du 19/10/2026) :
 pommier, poirier, prunier, cerisier, vigne, groseillier à grappes, cassissier,
 haie persistante, haie caduque, rosier, arbuste à floraison printanière,
 arbuste à floraison estivale, pelouse.
 
-**Sourcés, en attente d'une décision** : pêcher (incompatible avec B-T1 tel
-qu'il est écrit, Q20), framboisier (deux règles selon qu'il est remontant ou
-non, Q21).
+Le **framboisier** y entre aussi, en une espèce à deux variantes de conduite,
+remontant et non remontant (RG-51, Q21).
 
-**Encore à sourcer** : les traitements communs aux fruitiers (cuivre, huile
-blanche), écrits en R3 dans l'annexe A alors que le MVP n'a que R1 et R2 (Q23).
-Le groseillier à maquereau est écarté de la liste de départ : une seule source
-retenue.
+**Sourcé, en attente d'une décision** : pêcher (incompatible avec B-T1 tel
+qu'il est écrit, Q20).
+
+**Hors de la liste de départ** : les traitements communs aux fruitiers (cuivre,
+huile blanche), non sourcés et écrits en R3 alors que le MVP n'a que R1 et R2
+(Q23). L'utilisateur peut toujours créer ses propres règles de traitement. Le
+groseillier à maquereau est écarté lui aussi : une seule source retenue.
 
 Cette seconde liste n'est pas une omission, c'est l'application de B4 et B5 du
 protocole de bibliothèque : une périodicité non consultée est une invention
@@ -1648,9 +1658,9 @@ sont aussi :
 | Q18 | Conditions d'usage des orthophotos IGN | Licence, attribution à afficher, limite de débit éventuelle : non relues à ce jour, seul l'accès sans clé a été vérifié | **Ouverte** — à lire avant de livrer la V1 ; le fond reste un agrément (RG-47) |
 | Q19 | Nature de la nidification pour une haie de jardin | Les sources la donnent comme une recommandation pour un particulier, une obligation pour un exploitant agricole. Le produit l'applique comme un butoir que rien ne franchit (RG-44) : dire « interdit » à un particulier est inexact, dire « déconseillé » affaiblit la règle | **Ouverte** — garder un butoir dur et formuler l'explication en « période de nidification, taille déconseillée », ou laisser l'utilisateur lever le butoir sur sa plante |
 | Q20 | Pêcher et B-T1 | B-T1 interdit à tout fruitier à noyau une fenêtre de taille qui recouvre décembre → février ; toutes les sources taillent le pêcher en février–mars. La bibliothèque ne se publie pas tant que les deux coexistent | **Ouverte** — exception nominative au pêcher dans B-T1, ou B-T1 restreint au cerisier et au prunier |
-| Q21 | Framboisier remontant et non remontant | Deux tailles différentes ; B-T7 interdit deux règles du même type sur une espèce | **Ouverte** — deux espèces de bibliothèque (proposition du sourçage), ou une espèce et le choix de la règle à la création de la plante |
+| Q21 | Framboisier remontant et non remontant | Deux tailles différentes ; B-T7 interdit deux règles du même type sur une espèce | **Tranchée le 20/10/2026** — une espèce, deux variantes de conduite choisies à la création de la plante (RG-51) |
 | Q22 | Périodicité de la haie caduque | Une haie taillée de jardin se reprend chaque année (non sourcé), une haie bocagère tous les 2 à 3 ans (sourcé) | **Ouverte** — 1 an par défaut, ou 2 ans |
-| Q23 | Traitements fruitiers | Écrits en R3 (hors MVP) et non sourcés, alors que le plan les attend dans la bibliothèque du sprint 4b | **Ouverte** — les sourcer et les écrire en R2 à deux fenêtres (RG-36), ou les retirer de la liste de départ |
+| Q23 | Traitements fruitiers | Écrits en R3 (hors MVP) et non sourcés, alors que le plan les attend dans la bibliothèque du sprint 4b | **Tranchée le 20/10/2026** — retirés de la liste de départ |
 
 ---
 
@@ -1711,6 +1721,8 @@ Décisions actées, pour ne pas les rouvrir sans raison nouvelle.
 | 20/10/2026 | **La période de nidification devient 16/03 → 15/08** ; butoirs de haie 16/08 et 15/03 | Le 01/04 → 31/07 de la v0.13 venait de l'arrêté PAC de 2015, périmé. Le sourçage s'appuie sur six textes concordants. RG-37, RG-44, critère 4, B-T2, B-T12, B-T14 et les jeux témoins du plan sont corrigés en conséquence | Annexe A, RG-44, `docs/plan/sourcing-annexe-a.md` |
 | 20/10/2026 | **L'annexe A prend les valeurs du sourçage**, avec leur niveau de confiance | Les valeurs de la v0.13 venaient de sources de vulgarisation. La haie persistante passe à une seule fenêtre (la seconde tombait en nidification), le rosier perd « jusqu'en novembre », la pelouse reçoit des intervalles mensuels. Vigne, groseillier à grappes, cassissier et arbuste à floraison printanière entrent dans la liste de départ ; le groseillier à maquereau en est écarté | Annexe A, §5.1 |
 | 20/10/2026 | **Les questions que le sourçage ne tranche pas sont posées à Léon**, pas résolues : nature de la nidification, pêcher, framboisier, haie caduque, traitements | Elles engagent le comportement du produit ou une règle de test, pas seulement une valeur | Q19 à Q23 |
+| 20/10/2026 | **Une espèce peut porter des variantes de conduite** ; le framboisier en a deux, remontant et non remontant, choisies à la création de la plante | Décision de Léon (Q21). Deux espèces auraient obligé l'utilisateur à savoir que « framboisier remontant » est une espèce à part ; une variante pose la question au moment où elle compte | RG-51, §5.1, annexe A |
+| 20/10/2026 | **Les traitements fruitiers sortent de la liste de départ** | Décision de Léon (Q23). Non sourcés, et écrits en R3 hors MVP. L'utilisateur crée les siens ; les types d'intervention restent au catalogue | §5.1, annexe A |
 ---
 
 ## Annexe A — Périodicités de référence
@@ -1729,8 +1741,8 @@ comme telle (§5.1).
 | Prunier | Taille | R2 | Mêmes valeurs que le cerisier | indicative |
 | Pêcher | Taille de fructification | R2 | 01/02 → 31/03, optimale 01/03 → 31/03, chaque année. **Contredit B-T1** (Q20) | indicative |
 | Vigne | Taille d'hiver | R2 | 01/12 → 31/03, optimale 01/02 → 31/03, chaque année | vérifiée |
-| Framboisier non remontant | Taille | R2 | 01/02 → 31/03, chaque année (Q21) | vérifiée |
-| Framboisier remontant (récolte d'automne) | Taille | R2 | 01/11 → 28/02, chaque année (Q21) | vérifiée |
+| Framboisier, variante non remontant (RG-51) | Taille | R2 | 01/02 → 31/03, chaque année | vérifiée |
+| Framboisier, variante remontant (récolte d'automne) | Taille | R2 | 01/11 → 28/02, chaque année | vérifiée |
 | Groseillier à grappes | Taille | R2 | 01/01 → 15/03, optimale 01/02 → 28/02, chaque année | vérifiée |
 | Cassissier | Taille | R2 | 01/11 → 28/02, chaque année | vérifiée |
 | Haie persistante | Taille | R2, **une** fenêtre | 16/08 → 30/09, chaque année. La taille de printemps des sources tombe en nidification : elle est retirée | vérifiée |
@@ -1740,8 +1752,8 @@ comme telle (§5.1).
 | Arbuste à floraison estivale | Taille | R2 | 01/02 → 31/03, optimale 01/03 → 31/03, chaque année | vérifiée |
 | Rosier (buisson remontant) | Taille | R2 | 01/02 → 31/03, chaque année. Le « jusqu'en novembre » de la v0.13 n'est confirmé par aucune source | vérifiée |
 | Pelouse (zone) | Tonte | R1 saisonnier | Janvier–février : aucune ; mars–mai : 7 j ; juin–août : 14 j ; septembre–octobre : 7 j ; novembre–décembre : aucune | indicative |
-| Fruitiers | Traitement cuivre | R3 | 2 à 3 passages/an : chute des feuilles (~nov), fin d'hiver avant débourrement (~fév), complément printanier si humide. Minimum 12–15 j entre deux. **Non sourcé** (Q23) | — |
-| Fruitiers | Huile blanche | R3 | 2 passages en fin d'hiver, à ~1 mois d'intervalle. **Non sourcé** (Q23) | — |
+| Fruitiers | Traitement cuivre | R3 | 2 à 3 passages/an : chute des feuilles (~nov), fin d'hiver avant débourrement (~fév), complément printanier si humide. Minimum 12–15 j entre deux. **Non sourcé, hors de la liste de départ** (Q23) | — |
+| Fruitiers | Huile blanche | R3 | 2 passages en fin d'hiver, à ~1 mois d'intervalle. **Non sourcé, hors de la liste de départ** (Q23) | — |
 | Planche (zone) | Rotation | R5 | Pas de retour de la même famille botanique avant 3 à 4 ans. Lot 3, hors du sourçage | — |
 
 **Correction de la v0.13.** La période de nidification était écrite

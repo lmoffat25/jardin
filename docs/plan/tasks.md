@@ -1015,8 +1015,8 @@ especes:
 **Objectif :** chercher une espèce par son nom, et recevoir ses règles proposées déjà calées pour le profil du jardin.
 **Constructeur :** back
 **Risque :** complet
-**Lecture :** CDC §5.1, RG-25, RG-31 ; `conception-ecrans.md` (B7) ; décision D-40.
-**Contrat :** `GET /especes?q=` → JSON `[{id, cle, nom_commun, nom_latin, categorie}]` (20 au plus) ; `GET /especes/{espece}/regles-proposees` → JSON `[{cle, type_intervention, type_regle, confiance, periodes, intervalles, sources}]` (B7).
+**Lecture :** CDC §5.1, RG-25, RG-31, RG-51 ; `conception-ecrans.md` (B7) ; décision D-40.
+**Contrat :** `GET /especes?q=` → JSON `[{id, cle, nom_commun, nom_latin, categorie, variantes}]` (20 au plus ; `variantes` : liste vide si l'espèce n'en a pas, RG-51) ; `GET /especes/{espece}/regles-proposees?variante=` → JSON `[{cle, type_intervention, type_regle, confiance, periodes, intervalles, sources}]` (B7).
 **Tests d'abord :** `tests/Routes/RechercheEspeceTest.php` ; premier rouge attendu : « route /especes absente ».
 **Preuve :** rouge
 **Itérer sur / lancer une fois :** les deux classes / `make verifier`.
@@ -1031,12 +1031,12 @@ especes:
 ### 4b.1 Lecture
 
 - [ ] Créer `database/migrations/2026_10_20_000009_extension_unaccent.php` (`CREATE EXTENSION IF NOT EXISTS unaccent`) ; si l'extension manque dans DDEV ou dans la CI, `ILIKE` seul, écrit dans `decisions-agents.md`.
-- [ ] Implémenter `src/Bibliotheque/Especes/RechercheEspece.php` (nom commun ou latin, insensible à la casse et aux accents), `src/Bibliotheque/Especes/EspeceController.php` (`rechercher` ; `reglesProposees` : règles en vigueur avec les périodes projetées par `Fenetre::projeter` pour le profil du jardin courant et l'année courante, la confiance et les sources) et `src/Bibliotheque/routes.php`. Ajouter les deux routes à `EXCEPTIONS` du test de cloisonnement, avec la raison.
+- [ ] Implémenter `src/Bibliotheque/Especes/RechercheEspece.php` (nom commun ou latin, insensible à la casse et aux accents), `src/Bibliotheque/Especes/EspeceController.php` (`rechercher` ; `reglesProposees` : règles en vigueur — communes, plus celles de la variante demandée ; `variante` absente pour une espèce qui en a → `422` (RG-51) — avec les périodes projetées par `Fenetre::projeter` pour le profil du jardin courant et l'année courante, la confiance et les sources) et `src/Bibliotheque/routes.php`. Ajouter les deux routes à `EXCEPTIONS` du test de cloisonnement, avec la raison.
 
 ### 4b.2 Tests
 
 - [ ] `tests/Routes/RechercheEspeceTest.php` : casse, accents, nom latin, 20 résultats au plus, `q` vide → `422` (V65).
-- [ ] `tests/Routes/ReglesProposeesTest.php` : V65 (deux jardins de profils différents, périodes décalées ; aucune route en écriture sous `/especes`).
+- [ ] `tests/Routes/ReglesProposeesTest.php` : V65 (deux jardins de profils différents, périodes décalées ; aucune route en écriture sous `/especes` ; une espèce témoin à deux variantes rend ses règles communes plus celles de la variante demandée, et `422` sans variante).
 
 ---
 
@@ -1047,7 +1047,7 @@ especes:
 **Constructeur :** back (avec recherche documentaire)
 **Risque :** complet
 **Lecture :** protocole de bibliothèque en entier ; CDC §5.1 (liste de départ), annexe A ; `docs/plan/sourcing-annexe-a.md` (sources retenues, citations et sources exclues : le point de départ, chaque source étant rouverte dans la session, B4) ; critère 4 ; décisions D-52, D-63.
-**Contrat :** fichiers `bibliotheque/fruitiers.yaml`, `haies.yaml`, `ornement.yaml`, `pelouse.yaml`, `traitements.yaml` ; `make sources`.
+**Contrat :** fichiers `bibliotheque/fruitiers.yaml`, `haies.yaml`, `ornement.yaml`, `pelouse.yaml` ; `make sources`.
 **Tests d'abord :** `tests/Persistance/CoherenceBibliothequeTest.php` sur des fichiers témoins fautifs ; premier rouge attendu : « aucun fruitier à noyau trouvé ».
 **Preuve :** rouge
 **Itérer sur / lancer une fois :** les tests de la bibliothèque / `make verifier`.
@@ -1057,7 +1057,7 @@ especes:
 **Assertions :** V66, V68, V69
 **Fichiers :** `src/Bibliotheque/Console/VerifierSources.php`, `Makefile`
 **Classes de test :** `tests/Persistance/CoherenceBibliothequeTest.php`, `tests/Persistance/ClimatsBibliothequeTest.php`, `tests/Persistance/NidificationBoutEnBoutTest.php`, `tests/Architecture/WorkflowTest.php`
-**Fin :** pommier, poirier, prunier, cerisier, vigne, groseillier à grappes, cassissier, haie persistante, haie caduque, rosier, arbustes à floraison printanière et estivale et pelouse sont chargés ; les traitements fruitiers suivent la réponse de Léon à Q23 du CDC (sans réponse : absents, inscrits dans `bibliotheque/retraits.yaml`) ; tous avec deux sources par règle (URL, libellé, date de consultation), chaque valeur venant d'une source consultée dans la session (B4) ; rosier et arbuste à floraison estivale sont `verifiee` ou `indicative` selon ce que les sources permettent ; une espèce ou une règle sans source est absente des fichiers et inscrite dans `bibliotheque/retraits.yaml`.
+**Fin :** pommier, poirier, prunier, cerisier, vigne, groseillier à grappes, cassissier, haie persistante, haie caduque, rosier, arbustes à floraison printanière et estivale et pelouse sont chargés ; les traitements fruitiers sont absents de la bibliothèque (Q23 du CDC, décision de Léon) ; tous avec deux sources par règle (URL, libellé, date de consultation), chaque valeur venant d'une source consultée dans la session (B4) ; rosier et arbuste à floraison estivale sont `verifiee` ou `indicative` selon ce que les sources permettent ; une espèce ou une règle sans source est absente des fichiers et inscrite dans `bibliotheque/retraits.yaml`.
 **Coût :** recherche documentaire lente et jugement de qualité, comportement jamais observé (la projection des cinq profils sur des valeurs réelles) → **couper** : les cinq espèces à sourcer passent au 4d ; ici, seules celles que le CDC dit déjà sourcées.
 
 ### 4c.1 Contenu
@@ -1080,7 +1080,7 @@ especes:
 ## Sprint 4d — Espèces à sourcer
 <!-- taille : 1 assertion, 0 fichier, 1 classe de test -->
 
-**Objectif :** pêcher et framboisier, sourcés le 19/10/2026 mais suspendus aux questions Q20 et Q21 du CDC, entrent dans la bibliothèque selon la réponse de Léon, ou en sortent avec la raison.
+**Objectif :** le pêcher, sourcé le 19/10/2026 mais suspendu à la question Q20 du CDC, entre dans la bibliothèque selon la réponse de Léon, ou en sort avec la raison ; le framboisier entre avec ses deux variantes de conduite (RG-51).
 **Constructeur :** back (recherche documentaire)
 **Risque :** léger (données et tests seuls)
 **Lecture :** protocole de bibliothèque ; CDC §5.1 (espèces à sourcer), annexe A ; décisions D-52, D-63.
@@ -1097,7 +1097,7 @@ especes:
 **Fin :** chaque espèce de la liste de départ a une règle sourcée, ou figure dans `bibliotheque/retraits.yaml` avec la raison de son retrait, recopiée dans `decisions-agents.md` (D-63).
 **Coût :** recherche documentaire, résultat incertain (l'espèce peut sortir) → **accepter**, le sprint est petit et n'en bloque aucun autre.
 
-- [ ] Reprendre les sources du pêcher et du framboisier dans `docs/plan/sourcing-annexe-a.md`, les rouvrir (B4), deux sources par règle et domaines commerciaux refusés comme au 4c (D-52) ; ajouter les règles selon les réponses à Q20 (B-T1) et Q21 (une ou deux espèces). Sans réponse : retrait motivé.
+- [ ] Reprendre les sources du pêcher et du framboisier dans `docs/plan/sourcing-annexe-a.md`, les rouvrir (B4), deux sources par règle et domaines commerciaux refusés comme au 4c (D-52) ; ajouter les règles : framboisier en une espèce, variantes `remontant` et `non-remontant` (RG-51, B-T7) ; pêcher selon la réponse à Q20 (B-T1), sans réponse retrait motivé.
 - [ ] `tests/Persistance/CompletudeBibliothequeTest.php` : la liste de départ, lue dans le test, a pour chaque espèce soit une règle chargée, soit une entrée `retiree:` dans `bibliotheque/retraits.yaml` avec sa raison (B-T10).
 
 ---
