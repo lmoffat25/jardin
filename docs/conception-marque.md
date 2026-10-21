@@ -162,6 +162,33 @@ description, pour que rien de personnel n'entre dans le dépôt.
 
 *(Rempli à mesure des étapes, avec la raison et ce qui a été écarté — M16.)*
 
+**Tour de la concurrence (21/10/2026).** Ce qui est banal dans le secteur :
+le vert feuille saturé, la sans-serif neutre et arrondie (Inter, Nunito,
+Montserrat, police système), les boutons en pilule sur de grandes cartes
+blanches, le ton copain et les badges. Le trio vert sapin, fond crème et
+titres à empattements est déjà pris par une application de plantes grand
+public. Une palette ne suffit donc pas à se distinguer : la marque part d'un
+**objet réel** du monde naturaliste.
+
+**Trois territoires explorés** (M15), choisis parmi les cinq territoires
+libres relevés :
+
+| Territoire | L'objet de départ | Pourquoi il sert le produit |
+|---|---|---|
+| **A · Étiquette de collection** | L'herbier et l'étiquette de jardin botanique, avec son numéro d'accession | Chaque plante a déjà son code (`FRU-001`) : l'outil devient le registre d'une collection, organisé et savant |
+| **B · Carnet de terrain** | Le journal daté du naturaliste et sa fiche par espèce | Il reprend le carnet papier que l'outil remplace, et sa discipline sans l'effort |
+| **C · Planche botanique** | La planche pédagogique légendée, au trait | Le côté ludique et savant : expliquer une taille par un schéma |
+
+**Écartés comme territoire principal** : la carte en relief estompé, gardée
+pour les écrans de carte plutôt que pour l'identité ; le catalogue grainier,
+trop proche de A, dont il est fondu.
+
+**Couleurs** : trois couches, marque, neutres, états. Le rouge d'état est
+terreux ou corail, posé sur de petites surfaces (pastille, filet, mention
+« en retard ») ; le vert « fait » se distingue du vert de marque ; un mot ou
+une forme double toujours la couleur (rouge et vert se confondent pour une
+partie des daltoniens).
+
 ## 7. Outils
 
 | Outil | Sert à | Remarque |
