@@ -68,7 +68,7 @@ le dépôt tant qu'une police n'est pas retenue.
 > les wireframes (M13).
 
 > **M16** — Chaque choix de marque (police, couleur, forme, disposition) est
-> écrit avec **sa raison et ce qui a été écarté**, dans ce document (§5).
+> écrit avec **sa raison et ce qui a été écarté**, dans ce document (§6).
 > Un choix sans raison écrite ne passe pas à la maquette.
 
 > **M17** — Les explorations se jugent **sur le téléphone**, pas sur l'écran
@@ -100,11 +100,66 @@ n'entre dans ce dépôt public.
 10. Le prix visé et la façon de vendre (abonnement, achat) : est-ce que la
     marque doit faire « haut de gamme » ou « accessible » ?
 
-## 5. Choix retenus
+### Réponses de Léon (21/10/2026)
+
+Reprises au plus près de ses mots. Une mention familiale est remplacée par sa
+description, pour que rien de personnel n'entre dans le dépôt.
+
+1. **Premiers utilisateurs** : lui-même, pour son jardin, ses arbres, les
+   lieux à entretenir, les plantes à récupérer. Ensuite, un grand domaine
+   familial « de la taille d'un petit village », entretenu par un employé, qui
+   tient aujourd'hui l'équivalent de l'outil dans un carnet papier.
+2. **Dans trois ans** : des paysagistes qui entretiennent les jardins de
+   leurs clients.
+3. **Aujourd'hui** : le carnet. Le suivi y est moins simple et demande « une
+   sacrée discipline pour ne pas perdre le fil » ; sinon on ne le fait pas, et
+   le terrain est mal entretenu.
+4. **La phrase** : « Avec ça, tu sauras entretenir ton jardin facilement. »
+5. **Personnalité** : organisée, ludique, savante (*knowledgeable*). **Ne
+   doit pas évoquer** : une association, le bas de gamme.
+6. **Allures aimées** : PictureThis, Merlin Bird ID.
+7. **Registre** : outil de travail sobre ; botanique et naturaliste.
+8. **Tutoiement.**
+9. **À éviter** : le violet, le rouge, le flat design.
+10. **Modèle** : freemium, abonnement annuel ; la marque doit faire haut de
+    gamme.
+
+## 5. Plateforme de marque
+
+*Proposée le 21/10/2026 à partir de l'entretien, à valider par Léon.*
+
+- **Pour qui** : celui qui a plus de terrain que de mémoire. D'abord le
+  particulier avec un grand terrain, puis le domaine entretenu par un
+  employé, puis le paysagiste qui suit les jardins de ses clients. Le carnet
+  papier est le concurrent réel.
+- **Promesse** : l'outil tient le fil à ta place. Tu notes en trois gestes ce
+  que tu as fait ; il sait quand recommencer, et pourquoi.
+- **Personnalité** :
+
+  | Elle est | Elle n'est pas |
+  |---|---|
+  | Organisée : chaque chose à sa place, l'urgent d'abord | Administrative, un tableur déguisé |
+  | Ludique : la satisfaction d'un geste fait, la saison qui se remplit | Enfantine, des badges et des confettis |
+  | Savante : elle explique d'où vient chaque échéance, sources à l'appui | Professorale, du jargon de botaniste |
+  | Haut de gamme : matière, photo, typographie soignée | Associative, faite de bric et de broc |
+
+- **Ton** : tutoiement, phrases courtes, verbes de jardinier (« tailler »,
+  « traiter », « tondre »), l'explication à portée de main mais jamais
+  imposée. Le passage du vouvoiement au tutoiement touche tous les écrans :
+  il se fait dans la passe sur les wireframes.
+- **Territoire visuel** : le naturaliste de terrain, comme dans les
+  références aimées : la photo de la plante au premier plan, la précision
+  d'un guide de terrain, de la profondeur et de la matière plutôt que des
+  aplats.
+- **Contraintes de couleur** : ni violet ni rouge, donc l'état « en
+  retard » se dit autrement que par le rouge (teinte, icône, mot, position).
+  Cela remplace l'idée d'un rouge d'alerte dans les `Primitives`.
+
+## 6. Choix retenus
 
 *(Rempli à mesure des étapes, avec la raison et ce qui a été écarté — M16.)*
 
-## 6. Outils
+## 7. Outils
 
 | Outil | Sert à | Remarque |
 |---|---|---|
