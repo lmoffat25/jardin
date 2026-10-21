@@ -1,7 +1,7 @@
 # Conception des écrans — maquette dans FigCraft
 
 Version 0.1 — 19/10/2026
-Applique le CDC v0.13 (§2.2, §7, §8.5, §1.5). Décisions **M1 à M13**. Points
+Applique le CDC v0.13 (§2.2, §7, §8.5, §1.5). Décisions **M1 à M13** (M14 à M17 dans `conception-marque.md`). Points
 ouverts **O22 à O25**, à la suite du chapitre technique 6.
 
 **Ce que ce document traite.** Comment les écrans sont conçus avant d'être
@@ -370,6 +370,9 @@ calques.
 > police, une palette courte, un thème clair, pas d'animation autre que le
 > retour d'une action. Ce qui serait ajouté « parce que les produits finis en
 > ont » attend un besoin.
+>
+> **Révisé le 21/10/2026** : la police devient une paire, titres et texte
+> (M14, `docs/conception-marque.md`).
 
 ---
 
@@ -414,7 +417,7 @@ posent au plus tôt après la V1.
 | M7 | Le fichier vit dans le dépôt | La maquette décrit le produit livré |
 | M8 | Chaque écran dessiné dans ses états, dont vide, chargé et non envoyé | Ce sont les états qui font abandonner |
 | M9 | Un composant n'existe que s'il sert à deux écrans | La bibliothèque reste à la taille du produit |
-| M10 | Une police, une palette courte, un thème clair, presque pas d'animation | Mesure du CDC §1.5 |
+| M10 | Une police (une paire depuis M14), une palette courte, un thème clair, presque pas d'animation | Mesure du CDC §1.5 |
 | M11 | Un écart à la maquette se signale, ne s'improvise pas | Même règle que RG-49 |
 | M12 | Pas d'écran développé sans maquette validée | Les agents n'inventent pas l'ergonomie |
 
