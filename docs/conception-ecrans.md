@@ -1,7 +1,7 @@
 # Conception des écrans — maquette dans FigCraft
 
 Version 0.1 — 19/10/2026
-Applique le CDC v0.13 (§2.2, §7, §8.5, §1.5). Décisions **M1 à M12**. Points
+Applique le CDC v0.13 (§2.2, §7, §8.5, §1.5). Décisions **M1 à M13** (M14 à M17 dans `conception-marque.md`). Points
 ouverts **O22 à O25**, à la suite du chapitre technique 6.
 
 **Ce que ce document traite.** Comment les écrans sont conçus avant d'être
@@ -22,6 +22,31 @@ n'existe pas encore, et le fichier est conçu pour l'attendre (§2).
 ---
 
 ## 1. Deux étapes, et un arrêt entre les deux
+
+> **Révision du 21/10/2026 (décision de Léon, après le premier essai du
+> prototype).** Les écrans d'interface recopiaient la structure des
+> wireframes sans la remettre en cause (bouton retour dans une bande à part,
+> plante redemandée depuis sa fiche). D'où trois livrables distincts, chacun
+> avec sa revue :
+>
+> 1. **Wireframes**, repris en une passe guidée par le référentiel
+>    `docs/principes-ux.md` et sa grille d'audit. Ils deviennent la
+>    **référence des parcours** : ordre, gestes, place de chaque élément.
+> 2. **Marque initiale**, faite par nous, cohérente avec le produit, le besoin
+>    et la cible : positionnement, ton, palette, typographie, logo provisoire,
+>    proposés en deux ou trois directions. Le nom du produit reste à Léon. Elle
+>    sera remplacée par celle d'un designer, en changeant les `Primitives`
+>    (M3), sans toucher aux écrans.
+> 3. **Maquette**, l'interface rejouée avec cette marque et une vraie passe de
+>    rendu (tailles, image pleine largeur, densité). Elle devient la
+>    **référence du rendu** pour les agents de développement (§6).
+>
+> **M13** — Un défaut relevé sur la maquette se classe avant d'être corrigé :
+> **structure** (un élément manque, est mal placé, coûte un geste ou redemande
+> ce que le contexte connaît) se corrige dans la vague du wireframe, et
+> l'interface suit ; **rendu** (taille, contraste, espacement, hiérarchie) se
+> corrige dans `design/interface/`. Corriger une structure dans l'interface
+> seule, c'est la perdre à la prochaine reconstruction.
 
 > **Révision du 19/10/2026 (décision de Léon).** L'arrêt entre les deux
 > étapes n'est plus une porte : les vagues s'enchaînent sans attendre la
@@ -225,11 +250,11 @@ donc à un seul endroit, et l'interface suit.
 
 | # | Écran | Contexte | Parcours, fonction | Lot |
 |---|---|---|---|---|
-| T1 | Aujourd'hui : liste du jour, « fait » | Terrain | P2 | 0 |
-| T2 | Je viens de faire : choix du type | Terrain | P1 | 0 |
-| T3 | Choix des plantes, triées par proximité | Terrain | P1 | 0 |
+| T1 | Aujourd'hui : liste du jour, « fait » en un geste, sans confirmation, avec « Annuler » dans le bandeau « Enregistré » (Q-UX-24) ; les jours chargés, un bloc « En retard » en tête et « Tout fait » par groupe (Q-UX-25) ; une mention discrète hors ligne (T1·08) ; la photo de l'intervention est facultative et proposée après coup (T1·07) | Terrain | P2 | 0 |
+| T2 | Je viens de faire : choix du type, les 5 derniers types en tête, puis tous | Terrain | P1 | 0 |
+| T3 | Choix des plantes, triées par proximité ; sans position, les plantes dues pour ce type puis les récentes | Terrain | P1 | 0 |
 | T4 | Saisie enregistrée, ou **non envoyée** (RG-50) | Terrain | P1, P2 | 0 |
-| T5 | Fiche plante, avec photo | Terrain | P6 | 0 |
+| T5 | Fiche plante : photo de couverture pleine largeur, ou son encart vide avec « + » ; « Je viens de faire… » garde la plante choisie (T5·03) | Terrain | P6 | 0 |
 | T6 | Lecture d'un QR | Terrain | Étiquettes scannables | 4 |
 | T7 | Carte terrain et ordre de tournée. On y entre par un **bouton « Carte »** dans l'en-tête de T1, pas par un glissé (19/10/2026) ; la tournée est un panneau fixe sous la carte, sans glissé (vague 6, Q-UX-10) | Terrain | Carte | 4 |
 | B1 | Connexion | Bureau | Socle | 0 |
@@ -325,6 +350,14 @@ calques.
   défaut, la plante proposée est la dernière consultée ou la plus proche.
 - L'utilisateur sait toujours si ce qu'il vient de saisir est enregistré
   (RG-50) : l'état « non envoyé » est dessiné, pas laissé au développement.
+- Un geste réversible ne se confirme pas : il s'applique, et le bandeau
+  « Enregistré » propose « Annuler » quelques secondes (Q-UX-24). Seul
+  l'irréversible demande une confirmation.
+- On tutoie, partout : écrans, messages, consignes d'essai du prototype.
+- Le retour d'un écran à photo pleine largeur est un bouton rond posé sur la
+  photo, sous la barre d'état (rayon `forme/rayon-rond`).
+- Une liste qui défile sous un tiroir fixe garde une marge basse égale à la
+  hauteur du tiroir : aucune ligne n'est coupée.
 
 ### Bureau
 
@@ -345,6 +378,9 @@ calques.
 > police, une palette courte, un thème clair, pas d'animation autre que le
 > retour d'une action. Ce qui serait ajouté « parce que les produits finis en
 > ont » attend un besoin.
+>
+> **Révisé le 21/10/2026** : la police devient une paire, titres et texte
+> (M14, `docs/conception-marque.md`).
 
 ---
 
@@ -389,7 +425,7 @@ posent au plus tôt après la V1.
 | M7 | Le fichier vit dans le dépôt | La maquette décrit le produit livré |
 | M8 | Chaque écran dessiné dans ses états, dont vide, chargé et non envoyé | Ce sont les états qui font abandonner |
 | M9 | Un composant n'existe que s'il sert à deux écrans | La bibliothèque reste à la taille du produit |
-| M10 | Une police, une palette courte, un thème clair, presque pas d'animation | Mesure du CDC §1.5 |
+| M10 | Une police (une paire depuis M14), une palette courte, un thème clair, presque pas d'animation | Mesure du CDC §1.5 |
 | M11 | Un écart à la maquette se signale, ne s'improvise pas | Même règle que RG-49 |
 | M12 | Pas d'écran développé sans maquette validée | Les agents n'inventent pas l'ergonomie |
 

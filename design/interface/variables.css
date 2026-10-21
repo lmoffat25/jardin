@@ -35,6 +35,7 @@
   --rayon-6: 6px;
   --rayon-10: 10px;
   --rayon-13: 13px;
+  --rayon-24: 24px;
   --cible-24: 24px;
   --cible-48: 48px;
   --police-base: "Inter";
@@ -78,6 +79,7 @@
   --forme-rayon-case: var(--rayon-4);
   --forme-rayon-marque: var(--rayon-6);
   --forme-rayon-pastille: var(--rayon-13);
+  --forme-rayon-rond: var(--rayon-24);
 }
 /* Densité · Bureau */
 :root {

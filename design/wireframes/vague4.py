@@ -18,14 +18,14 @@ N0 = len(vague3.LIENS_NAV)   # les coquilles de cette vague s'ajoutent après
 ECHEANCES = [  # zone, plante, geste, état, fort, quand, explication
     ("Verger haut", "Prunier n°3", "Traitement cuivre", "urgente", True,
      "avant le 24 oct. · dans 3 jours",
-     "Règle que vous avez définie, à la chute des feuilles."),
+     "Règle que tu as définie, à la chute des feuilles."),
     ("Verger haut", "Pommier 'Reine des reinettes'", "Traitement cuivre", "ouverte", False,
-     "jusqu'au 15 nov.", "Règle que vous avez définie."),
+     "jusqu'au 15 nov.", "Règle que tu as définie."),
     ("Pelouse", "Pelouse devant la maison", "Tonte", "ouverte", False,
      "d'ici ven. 24 oct.", "Règle de la bibliothèque · 7 jours après la dernière tonte "
      "(17 oct.)."),
     ("Verger bas", "Poirier 'Conférence'", "Traitement cuivre", "ouverte", False,
-     "jusqu'au 15 nov.", "Règle que vous avez définie."),
+     "jusqu'au 15 nov.", "Règle que tu as définie."),
 ]  # zones dans l'ordre de leur échéance la plus proche (CDC §3.3)
 COLS = [("", 44), ("Plante", 330), ("Geste", 190), ("État", 120), ("Quand", 260),
         ("", CW - 44 - 330 - 190 - 120 - 260)]
@@ -36,7 +36,7 @@ def a_faire(f, periode: str, groupe: bool, cochees=0):
     d.texte(f, CX0, 40, 500, "À faire", 32, gras=True)
     d.texte(f, CX0, 86, 700, "Le Clos · 1 urgente · 3 ouvertes", 16,
             couleur=SECOND)
-    passee = d.bouton(f, CX0 + CW - 520, 40, 300, 48, "Ajouter une intervention passée")
+    passee = d.bouton(f, CX0 + CW - 520, 40, 300, 48, "Ajouter ce que j'ai fait")   # Q-UX-26
     imprimer = d.bouton(f, CX0 + CW - 208, 40, 208, 48, "Imprimer la liste")
     onglets = {}
     x = CX0
@@ -71,7 +71,8 @@ def a_faire(f, periode: str, groupe: bool, cochees=0):
         d.texte(r, 374, 16, 180, geste, 15)
         pastille(r, 564, 13, etat, fort)
         d.texte(r, 684, 16, 250, quand, 15, gras=fort)
-        boutons_fait.append(d.bouton(r, CW - 100, 16, 88, 48, "Fait", principal=fort))
+        # Même « Fait » partout : l'urgence est portée par l'état et le contour (audit n° 36).
+        boutons_fait.append(d.bouton(r, CW - 100, 16, 88, 48, "Fait"))
         y += 88
     return passee, imprimer, onglets, boutons_fait
 
@@ -82,12 +83,9 @@ d.texte(b4, CX0, 818, CW, "Ce qui est à venir au-delà de 15 jours (taille de l
 
 b4s = ecran("B4 · 02 · À faire — 3 cochées")
 a_faire(b4s, "15 prochains jours", True, cochees=3)
-barre = d.cadre("Actions groupées", b4s, CX0, BH - 88, CW, 72, fond=FORT, rayon=12)
-d.texte(barre, 24, 25, 300, "3 échéances cochées", 17, gras=True, couleur=BLANC)
-b4s_fait = d.bouton(barre, CW - 24 - 200 - 10 - 160 - 10 - 140, 12, 200, 48, "Tout marquer fait",
-                    principal=False)
-d.bouton(barre, CW - 24 - 160 - 10 - 140, 12, 160, 48, "Reporter…")
-d.bouton(barre, CW - 24 - 140, 12, 140, 48, "Imprimer")
+b4s_fait = vague3.barre_selection(b4s, CX0, BH - 88, CW, "3 cochées", 4, [
+    ("Tout marquer fait", 200), ("Reporter…", 160), ("Imprimer", 140)], autres=False)[
+    "Tout marquer fait"]
 
 # Impression : la liste du week-end, sur une feuille A4.
 imp = ecran("B4 · 03 · Liste imprimée (aperçu)")
@@ -106,9 +104,9 @@ for zone, plante, geste, etat, fort, quand, _ in ECHEANCES:
     d.texte(feuille, 76, y, 360, f"{geste} · {plante}", 14, gras=fort)
     d.texte(feuille, 440, y, 112, quand.split(" · ")[0], 13, couleur=SECOND, align="right")
     y += 34
-d.texte(feuille, 48, 760, 504, "Cochez au stylo, saisissez ensuite : « Ajouter une intervention "
-        "passée ».", 12, couleur=SECOND)
-imp_retour = d.bouton(imp, BW - 240, 40, 200, 48, "Retour")
+d.texte(feuille, 48, 760, 504, "Coche au stylo, saisis ensuite : « Ajouter ce que j'ai fait ».",
+        12, couleur=SECOND)
+imp_retour = d.bouton(imp, 40, 40, 160, 48, "‹ Retour")   # en haut à gauche (audit n° 37)
 
 # --- B8 · Intervention passée, sur plusieurs plantes (P5) -----------------------
 FG = 560
@@ -125,17 +123,17 @@ def passee(nom, choisies: int, enregistre=False):
     f = ecran(nom)
     coquille(f, "À faire")
     d.texte(f, CX0, 24, 600, "À faire  ›  Intervention passée", 14, couleur=SECOND)
-    d.texte(f, CX0, 52, 800, "Ajouter une intervention passée", 32, gras=True)
+    d.texte(f, CX0, 52, 800, "Ajouter ce que j'ai fait", 32, gras=True)
     champ(f, CX0, 120, 260, "Date", "12/02/2026" if choisies else None, "jj/mm/aaaa")
     d.texte(f, CX0 + 276, 156, 280, "il y a 8 mois" if choisies else "", 14, couleur=SECOND)
-    champ(f, CX0, 224, FG, "Geste", "Taille  ↓" if choisies else None, "Choisissez  ↓")
+    champ(f, CX0, 224, FG, "Geste", "Taille  ↓" if choisies else None, "Choisis  ↓")
     champ(f, CX0, 328, 260, "Durée totale (facultatif)", "4 h" if choisies else None, "—")
     champ(f, CX0, 432, FG, "Note (facultatif)", "Taille d'hiver de tout le verger haut"
           if choisies else None, "—")
     d.texte(f, CX0, 536, FG, "Photos (facultatif)", 15, gras=True)
     depot = d.cadre("Dépôt · photos", f, CX0, 562, FG, 80, fond=SURFACE, rayon=8, trait=TRAIT,
                     pointille=True)
-    d.texte(depot, 0, 28, FG, "Glissez des photos : leur date de prise de vue est conservée", 14,
+    d.texte(depot, 0, 28, FG, "Glisse des photos : leur date de prise de vue est conservée", 14,
             couleur=SECOND, align="center")
 
     pan = d.cadre("Plantes concernées", f, XR, 120, FD, 630, fond=SURFACE, rayon=12)
@@ -166,13 +164,16 @@ def passee(nom, choisies: int, enregistre=False):
     res = d.cadre("Résultat", pan, 24, 480, FD - 48, 130, fond=FOND, rayon=10)
     if choisies:
         d.texte(res, 16, 12, FD - 80, f"{choisies} interventions seront enregistrées, une par "
-                "plante (RG-04).", 15, gras=True)
+                "plante.", 15, gras=True)
         d.texte(res, 16, 58, FD - 80, "Les 6 échéances de taille se recalculent à partir du "
-                "12/02/2026. Celle d'avril 2026, déjà consignée manquée, devient soldée : "
+                "12/02/2026. Celle d'avril 2026, notée manquée, comptera comme faite : "
                 "l'historique le dira.", 13, couleur=SECOND)
     else:
-        d.texte(res, 16, 12, FD - 80, "Cochez une zone entière, ou les plantes une à une.", 15,
+        d.texte(res, 16, 12, FD - 80, "Coche une zone entière, ou les plantes une à une.", 15,
                 couleur=SECOND)
+    if not choisies:   # dire ce qui manque, pas seulement griser (audit n° 24)
+        d.texte(f, XR, BH - 148, FD, "Il manque : la date, le geste, au moins une plante.", 14,
+                couleur=SECOND, align="right")
     valider = d.bouton(f, XR + FD - 280, BH - 112, 280, 56,
                        f"Enregistrer pour {choisies} plantes" if choisies else "Enregistrer",
                        principal=True, inactif=not choisies)
@@ -184,7 +185,7 @@ def passee(nom, choisies: int, enregistre=False):
         d.texte(boite, 32, 72, 496, "Taille du 12/02/2026, sur les 6 pommiers du Verger haut.",
                 15)
         for k, s in enumerate(["6 échéances recalculées : prochaine taille avant le 7 avril 2027",
-                               "1 échéance manquée requalifiée en soldée"]):
+                               "1 échéance manquée comptée comme faite"]):
             d.texte(boite, 32, 112 + k * 28, 496, "• " + s, 14, couleur=SECOND)
         ok = d.bouton(boite, 32, 212, 240, 56, "Revenir à « À faire »", principal=True)
         d.bouton(boite, 288, 212, 240, 56, "Annuler la saisie")
@@ -213,8 +214,9 @@ for k, (lib, sel) in enumerate([("Tous les N jours", True), ("Dans une fenêtre 
 champ(b9, CX0, 248, 200, "Tous les", "10 jours")
 d.texte(b9, CX0 + 216, 284, 340, "au lieu de 7 (bibliothèque)", 14, couleur=SECOND)
 d.texte(b9, CX0, 352, FG, "Variation selon le mois", 15, gras=True)
-d.texte(b9, CX0, 378, FG, "Celle de la bibliothèque, appliquée à vos 10 jours. Voir le détail "
-        "mois par mois", 14, couleur=SECOND)
+d.texte(b9, CX0, 378, FG, "Celle de la bibliothèque, appliquée à tes 10 jours.", 14,
+        couleur=SECOND)
+d.bouton(b9, CX0 + FG - 280, 368, 280, 40, "Voir le détail mois par mois ›")   # audit n° 42
 d.texte(b9, CX0, 430, FG, "Pourquoi cette correction ? (facultatif)", 15, gras=True)
 motif = d.cadre("Champ · motif", b9, CX0, 456, FG, 72, fond=FOND, rayon=8, trait=TRAIT)
 d.texte(motif, 14, 12, FG - 28, "« L'herbe pousse moins vite à l'ombre du noyer. »", 15)
@@ -225,8 +227,8 @@ for k, (lib, sel) in enumerate([("Cette pelouse seulement", True),
                 trait=FORT if sel else TRAIT)
     d.cadre("Radio", r, 14, 12, 20, 20, fond=FORT if sel else FOND, rayon=10, trait=FORT)
     d.texte(r, 46, 12, FG - 60, lib, 15, gras=sel)
-d.texte(b9, CX0, 698, FG, "La bibliothèque n'est pas modifiée : votre version fait foi pour "
-        "vos plantes (RG-09).", 13, couleur=SECOND)
+d.texte(b9, CX0, 698, FG, "La bibliothèque n'est pas modifiée : ta version fait foi pour "
+        "tes plantes.", 13, couleur=SECOND)
 
 pan = d.cadre("Effet de la correction", b9, XR, 150, FD, 420, fond=SURFACE, rayon=12)
 d.texte(pan, 24, 20, FD - 48, "Ce que ça change", 18, gras=True)
@@ -237,7 +239,7 @@ for k, (lib, val, fort) in enumerate([("Prochaine tonte, avant", "ven. 24 oct.",
 d.texte(pan, 24, 148, FD - 48, "Recalculée immédiatement, à partir de la dernière tonte "
         "(17 oct.).", 13, couleur=SECOND)
 d.texte(pan, 24, 196, FD - 48, "Versions de cette règle", 15, gras=True)
-for k, (v, q) in enumerate([("v2 · tous les 10 jours", "aujourd'hui, par vous — en cours"),
+for k, (v, q) in enumerate([("v2 · tous les 10 jours", "aujourd'hui, par toi — en cours"),
                             ("v1 · tous les 7 jours", "02/05/2026 · bibliothèque 2026.1")]):
     d.texte(pan, 24, 228 + k * 50, FD - 48, v, 15, gras=k == 0)
     d.texte(pan, 24, 250 + k * 50, FD - 48, q, 13, couleur=SECOND)
@@ -277,8 +279,8 @@ d.noeud("text", x=-680, y=2200, text=(
     "plante (RG-04).\n\n"
     "B9 · Corriger une règle (P7) : l'effet est montré avant d'enregistrer ; chaque version est "
     "datée et restaurable (RG-08) ; la bibliothèque n'est jamais touchée (RG-09).\n\n"
-    "À trancher par Léon plus tard : une intervention rétroactive qui tombe dans une fenêtre "
-    "déjà « manquée » la requalifie en « soldée » (choix fait ici, registre Q-UX)."),
+    "En attente de Léon (Q-UX-11) : une intervention rétroactive qui tombe dans une fenêtre "
+    "déjà « manquée » la fait compter comme faite (recommandation appliquée)."),
     name="Notes · vague 4", props={
         "width": 560, "textAutoResize": "height", "fontFamily": "Inter", "fontSize": 16,
         "fills": [TEXTE]})

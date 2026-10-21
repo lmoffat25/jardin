@@ -30,7 +30,7 @@ PRIMITIVES_COULEURS = {
     "bleu/700": "#1F4FA8", "noir/40": "#00000066",
 }
 TAILLES = [12, 13, 14, 15, 17, 18, 20, 24, 28, 36, 40]
-RAYONS = [4, 6, 10, 13]
+RAYONS = [4, 6, 10, 13, 24]
 MARQUE = {"police/base": "Inter", "marque/nom": "Nom du produit"}
 
 # --- Sémantique : des rôles, chacun alias d'une primitive (M4) -----------------
@@ -54,6 +54,8 @@ SEMANTIQUE_AUTRES = {   # nom: (type, primitive)
     "typo/famille": ("string", "police/base"), "texte/nom-produit": ("string", "marque/nom"),
     "forme/rayon-controle": ("number", "rayon/10"), "forme/rayon-case": ("number", "rayon/4"),
     "forme/rayon-marque": ("number", "rayon/6"), "forme/rayon-pastille": ("number", "rayon/13"),
+    # Un bouton rond de 48 posé sur une photo (T5, retour) : la moitié de son côté.
+    "forme/rayon-rond": ("number", "rayon/24"),
 }
 # Les couples à 7:1 (texte sur son fond), et les contours à 3:1.
 CONTRASTES_7 = [("texte/principal", "fond/page"), ("texte/secondaire", "fond/page"),

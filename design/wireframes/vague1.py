@@ -342,14 +342,44 @@ ECRANS: dict[str, int] = {}
 X = [0]
 
 
-def ecran(nom: str, hauteur: int = H) -> int:
+def ecran(nom: str, hauteur: int = H, barre: bool = True) -> int:
+    """`barre` faux : l'écran pose lui-même ce qui passe sous la barre d'état (une photo
+    pleine largeur, T5), puis `barre_etat` par-dessus."""
     with d.surcharge({("fill", FOND): "fond/page"}):
         f = d.cadre(nom, None, X[0], 120, W, hauteur, fond=FOND)
     d.densite(f, "Terrain")
     X[0] += W + 80
     ECRANS[nom] = f
-    d.cadre("Barre d'état", f, 0, 0, W, 44, fond=SURFACE)
+    if barre:
+        d.cadre("Barre d'état", f, 0, 0, W, 44, fond=SURFACE)
     return f
+
+
+def barre_etat(f):
+    """La barre d'état sans fond, posée sur une image qui monte jusqu'en haut."""
+    return d.cadre("Barre d'état (sur la photo)", f, 0, 0, W, 44)
+
+
+def retour_rond(f, x=12, y=50):
+    """Le retour posé sur une photo : un rond plein, dans la zone sûre (principes-ux §2)."""
+    b = d.bouton_icone(f, x, y, 48, 48, "chevron-left", "Retour")
+    if INTERFACE:
+        d.lier(b, "cornerRadius", "forme/rayon-rond")
+    else:
+        d.cmd("node.set", ids=[b], cornerRadius=24)
+    return b
+
+
+def bandeau_enregistre(f, x, y, w, detail):
+    """« Enregistré », avec l'annulation (Q-UX-24) et la photo facultative de l'intervention
+    (RG-38) : deux actions, sous le message. Rend (annuler, photo)."""
+    with d.etat("fait"):
+        b = d.cadre("Bandeau · enregistré", f, x, y, w, 124, fond=FOND, rayon=10, trait=FORT)
+        d.texte(b, 14, 12, w - 28, "✓ Enregistré", 16, gras=True)
+    d.texte(b, 14, 38, w - 28, detail, 13, couleur=SECOND)
+    photo = d.bouton(b, 12, 64, w - 24 - 120 - 8, 48, "+ Ajouter une photo")
+    annuler = d.bouton(b, w - 12 - 120, 64, 120, 48, "Annuler")
+    return annuler, photo
 
 
 def pastille_essai(f, x=246, y=6):
@@ -375,6 +405,7 @@ LIGNES = [  # zone, plante, intervention, état, en retard ?
     ("Haies", "Haie de charmilles — côté route", "Taille", "à venir · dès le 8 nov.", False),
 ]
 TYPES_RECENTS = ["Taille", "Tonte", "Traitement cuivre", "Arrosage", "Récolte", "Autre…"]
+Y_TIROIR = 580   # le tiroir s'arrête au-dessus de l'indicateur d'accueil (810)
 
 
 BOUTONS_CARTE: list[int] = []
@@ -410,13 +441,30 @@ def texte_flux(parent, s, taille=16, gras=False, couleur=TEXTE):
 RANGS_ECHEANCE: list[int] = []   # chaque ligne ouvre la fiche plante (T5, vague 3)
 
 
-def liste_du_jour(f, y, lignes, boutons_fait: dict):
+def liste_du_jour(f, y, lignes, boutons_fait: dict, groupes=False):
+    """`groupes` (journée chargée, Q-UX-25) : les retards d'abord, dans un bloc à part, puis
+    l'ordre par zone ; une zone dont toutes les lignes ont le même type porte « Tout fait »."""
     liste = boite("Liste du jour", f, "vertical", x=0, y=y, width=W)
+    if groupes:
+        retards = [l for l in lignes if l[4]]
+        lignes = [("En retard",) + l[1:] for l in retards] + [l for l in lignes if not l[4]]
     zone = None
     for z, plante, inter, etat, retard in lignes:
         if z != zone:
-            entete = boite(f"Zone · {z}", liste, "vertical", padding=[14, M, 2, M])
-            texte_flux(entete, z.upper(), 13, gras=True, couleur=SECOND)
+            meme = [l for l in lignes if l[0] == z]
+            if groupes and len(meme) > 1 and len({l[2] for l in meme}) == 1 and z != "En retard":
+                entete = boite(f"Zone · {z}", liste, "horizontal", padding=[10, M, 2, M], gap=12)
+                texte_flux(entete, f"{z.upper()} · {inter.upper()} · {len(meme)}", 13, gras=True,
+                           couleur=SECOND)
+                d.bouton(entete, 0, 0, 132, 48, f"Tout fait · {len(meme)}")
+            else:
+                entete = boite(f"Zone · {z}", liste, "vertical", padding=[14, M, 2, M])
+                titre = f"{z.upper()} · {len(meme)}" if z == "En retard" else z.upper()
+                if z == "En retard":
+                    with d.etat("en-retard"):
+                        texte_flux(entete, titre, 13, gras=True, couleur=TEXTE)
+                else:
+                    texte_flux(entete, titre, 13, gras=True, couleur=SECOND)
             zone = z
         if INTERFACE:
             ligne = d.instance("Échéance/Ligne", liste, proprietes={
@@ -440,13 +488,14 @@ def liste_du_jour(f, y, lignes, boutons_fait: dict):
 
 
 def tiroir_je_viens_de_faire(f):
-    t = d.cadre("Je viens de faire", f, 0, 588, W, H - 588, fond=SURFACE, rayon=16)
-    d.texte(t, M, 16, W - 2 * M, "Je viens de faire…", 17, gras=True)
+    t = d.cadre("Je viens de faire", f, 0, Y_TIROIR, W, H - Y_TIROIR, fond=SURFACE, rayon=16)
+    d.texte(t, M, 16, 200, "Je viens de faire…", 17, gras=True)
+    d.texte(t, M + 200, 18, W - 2 * M - 200, "tes 5 derniers types", 13, couleur=SECOND,
+            align="right")
     puces = {}
     for i, nom in enumerate(TYPES_RECENTS):
         col, rang = i % 2, i // 2
         puces[nom] = d.bouton(t, M + col * 183, 52 + rang * 58, 175, 50, nom)
-    d.texte(t, M, 232, W - 2 * M, "Les 5 derniers types utilisés", 13, couleur=SECOND)
     return puces
 
 
@@ -458,27 +507,19 @@ fait_t1: dict = {}
 liste_du_jour(t1, 130, LIGNES, fait_t1)
 puces_t1 = tiroir_je_viens_de_faire(t1)
 
-# Confirmation « fait » (superposition, P2 : une seule confirmation).
-conf = ecran("T1 · 02 · Confirmer « fait »", 300)
-d.texte(conf, M, 60, W - 2 * M, "Traitement cuivre", 22, gras=True)
-d.texte(conf, M, 92, W - 2 * M, "Prunier n°3 · fait aujourd'hui, mar. 21 oct.", 16, couleur=SECOND)
-ok_conf = d.bouton(conf, M, 140, W - 2 * M, 56, "C'est fait", principal=True)
-annuler_conf = d.bouton(conf, M, 208, W - 2 * M, 56, "Annuler")
+# « Fait » s'applique tout de suite, sans confirmation : « Annuler » sert de filet
+# (Q-UX-24). L'ancien T1 · 02 (confirmation) n'existe plus.
 
-# T1 après enregistrement.
+# T1 après enregistrement : annuler, ou ajouter la photo de l'intervention (RG-38).
 t1ok = ecran("T1 · 03 · Aujourd'hui — enregistré")
 entete_aujourdhui(t1ok, "mar. 21 oct. · 3 à faire")
 pastille_essai(t1ok)
-if INTERFACE:
-    _, annuler_ok = d.bandeau(t1ok, M, 128, W - 2 * M, 72, "succes", "Enregistré",
-                              "Taille · Pommier 'Reine des reinettes'", "Annuler", largeur_action=96)
-else:
-    bandeau = d.cadre("Bandeau · enregistré", t1ok, M, 128, W - 2 * M, 64, fond=SURFACE, rayon=10)
-    d.texte(bandeau, 14, 10, 220, "✓ Enregistré", 16, gras=True)
-    d.texte(bandeau, 14, 34, 230, "Taille · Pommier 'Reine des reinettes'", 13, couleur=SECOND)
-    annuler_ok = d.bouton(bandeau, W - 2 * M - 104, 8, 96, 48, "Annuler")
+annuler_ok, photo_ok = bandeau_enregistre(t1ok, M, 128, W - 2 * M,
+                                          "Traitement cuivre · Prunier n°3")
 fait_t1ok: dict = {}
-liste_du_jour(t1ok, 204, LIGNES[1:], fait_t1ok)
+# La liste défile ; sa marge basse vaut la hauteur du tiroir. Le cadre fixe n'en montre que
+# les lignes entières (audit n° 14).
+liste_du_jour(t1ok, 264, LIGNES[1:3], fait_t1ok)
 puces_t1ok = tiroir_je_viens_de_faire(t1ok)
 
 # --- T3 · Choisir les plantes --------------------------------------------------
@@ -490,7 +531,9 @@ PROCHES = [("Pommier 'Reine des reinettes'", "8 m · Verger haut"),
            ("Rosier 'Pierre de Ronsard'", "41 m · Massif d'entrée")]
 
 
-def choisir_plantes(nom, coches: int, titre="Taille", sous="Près de vous", liste=PROCHES):
+def choisir_plantes(nom, coches: int, titre="Taille", sections=(("Près de toi", PROCHES),),
+                    message=None):
+    """`sections` : [(titre, plantes)] ; `message` dit pourquoi la liste change (sans position)."""
     f = ecran(nom)
     retour = d.bouton_icone(f, 8, 52, 48, 48, "chevron-left", "Retour")
     d.texte(f, 64, 56, 180, titre, 24, gras=True)
@@ -503,10 +546,25 @@ def choisir_plantes(nom, coches: int, titre="Taille", sous="Près de vous", list
         champ = d.cadre("Champ · recherche", f, M, 124, W - 2 * M, 48, fond=FOND, rayon=10,
                         trait=TRAIT)
         d.texte(champ, 14, 14, 300, "Rechercher une plante ou un code", 15, couleur=TRAIT)
-    d.texte(f, M, 188, W - 2 * M, sous.upper(), 13, gras=True, couleur=SECOND)
     rangs = []
-    liste_p = boite("Plantes", f, "vertical", x=0, y=208, width=W)
-    for i, (plante, ou) in enumerate(liste):
+    liste_p = boite("Plantes", f, "vertical", x=0, y=184, width=W)
+    if message:
+        texte_flux(boite("Message", liste_p, "vertical", padding=[0, M, 4, M]), message, 14,
+                   couleur=SECOND)
+    for sous, liste in sections:
+        texte_flux(boite(f"Section · {sous}", liste_p, "vertical", padding=[8, M, 2, M]),
+                   sous.upper(), 13, gras=True, couleur=SECOND)
+        _rangs_plantes(liste_p, liste, coches, rangs, len(rangs))
+    # Le facultatif derrière un seul « Détails » (principes-ux §1) ; la photo se propose
+    # après l'enregistrement (RG-38).
+    d.bouton(f, M, 652, W - 2 * M, 48, "Détails : date, note ›")
+    libelle = f"Valider · {coches} plante" + ("s" if coches > 1 else "") if coches else "Choisis une plante"
+    valider = d.bouton(f, M, 716, W - 2 * M, 60, libelle, principal=True, inactif=not coches)
+    return f, retour, rangs, valider
+
+
+def _rangs_plantes(liste_p, liste, coches, rangs, depart):
+    for i, (plante, ou) in enumerate(liste, start=depart):
         r = boite(f"Plante · {plante}", liste_p, "horizontal", padding=[10, M, 10, M], gap=14)
         if INTERFACE:
             d.instance("Case", r, 0, 0, 28, 28, {"etat": "cochee" if i < coches else "vide"})
@@ -519,12 +577,6 @@ def choisir_plantes(nom, coches: int, titre="Taille", sous="Près de vous", list
         texte_flux(col, plante, 17, gras=True)
         texte_flux(col, ou, 14, couleur=SECOND)
         rangs.append(r)
-    # Champs facultatifs, en bas, jamais obligatoires (CDC §2.2).
-    for j, (lib, w) in enumerate([("Maintenant", 128), ("+ Photo", 104), ("+ Note", 94)]):
-        d.bouton(f, M + [0, 136, 248][j], 652, w, 48, lib)
-    libelle = f"Valider · {coches} plante" + ("s" if coches > 1 else "") if coches else "Choisissez une plante"
-    valider = d.bouton(f, M, 716, W - 2 * M, 60, libelle, principal=True, inactif=not coches)
-    return f, retour, rangs, valider
 
 
 t3, t3_retour, t3_rangs, _ = choisir_plantes("T3 · 01 · Choisir les plantes", 0)
@@ -536,34 +588,64 @@ t4 = ecran("T4 · 01 · Aujourd'hui — non envoyé")
 entete_aujourdhui(t4, "mar. 21 oct. · 4 à faire")
 pastille_essai(t4)
 if INTERFACE:
-    _, renvoyer = d.bandeau(t4, M, 128, W - 2 * M, 140, "non-envoye", "Pas envoyé — pas de réseau",
+    _, renvoyer = d.bandeau(t4, M, 128, W - 2 * M, 124, "non-envoye", "Pas envoyé — pas de réseau",
                             "Taille · Pommier 'Reine des reinettes'\n14:32 · gardé sur ce "
                             "téléphone.", "Renvoyer", principal=True, largeur_action=116)
 else:
     with d.etat("non-envoye"):
-        alerte = d.cadre("Bandeau · non envoyé", t4, M, 128, W - 2 * M, 140, fond=FOND, rayon=10,
+        alerte = d.cadre("Bandeau · non envoyé", t4, M, 128, W - 2 * M, 124, fond=FOND, rayon=10,
                          trait=FORT)
         d.texte(alerte, 14, 12, W - 2 * M - 28, "⚠ Pas envoyé — pas de réseau", 16, gras=True)
     d.texte(alerte, 14, 38, W - 2 * M - 28, "Taille · Pommier 'Reine des reinettes'", 13,
             couleur=SECOND)
     d.texte(alerte, 14, 62, W - 2 * M - 28, "14:32 · gardé sur ce téléphone.", 13, couleur=SECOND)
-    renvoyer = d.bouton(alerte, W - 2 * M - 126, 80, 116, 48, "Renvoyer", principal=True)
+    renvoyer = d.bouton(alerte, W - 2 * M - 126, 66, 116, 48, "Renvoyer", principal=True)
 fait_t4: dict = {}
-liste_du_jour(t4, 284, LIGNES[:3], fait_t4)
+liste_du_jour(t4, 264, LIGNES[:3], fait_t4)   # finit au-dessus du tiroir (audit n° 14)
 tiroir_je_viens_de_faire(t4)
 
 # --- T2 · Tous les types ------------------------------------------------------
 t2 = ecran("T2 · 01 · Autre type")
 t2_retour = d.bouton_icone(t2, 8, 52, 48, 48, "chevron-left", "Retour")
 d.texte(t2, 64, 60, 250, "Quel type ?", 24, gras=True)
+# Les récents d'abord (CDC P1 : « les 5 derniers en tête »), puis tous, de A à Z ; l'ajout
+# d'un type est une action, pas un type (audit n° 13).
+RECENTS = TYPES_RECENTS[:5]
 TOUS = ["Arrosage", "Désherbage", "Engrais", "Huile blanche", "Paillage", "Plantation",
-        "Récolte", "Taille", "Tonte", "Traitement cuivre", "Ajouter un type…"]
-t2_rangs = []
-for i, nom in enumerate(TOUS):
-    r = d.cadre(f"Type · {nom}", t2, 0, 116 + i * 60, W, 60, fond=FOND)
-    d.texte(r, M, 18, 300, nom, 17, gras=nom != TOUS[-1], couleur=TEXTE if nom != TOUS[-1] else SECOND)
-    d.cadre("Séparateur", r, M, 59, W - 2 * M, 1, fond=SURFACE)
-    t2_rangs.append(r)
+        "Récolte", "Taille", "Tonte", "Traitement cuivre"]
+
+
+def liste_types(f, y, sections, ajouter=True):
+    """[(titre, types)] en rangs de 52 ; rend les rangs (le premier type de la première
+    section en tête)."""
+    rangs = []
+    liste = boite("Types", f, "vertical", x=0, y=y, width=W)
+    for titre, types in sections:
+        texte_flux(boite(f"Section · {titre}", liste, "vertical", padding=[10, M, 4, M]),
+                   titre.upper(), 13, gras=True, couleur=SECOND)
+        for nom in types:
+            r = boite(f"Type · {nom}", liste, "vertical", padding=[14, M, 14, M], trait_bas=True)
+            texte_flux(r, nom, 17, gras=True)
+            rangs.append(r)
+    if ajouter:
+        r = boite("Ajouter un type", liste, "vertical", padding=[14, M, 14, M])
+        texte_flux(r, "+ Ajouter un type…", 17)
+    return rangs
+
+
+t2_rangs = liste_types(t2, 108, [("Récents", RECENTS), ("Tous les types", TOUS)])
+
+# --- Photo de l'intervention (facultative, RG-38) ------------------------------
+# Proposée par « Ajouter une photo » du bandeau « Enregistré » : jamais un geste de plus
+# sur le chemin de P1.
+photo_inter = ecran("T1 · 07 · Photo de l'intervention")
+with d.surcharge({("fill", FORT): "fond/appareil-photo"}):
+    d.cadre("Viseur (appareil photo)", photo_inter, 0, 44, W, 600, fond=FORT)
+photo_retour = d.bouton_icone(photo_inter, 8, 52, 48, 48, "x", "Annuler")
+d.texte(photo_inter, M, 664, W - 2 * M, "Traitement cuivre · Prunier n°3", 15, couleur=SECOND,
+        align="center")
+photo_prendre = d.bouton(photo_inter, M, 704, W - 2 * M, 60, "Prendre la photo", principal=True,
+                         icone="camera")
 
 # --- États sans prototype (M8) ------------------------------------------------
 vide = ecran("T1 · 04 · Aujourd'hui — rien à faire")
@@ -580,8 +662,21 @@ d.texte(premier, M, 216, W - 2 * M,
         "L'inventaire se fait depuis l'ordinateur. Chaque plante saisie donne déjà ses échéances.",
         16, couleur=SECOND, align="center")
 
-choisir_plantes("T3 · 04 · Choisir les plantes — sans position", 0, sous="De A à Z",
-                liste=[(p, z.split(" · ")[1]) for p, z in sorted(PROCHES)])
+# Hors ligne, rien en attente : on le dit quand même, discrètement (RG-50, audit n° 28).
+hors_ligne = ecran("T1 · 08 · Aujourd'hui — hors ligne")
+d.texte(hors_ligne, M, 56, 230, "Aujourd'hui", 28, gras=True)
+d.icone(hors_ligne, "wifi-off", M, 94, couleur=SECOND, libelle="Hors ligne")
+d.texte(hors_ligne, M + 32, 96, W - 2 * M - 32 - 112, "Hors ligne · tes saisies attendront "
+        "sur ce téléphone", 14, couleur=SECOND)
+BOUTONS_CARTE.append(d.bouton(hors_ligne, W - M - 104, 60, 104, 48, "Carte"))
+liste_du_jour(hors_ligne, 150, LIGNES[:3], {})
+tiroir_je_viens_de_faire(hors_ligne)
+
+# Sans position : on le dit, et la liste reste courte (audit n° 15) — d'abord les plantes
+# dont ce type est dû, puis les dernières touchées ; la recherche reste en tête.
+choisir_plantes("T3 · 04 · Choisir les plantes — sans position", 0, message=(
+    "Position indisponible : les plantes ne sont pas triées par distance."), sections=(
+    ("Taille due", PROCHES[:2]), ("Récentes", PROCHES[2:4])))
 
 charge = ecran("T1 · 06 · Aujourd'hui — chargé (extrait)", 1500)
 entete_aujourdhui(charge, "mar. 21 oct. · 17 à faire")
@@ -591,21 +686,15 @@ BEAUCOUP = [(z, f"{p} n°{i}", inter, "en retard de 2 jours" if i % 5 == 0 else 
     + [("Haies", "Haie de charmilles — tronçon", "Taille", "à venir · dès le 8 nov.")] * 4
     + [("Pelouse", "Pelouse", "Tonte", "à faire aujourd'hui")] * 2, start=1)]
 fait_charge: dict = {}
-liste_du_jour(charge, 130, BEAUCOUP, fait_charge)
+liste_du_jour(charge, 130, BEAUCOUP, fait_charge, groupes=True)   # Q-UX-25
 
 # Le cadre de T7 naît ici pour que le bouton Carte y aboutisse ; vague6.py le remplit.
 t7 = ecran("T7 · 01 · Carte terrain")
 
 # --- Prototype -----------------------------------------------------------------
-# P2 : « Fait » → confirmation → enregistré (ou non envoyé).
+# P2 : « Fait » → enregistré (ou non envoyé), un seul geste ; « Annuler » défait (Q-UX-24).
 for b in list(fait_t1.values()) + list(fait_t1ok.values()) + list(fait_t4.values()):
-    d.cmd("proto.interaction.add", id=b, trigger={"type": "onClick"}, action={
-        "type": "openOverlay", "dest": conf, "position": "bottomCenter",
-        "close_on_outside": True, "background": "#00000066"},
-        transition={"type": "moveIn", "direction": "top"}, durationMs=200)
-d.selon_reseau(ok_conf, t1ok, t4)
-d.cmd("proto.interaction.add", id=annuler_conf, trigger={"type": "onClick"},
-      action={"type": "closeOverlay"})
+    d.selon_reseau(b, t1ok, t4)
 # P1 : type → plantes → valider. Trois gestes.
 for puces in (puces_t1, puces_t1ok):
     for nom, b in puces.items():
@@ -621,6 +710,9 @@ d.selon_reseau(t3b_valider, t1ok, t4)
 d.selon_reseau(t3c_valider, t1ok, t4)
 d.selon_reseau(renvoyer, t1ok, t4)
 d.lien(annuler_ok, t1, "dissolve")
+d.lien(photo_ok, photo_inter)
+d.retour(photo_retour)
+d.lien(photo_prendre, t1ok, "dissolve")
 for b in BOUTONS_CARTE:
     d.lien(b, t7)
 d.cmd("proto.flow.add", start=t1, name="Vague 1 — terrain (P1 et P2)")
@@ -632,15 +724,19 @@ note = d.noeud("text", x=-560, y=120, text=(
     "P1 · Enregistrer : un appui sur un type (« Je viens de faire… »), un appui sur la "
     "plante, Valider. 3 gestes. Les 5 derniers types sont sur l'écran d'accueil : c'est ce qui "
     "permet de tenir les 3 gestes sans écran de choix du type.\n\n"
-    "P2 · Solder : « Fait » sur la ligne, « C'est fait » dans la confirmation. 1 geste + 1 "
-    "confirmation.\n\n"
+    "P2 · Solder : « Fait » sur la ligne, et c'est enregistré. 1 geste. Pas de confirmation : "
+    "« Annuler » reste quelques secondes dans le bandeau « Enregistré » (Q-UX-24).\n\n"
+    "Photo de l'intervention : facultative (RG-38), proposée après l'enregistrement par « Ajouter "
+    "une photo » dans le bandeau. Elle n'ajoute aucun geste à P1 ni à P2.\n\n"
+    "Journée chargée : les retards en tête, puis par zone ; « Tout fait » sur une zone dont "
+    "toutes les lignes ont le même type (Q-UX-25).\n\n"
     "RG-50 : la pastille en pointillés « Essai : réseau » est un outil d'essai, pas un élément "
-    "de l'écran. Touchez-la pour couper le réseau simulé, puis validez : la saisie arrive en "
+    "de l'écran. Touche-la pour couper le réseau simulé, puis valide : la saisie arrive en "
     "« Pas envoyé », et « Renvoyer » la fait partir.\n\n"
     "Carte : un bouton « Carte » dans l'en-tête, pas un glissé (invisible, en conflit avec le "
     "déplacement de la carte et le retour de Safari, exclu seul par WCAG 2.5.1 et 2.5.7). "
     "T7 : vague 6.\n\n"
-    "États sans prototype : rien à faire, premier jour, sans position, chargé.\n\n"
+    "États sans prototype : rien à faire, premier jour, sans position, chargé, hors ligne.\n\n"
     "Données fictives."), name="Notes · vague 1", props={
         "width": 480, "textAutoResize": "height", "fontFamily": "Inter", "fontSize": 16,
         "fills": [TEXTE]})

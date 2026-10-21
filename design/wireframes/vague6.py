@@ -14,10 +14,21 @@ from vague3 import NAV, coquille, pastille
 
 N0 = len(vague3.LIENS_NAV)
 ARBRES = [  # nom, x, y (en % de la carte), dû aujourd'hui ?, numéro de tournée
-    ("Prunier n°3", .30, .30, True, 1), ("Pommier 'Reine des reinettes'", .40, .26, False, 0),
-    ("Pommier 1", .48, .30, False, 0), ("Pommier 2", .56, .26, False, 0),
-    ("Poirier 'Conférence'", .34, .62, True, 2), ("Cerisier 'Burlat'", .46, .66, False, 0),
-]
+    ("Prunier n°3", .28, .32, True, 1), ("Pommier 'Reine des reinettes'", .46, .26, False, 0),
+    ("Pommier 1", .60, .34, False, 0), ("Pommier 2", .40, .40, False, 0),
+    ("Poirier 'Conférence'", .34, .62, True, 2), ("Cerisier 'Burlat'", .48, .66, False, 0),
+]   # espacées d'au moins 48 px sur la carte du téléphone : les cibles ne se recouvrent pas
+CIBLE = 48   # zone de toucher d'un pion (principes-ux §2), quelle que soit sa taille visible
+
+
+def pion(c, nom, cx, cy, r, plein, n=0, trait=FORT):
+    """Un rond visible de rayon `r`, centré dans une cible transparente de 48 × 48 (audit n° 6)."""
+    p = d.cadre(f"Plante · {nom}", c, cx - CIBLE / 2, cy - CIBLE / 2, CIBLE, CIBLE)
+    rond = d.cadre("Pion", p, CIBLE / 2 - r, CIBLE / 2 - r, 2 * r, 2 * r,
+                   fond=FORT if plein else FOND, rayon=r, trait=trait)
+    if n:
+        d.texte(rond, 0, r - 9, 2 * r, str(n), 13, gras=True, couleur=BLANC, align="center")
+    return p
 
 
 def fond_carte(parent, x, y, w, h, fond: str):
@@ -50,19 +61,11 @@ def fond_carte(parent, x, y, w, h, fond: str):
     d.texte(c, w * .08, h * .84 - 18, 300, "Haie de charmilles", 11, couleur=SECOND)
     pions = {}
     for nom, px, py, du, n in ARBRES:
-        r = 13 if du else 8
-        p = d.cadre(f"Plante · {nom}", c, w * px - r, h * py - r, 2 * r, 2 * r,
-                    fond=FORT if du else FOND, rayon=r, trait=FORT)
-        if n:
-            d.texte(p, 0, 4, 2 * r, str(n), 13, gras=True, couleur=BLANC, align="center")
-        pions[nom] = p
+        pions[nom] = pion(c, nom, w * px, h * py, 13 if du else 8, du, n)
     # La pelouse et la haie sont dues aussi : elles portent leur numéro de tournée
     for nom, px, py, n in [("Pelouse devant la maison", .81, .66, 3),
                            ("Haie de charmilles — côté route", .50, .845, 4)]:
-        p = d.cadre(f"Plante · {nom}", c, w * px - 13, h * py - 13, 26, 26, fond=FORT, rayon=13,
-                    trait=FOND)
-        d.texte(p, 0, 4, 26, str(n), 13, gras=True, couleur=BLANC, align="center")
-        pions[nom] = p
+        pions[nom] = pion(c, nom, w * px, h * py, 13, True, n, trait=FOND)
     return c, pions
 
 
@@ -106,61 +109,71 @@ def carte_bureau(nom, fond="aérienne", outil="Sélectionner", selection=None, b
 
 
 b13, b13_carte, b13_pions, b13_outils, b13_fonds, pan = carte_bureau("B13 · 01 · Carte")
-d.texte(pan, 24, 24, PANNEAU - 48, "Aujourd'hui sur la carte", 18, gras=True)
-d.texte(pan, 24, 54, PANNEAU - 48, "4 plantes dues, numérotées dans l'ordre de la tournée.", 14,
-        couleur=SECOND)
-for k, (n, nom, geste) in enumerate([(1, "Prunier n°3", "Traitement cuivre · urgent"),
-                                     (2, "Poirier 'Conférence'", "Traitement cuivre"),
-                                     (3, "Pelouse devant la maison", "Tonte"),
-                                     (4, "Haie de charmilles", "Taille")]):
-    p = d.cadre("Numéro", pan, 24, 100 + k * 56, 26, 26, fond=FORT, rayon=13)
-    d.texte(p, 0, 4, 26, str(n), 13, gras=True, couleur=BLANC, align="center")
-    d.texte(pan, 62, 98 + k * 56, PANNEAU - 86, nom, 15, gras=True)
-    d.texte(pan, 62, 120 + k * 56, PANNEAU - 86, geste, 13, couleur=SECOND)
-d.cadre("Séparateur", pan, 24, 336, PANNEAU - 48, 1, fond=TRAIT)
-d.texte(pan, 24, 356, PANNEAU - 48, "À placer · 12 sans position", 18, gras=True)
-d.texte(pan, 24, 386, PANNEAU - 48, "Glissez-les sur la carte, une par une.", 14, couleur=SECOND)
-a_placer = []
-for k in range(5):
-    r = d.cadre(f"À placer · Pommier {k + 4}", pan, 24, 420 + k * 52, PANNEAU - 48, 44,
-                fond=SURFACE, rayon=8)
-    poignee = d.cadre("Poignée", r, 12, 14, 14, 16)
-    for i in range(3):
-        d.cadre("Trait", poignee, 0, i * 6, 14, 2, fond=SECOND)
-    d.texte(r, 38, 12, 200, f"Pommier {k + 4}", 15, gras=True)
-    d.texte(r, PANNEAU - 48 - 96, 13, 84, f"FRU-{k + 5:03d}", 13, couleur=SECOND, align="right")
-    a_placer.append(r)
-d.texte(pan, 24, 690, PANNEAU - 48, "et 7 autres", 14, couleur=SECOND)
+def panneau_du_jour(pan):
+    """Les dues de la tournée, puis « À placer » : B13 · 01 et B13 · 04."""
+    d.texte(pan, 24, 24, PANNEAU - 48, "Aujourd'hui sur la carte", 18, gras=True)
+    d.texte(pan, 24, 54, PANNEAU - 48, "4 plantes dues, numérotées dans l'ordre de la tournée.",
+            14, couleur=SECOND)
+    for k, (n, nom, geste) in enumerate([(1, "Prunier n°3", "Traitement cuivre · urgent"),
+                                         (2, "Poirier 'Conférence'", "Traitement cuivre"),
+                                         (3, "Pelouse devant la maison", "Tonte"),
+                                         (4, "Haie de charmilles", "Taille")]):
+        p = d.cadre("Numéro", pan, 24, 100 + k * 56, 26, 26, fond=FORT, rayon=13)
+        d.texte(p, 0, 4, 26, str(n), 13, gras=True, couleur=BLANC, align="center")
+        d.texte(pan, 62, 98 + k * 56, PANNEAU - 86, nom, 15, gras=True)
+        d.texte(pan, 62, 120 + k * 56, PANNEAU - 86, geste, 13, couleur=SECOND)
+    d.cadre("Séparateur", pan, 24, 336, PANNEAU - 48, 1, fond=TRAIT)
+    d.texte(pan, 24, 356, PANNEAU - 48, "À placer · 12 sans position", 18, gras=True)
+    d.texte(pan, 24, 386, PANNEAU - 48, "Glisse-les sur la carte, une par une.", 14,
+            couleur=SECOND)
+    lignes = []
+    for k in range(5):
+        r = d.cadre(f"À placer · Pommier {k + 4}", pan, 24, 420 + k * 52, PANNEAU - 48, 44,
+                    fond=SURFACE, rayon=8)
+        poignee = d.cadre("Poignée", r, 12, 14, 14, 16)
+        for i in range(3):
+            d.cadre("Trait", poignee, 0, i * 6, 14, 2, fond=SECOND)
+        d.texte(r, 38, 12, 200, f"Pommier {k + 4}", 15, gras=True)
+        d.texte(r, PANNEAU - 48 - 96, 13, 84, f"FRU-{k + 5:03d}", 13, couleur=SECOND,
+                align="right")
+        lignes.append(r)
+    d.texte(pan, 24, 690, PANNEAU - 48, "et 7 autres", 14, couleur=SECOND)
+    return lignes
+
+
+a_placer = panneau_du_jour(pan)
 # Plante sélectionnée sur la carte : une bulle, avec l'action « fait » (§6, lot 4)
 px, py = MW * .34, BH * .62
-bulle = d.cadre("Bulle · Poirier 'Conférence'", b13_carte, px + 20, py - 150, 330, 190,
+# Large de 280 : elle s'arrête avant la pelouse et n'en masque pas le nom (audit n° 46).
+BULLE = 280
+bulle = d.cadre("Bulle · Poirier 'Conférence'", b13_carte, px + 20, py - 170, BULLE, 210,
                 fond=FOND, rayon=12, trait=FORT)
-d.texte(bulle, 16, 14, 298, "Poirier 'Conférence' · FRU-030", 16, gras=True)
-pastille(bulle, 16, 44, "ouverte")
-d.texte(bulle, 106, 48, 210, "Traitement cuivre", 14)
-d.texte(bulle, 16, 80, 298, "Jusqu'au 15 nov. · règle que vous avez définie. "
+d.texte(bulle, 16, 14, BULLE - 76, "Poirier 'Conférence' · FRU-030", 16, gras=True)
+b13_fermer = d.bouton_icone(bulle, BULLE - 52, 4, 48, 48, "x", "Fermer")
+pastille(bulle, 16, 62, "à faire")
+d.texte(bulle, 106, 66, BULLE - 122, "Traitement cuivre", 14)
+d.texte(bulle, 16, 96, BULLE - 32, "Jusqu'au 15 nov. · règle que tu as définie. "
         "Position : relevé GPS, ± 6 m.", 13, couleur=SECOND)
-b13_fait = d.bouton(bulle, 16, 132, 88, 44, "Fait", principal=True)
-b13_fiche = d.bouton(bulle, 112, 132, 150, 44, "Ouvrir la fiche")
+b13_fait = d.bouton(bulle, 16, 152, 88, 44, "Fait", principal=True)
+b13_fiche = d.bouton(bulle, 112, 152, 150, 44, "Ouvrir la fiche")
 
 # B13 · 02 : poser un pommier depuis le panneau
 b13p, c_p, _, _, _, pan_p = carte_bureau("B13 · 02 · Carte — poser une plante",
                                           outil="Poser une plante")
 d.texte(pan_p, 24, 24, PANNEAU - 48, "Pommier 4 · FRU-005", 18, gras=True)
-d.texte(pan_p, 24, 56, PANNEAU - 48, "Cliquez à son emplacement. Sa position prendra la source "
-        "« plan » : un relevé GPS ultérieur ne la déplacera pas (RG-48).", 14, couleur=SECOND)
+d.texte(pan_p, 24, 56, PANNEAU - 48, "Clique à son emplacement : le clic la pose. Une position "
+        "posée sur le plan ne bouge plus, même après un relevé GPS.", 14, couleur=SECOND)
 fantome = d.cadre("Plante en cours de pose", c_p, MW * .64 - 10, BH * .30 - 10, 20, 20,
                   fond=FOND, rayon=10, trait=FORT, pointille=True)
 d.texte(c_p, MW * .64 + 16, BH * .30 - 8, 200, "Pommier 4", 13, gras=True)
-b13p_ok = d.bouton(pan_p, 24, 150, PANNEAU - 48, 52, "Poser et passer au suivant",
-                   principal=True)
+b13p_ok = d.bouton(pan_p, 24, 150, PANNEAU - 48, 52, "Passer au suivant ›")
 d.bouton(pan_p, 24, 214, PANNEAU - 48, 52, "Arrêter de poser")
 d.texte(pan_p, 24, 290, PANNEAU - 48, "Restent 11 plantes à placer.", 14, couleur=SECOND)
 
 # B13 · 03 : caler un plan importé, en trois points
 b13c, c_c, _, _, _, pan_c = carte_bureau("B13 · 03 · Carte — caler un plan", fond="plan")
 d.texte(pan_c, 24, 24, PANNEAU - 48, "Caler le plan importé", 18, gras=True)
-d.texte(pan_c, 24, 56, PANNEAU - 48, "Désignez trois points que vous retrouvez sur le plan et "
+d.texte(pan_c, 24, 56, PANNEAU - 48, "Désigne trois points que tu retrouves sur le plan et "
         "sur la photographie aérienne : un angle de la maison, un piquet, un portail.", 14,
         couleur=SECOND)
 for k, (lib, fait) in enumerate([("A · Angle de la maison", True), ("B · Portail", True),
@@ -184,14 +197,12 @@ b13n, _, _, _, _, pan_n = carte_bureau(
     "B13 · 04 · Carte — fond indisponible", fond="neutre",
     bandeau="La photographie aérienne ne répond pas : fond neutre. Échéances, saisie et tournée "
             "ne sont pas touchées.")
-d.texte(pan_n, 24, 24, PANNEAU - 48, "Aujourd'hui sur la carte", 18, gras=True)
-d.texte(pan_n, 24, 54, PANNEAU - 48, "4 plantes dues — le même contenu, sans le fond.", 14,
-        couleur=SECOND)
+panneau_du_jour(pan_n)   # le même panneau que B13 · 01 : seul le fond manque (audit n° 26)
 
 # --- T7 · Carte terrain et tournée -----------------------------------------------
 d.cmd("page.select", id=ids_pages["3 · Wireframes terrain"])
 t7 = vague1.t7
-H_CARTE = 420
+H_CARTE = 340   # la tournée tient au-dessus de l'indicateur d'accueil (audit n° 7)
 
 
 def entete_carte(f):
@@ -230,7 +241,7 @@ c7, pions7 = fond_carte(t7, 0, 108, W, H_CARTE, "aérienne")
 moi = d.cadre("Ma position", c7, W * .22 - 9, H_CARTE * .44 - 9, 18, 18, fond=FOND, rayon=9,
               trait=FORT)
 d.cadre("Point", moi, 5, 5, 8, 8, fond=FORT, rayon=4)
-d.texte(c7, W * .22 - 40, H_CARTE * .44 + 12, 100, "Vous, ± 8 m", 11, gras=True,
+d.texte(c7, W * .22 - 40, H_CARTE * .44 + 12, 100, "Toi, ± 8 m", 11, gras=True,
         align="center")
 faits7: dict = {}
 t7_modifier = tournee(t7, 108 + H_CARTE + 20, TOURNEE[:4], faits7)
@@ -240,30 +251,36 @@ t7b = vague1.ecran("T7 · 02 · Carte — plante touchée")
 entete_carte(t7b)
 c7b, _ = fond_carte(t7b, 0, 108, W, H_CARTE, "aérienne")
 d.cadre("Voile", t7b, 0, 0, W, 844, fond="#00000066")
-feuille = d.cadre("Feuille · Poirier 'Conférence'", t7b, 0, 844 - 300, W, 300, fond=FOND,
-                  rayon=16)
-d.texte(feuille, M, 24, W - 2 * M, "2 · Poirier 'Conférence'", 20, gras=True)
-d.texte(feuille, M, 54, W - 2 * M, "FRU-030 · Verger bas · à 40 m", 14, couleur=SECOND)
-d.texte(feuille, M, 90, W - 2 * M, "Traitement cuivre · jusqu'au 15 nov.", 16)
-d.texte(feuille, M, 116, W - 2 * M, "Règle de la bibliothèque, décalée de 7 jours.", 13,
+# La feuille a sa poignée et sa croix, et ses boutons finissent au-dessus de l'indicateur
+# d'accueil (audit n° 7, 16) ; toucher le voile la ferme aussi.
+H_FEUILLE = 340
+feuille = d.cadre("Feuille · Poirier 'Conférence'", t7b, 0, 844 - H_FEUILLE, W, H_FEUILLE,
+                  fond=FOND, rayon=16)
+d.cadre("Poignée", feuille, (W - 40) // 2, 8, 40, 4, fond=TRAIT, rayon=2)
+t7b_fermer = d.bouton_icone(feuille, W - M - 48, 16, 48, 48, "x", "Fermer")
+d.texte(feuille, M, 28, W - 2 * M - 56, "2 · Poirier 'Conférence'", 20, gras=True)
+d.texte(feuille, M, 58, W - 2 * M - 56, "FRU-030 · Verger bas · à 40 m", 14, couleur=SECOND)
+d.texte(feuille, M, 94, W - 2 * M, "Traitement cuivre · jusqu'au 15 nov.", 16)
+d.texte(feuille, M, 120, W - 2 * M, "Règle de la bibliothèque, décalée de 7 jours.", 13,
         couleur=SECOND)
 t7b_fait = d.bouton(feuille, M, 160, W - 2 * M, 56, "Fait", principal=True)
-t7b_fiche = d.bouton(feuille, M, 228, W - 2 * M, 48, "Ouvrir la fiche")
+t7b_fiche = d.bouton(feuille, M, 228, W - 2 * M, 48, "Ouvrir la fiche")   # finit à 776
 
 # T7 · 03 : modifier l'ordre de la tournée
 t7c = vague1.ecran("T7 · 03 · Tournée — modifier l'ordre")
-d.texte(t7c, M, 60, W - 2 * M, "Ordre de la tournée", 22, gras=True)
-d.texte(t7c, M, 94, W - 2 * M, "Proposé du plus proche au plus loin, depuis votre position. "
+t7c_retour = d.bouton_icone(t7c, 8, 52, 48, 48, "chevron-left", "Retour")   # audit n° 30
+d.texte(t7c, 64, 60, W - 64 - M, "Ordre de la tournée", 22, gras=True)
+d.texte(t7c, M, 108, W - 2 * M, "Proposé du plus proche au plus loin, depuis ta position. "
         "C'est une suggestion.", 14, couleur=SECOND)
 for k, (n, nom, geste) in enumerate([TOURNEE[0], TOURNEE[2], TOURNEE[1], TOURNEE[3]]):
-    r = d.cadre(f"Ligne · {nom}", t7c, M, 160 + k * 92, W - 2 * M, 84, fond=FOND, rayon=10,
+    r = d.cadre(f"Ligne · {nom}", t7c, M, 168 + k * 92, W - 2 * M, 84, fond=FOND, rayon=10,
                 trait=FORT if k == 1 else TRAIT)
     d.texte(r, 14, 12, 220, f"{k + 1} · {nom}", 15, gras=True)
     d.texte(r, 14, 56, 220, geste.split(" · ")[0], 13, couleur=SECOND)
     d.bouton_icone(r, W - 2 * M - 112, 18, 48, 48, "arrow-up", f"Monter {nom}", inactif=k == 0)
     d.bouton_icone(r, W - 2 * M - 58, 18, 48, 48, "arrow-down", f"Descendre {nom}",
                    inactif=k == 3)
-d.texte(t7c, M, 540, W - 2 * M, "La pelouse est passée avant le poirier.", 14, couleur=SECOND)
+d.texte(t7c, M, 548, W - 2 * M, "La pelouse est passée avant le poirier.", 14, couleur=SECOND)
 d.bouton(t7c, M, 680, W - 2 * M, 48, "Revenir à l'ordre proposé")
 t7c_ok = d.bouton(t7c, M, 740, W - 2 * M, 56, "Terminé", principal=True)
 
@@ -295,14 +312,16 @@ d.texte(t6, M, 720, W - 2 * M, "L'appareil photo du téléphone, pas un lecteur 
         "aucune application à installer.", 13, couleur=BLANC, align="center")
 
 t6b = vague1.ecran("T6 · 02 · Étiquette inconnue")
-d.texte(t6b, M, 120, W - 2 * M, "Aucune plante « FRU-099 » dans vos jardins", 22, gras=True)
+t6b_retour = d.bouton_icone(t6b, 8, 52, 48, 48, "chevron-left", "Retour")
+d.texte(t6b, M, 120, W - 2 * M, "Aucune plante « FRU-099 » dans tes jardins", 22, gras=True)
 d.texte(t6b, M, 186, W - 2 * M, "L'étiquette vient peut-être d'un autre jardin, ou la plante a "
         "été supprimée.", 15, couleur=SECOND)
-d.bouton(t6b, M, 260, W - 2 * M, 56, "Chercher une plante par son nom", principal=True)
-d.bouton(t6b, M, 328, W - 2 * M, 56, "Aller à Aujourd'hui")
+# Les actions dans le tiers bas, à portée du pouce (audit n° 17)
+d.bouton(t6b, M, 652, W - 2 * M, 56, "Chercher une plante par son nom", principal=True)
+t6b_accueil = d.bouton(t6b, M, 720, W - 2 * M, 56, "Aller à Aujourd'hui")
 
 t6c = vague1.ecran("T6 · 03 · Étiquette scannée — pas connecté")
-d.texte(t6c, M, 100, W - 2 * M, "Connectez-vous pour ouvrir cette plante", 22, gras=True)
+d.texte(t6c, M, 100, W - 2 * M, "Connecte-toi pour ouvrir cette plante", 22, gras=True)
 d.texte(t6c, M, 166, W - 2 * M, "La fiche s'ouvrira juste après.", 15, couleur=SECOND)
 champ(t6c, M, 220, W - 2 * M, "Adresse électronique", "leon@exemple.fr")
 champ(t6c, M, 320, W - 2 * M, "Mot de passe", "••••••••••")
@@ -310,17 +329,23 @@ t6c_ok = d.bouton(t6c, M, 424, W - 2 * M, 56, "Se connecter", principal=True)
 
 # --- Prototype -----------------------------------------------------------------
 d.retour(t7_retour)
+t7e = vague1.ecran("T7 · 05 · Carte — enregistré")   # « Fait » sans confirmation (Q-UX-24)
+entete_carte(t7e)
+fond_carte(t7e, 0, 108, W, H_CARTE, "aérienne")
+t7e_annuler, t7e_photo = vague1.bandeau_enregistre(t7e, M, 120, W - 2 * M,
+                                                   "Traitement cuivre · Prunier n°3")
+tournee(t7e, 108 + H_CARTE + 20, TOURNEE[1:], {})
 for nom, b in faits7.items():
-    d.cmd("proto.interaction.add", id=b, trigger={"type": "onClick"}, action={
-        "type": "openOverlay", "dest": vague1.conf, "position": "bottomCenter",
-        "close_on_outside": True, "background": "#00000066"},
-        transition={"type": "moveIn", "direction": "top"}, durationMs=200)
+    d.selon_reseau(b, t7e, vague1.t4)
+d.lien(t7e_annuler, t7, "dissolve")
+d.lien(t7e_photo, vague1.photo_inter)
 d.lien(pions7["Poirier 'Conférence'"], t7b, "instant")
 d.lien(t7b_fiche, vague3.t5)
-d.cmd("proto.interaction.add", id=t7b_fait, trigger={"type": "onClick"}, action={
-    "type": "openOverlay", "dest": vague1.conf, "position": "bottomCenter",
-    "close_on_outside": True, "background": "#00000066"},
-    transition={"type": "moveIn", "direction": "top"}, durationMs=200)
+d.selon_reseau(t7b_fait, t7e, vague1.t4)
+d.lien(t7b_fermer, t7, "dissolve")
+d.retour(t7c_retour)
+d.retour(t6b_retour)
+d.lien(t6b_accueil, vague1.t1)
 d.lien(t7_modifier, t7c)
 d.lien(t7c_ok, t7)
 d.lien(lien_sys, vague3.t5)
