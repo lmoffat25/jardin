@@ -189,6 +189,28 @@ terreux ou corail, posé sur de petites surfaces (pastille, filet, mention
 une forme double toujours la couleur (rouge et vert se confondent pour une
 partie des daltoniens).
 
+**Présélection typographique (21/10/2026).** 21 polices candidates, toutes
+sous licence OFL 1.1, tirées du dépôt `google/fonts` et vérifiées dans les
+fichiers avec fontTools : chiffres tabulaires, lettres du français, graisses.
+Huit paires ont été notées sur les huit critères du §2. Une paire est
+retenue par territoire, pour les explorations :
+
+| Territoire | Titres | Texte | Note sur 40 | Ce qui la fait retenir |
+|---|---|---|---|---|
+| A · Étiquette | Archivo, étroit, 600 | Atkinson Hyperlegible Next, 400 et 600 | 37 | La meilleure lisibilité mesurée au terrain (`I` à empattements, zéro barré) ; la grotesque étroite de l'étiquette de collection |
+| B · Carnet | Alegreya, 500 | Alegreya Sans, 400 et 700 | 34 | La seule paire qui évoque la plume du naturaliste ; hauteur d'x basse, donc un corps plus grand au terrain, et des chiffres à forcer en `lining-nums tabular-nums` |
+| C · Planche | Bodoni Moda, 500, taille optique | IBM Plex Sans, 400 et 600 | 36 | Le didone de la planche gravée, une légende nette ; Bodoni jamais sous 20 px |
+
+**Écartées** : Instrument Serif, Libre Caslon Display, IM Fell English et
+Libre Franklin, qui n'ont pas de chiffres tabulaires ; Public Sans, qui
+confond `I`, `l` et presque `0` et `O`, constaté sur capture ; Fraunces et
+les sans-serif arrondies, déjà prises par le secteur.
+
+**À trancher à la convergence** : l'espace fine insécable (U+202F, avant
+« ; : ! ? % » et dans « 10 % ») manque dans 17 des 21 polices. Il faudra
+une police de repli vérifiée qui l'ait, ou l'espace insécable ordinaire
+(U+00A0).
+
 ## 7. Outils
 
 | Outil | Sert à | Remarque |
