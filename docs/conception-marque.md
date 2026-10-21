@@ -151,9 +151,12 @@ description, pour que rien de personnel n'entre dans le dépôt.
   références aimées : la photo de la plante au premier plan, la précision
   d'un guide de terrain, de la profondeur et de la matière plutôt que des
   aplats.
-- **Contraintes de couleur** : ni violet ni rouge, donc l'état « en
-  retard » se dit autrement que par le rouge (teinte, icône, mot, position).
-  Cela remplace l'idée d'un rouge d'alerte dans les `Primitives`.
+- **Contraintes de couleur** : ni violet ni rouge **dans la marque**
+  (palette, logo, illustrations, action principale). Les couleurs
+  **fonctionnelles** sont à part (précision de Léon, 21/10/2026) : une
+  urgence, un retard ou une erreur peuvent être en rouge, comme une
+  notification. Elles vivent dans les rôles sémantiques `etat/*` et `erreur`,
+  et restent doublées d'une icône et d'un mot (`conception-ecrans.md` §5).
 
 ## 6. Choix retenus
 
