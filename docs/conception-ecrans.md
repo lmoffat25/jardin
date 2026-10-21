@@ -1,7 +1,7 @@
 # Conception des écrans — maquette dans FigCraft
 
 Version 0.1 — 19/10/2026
-Applique le CDC v0.13 (§2.2, §7, §8.5, §1.5). Décisions **M1 à M12**. Points
+Applique le CDC v0.13 (§2.2, §7, §8.5, §1.5). Décisions **M1 à M13**. Points
 ouverts **O22 à O25**, à la suite du chapitre technique 6.
 
 **Ce que ce document traite.** Comment les écrans sont conçus avant d'être
@@ -22,6 +22,31 @@ n'existe pas encore, et le fichier est conçu pour l'attendre (§2).
 ---
 
 ## 1. Deux étapes, et un arrêt entre les deux
+
+> **Révision du 21/10/2026 (décision de Léon, après le premier essai du
+> prototype).** Les écrans d'interface recopiaient la structure des
+> wireframes sans la remettre en cause (bouton retour dans une bande à part,
+> plante redemandée depuis sa fiche). D'où trois livrables distincts, chacun
+> avec sa revue :
+>
+> 1. **Wireframes**, repris en une passe guidée par le référentiel
+>    `docs/principes-ux.md` et sa grille d'audit. Ils deviennent la
+>    **référence des parcours** : ordre, gestes, place de chaque élément.
+> 2. **Marque initiale**, faite par nous, cohérente avec le produit, le besoin
+>    et la cible : positionnement, ton, palette, typographie, logo provisoire,
+>    proposés en deux ou trois directions. Le nom du produit reste à Léon. Elle
+>    sera remplacée par celle d'un designer, en changeant les `Primitives`
+>    (M3), sans toucher aux écrans.
+> 3. **Maquette**, l'interface rejouée avec cette marque et une vraie passe de
+>    rendu (tailles, image pleine largeur, densité). Elle devient la
+>    **référence du rendu** pour les agents de développement (§6).
+>
+> **M13** — Un défaut relevé sur la maquette se classe avant d'être corrigé :
+> **structure** (un élément manque, est mal placé, coûte un geste ou redemande
+> ce que le contexte connaît) se corrige dans la vague du wireframe, et
+> l'interface suit ; **rendu** (taille, contraste, espacement, hiérarchie) se
+> corrige dans `design/interface/`. Corriger une structure dans l'interface
+> seule, c'est la perdre à la prochaine reconstruction.
 
 > **Révision du 19/10/2026 (décision de Léon).** L'arrêt entre les deux
 > étapes n'est plus une porte : les vagues s'enchaînent sans attendre la
