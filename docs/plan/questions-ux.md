@@ -442,3 +442,56 @@ D-107), le 20/10/2026 : `PUT /plantes/{plante}/geometrie` avec
 `source: manuel` rend `422` sur `source` quand la géométrie en place est en
 source `plan`. Une autre réponse change `GeometrieController`.
 **Réponse :**
+
+## Q-UX-24 — Solder une échéance : confirmer ou annuler
+
+**Question :** aujourd'hui « Fait » ouvre une confirmation, puis le bandeau
+« Enregistré » propose encore « Annuler » : deux sécurités pour un geste
+réversible, et un geste de plus. Le CDC (P2) dit « une seule confirmation ».
+**Concerne :** T1·01 à T1·03, T5, T7 (« Fait » sur le terrain), B4, B6.
+**Options :**
+1. **Recommandé — « Fait » s'applique tout de suite, avec « Annuler »
+   quelques secondes** dans le bandeau « Enregistré ». La confirmation
+   disparaît ; l'annulation tient lieu de filet (NN/g, *confirmation
+   dialogs* : confirmer seulement l'irréversible). Le texte de P2 est à
+   reformuler en conséquence quand Léon confirme.
+2. On garde la confirmation, sans « Annuler ».
+3. On garde les deux.
+
+**Ce qui attend :** rien ne bloque. Appliquée : la recommandation, dans la
+passe sur les wireframes du 21/10/2026 (audit UX, n° 3).
+**Réponse :**
+
+## Q-UX-25 — Une journée chargée
+
+**Question :** les jours chargés, les retards se perdent dans l'ordre par
+zone, et six traitements identiques d'une même zone se valident un par un.
+**Concerne :** T1·06 (Aujourd'hui, chargé), B4.
+**Options :**
+1. **Recommandé — un bloc « En retard » en tête, puis l'ordre par zone ; et
+   « Tout marquer fait » sur un groupe d'échéances du même type dans une même
+   zone**, avec « Annuler » (Q-UX-24).
+2. Le bloc « En retard » seul.
+3. Rien ne change.
+
+**Ce qui attend :** rien ne bloque. Appliquée : la recommandation, dans la
+passe sur les wireframes du 21/10/2026 (audit UX, n° 15). Le « Tout marquer
+fait » demande une route de solde groupé si elle n'existe pas.
+**Réponse :**
+
+## Q-UX-26 — Le mot « Intervention »
+
+**Question :** « Intervention » apparaît partout au bureau (menu, titres,
+boutons). L'audit propose « Geste », plus proche du jardinier ; mais c'est le
+vocabulaire de tout le CDC et du modèle de données.
+**Concerne :** navigation bureau, B4, B5, B6, B8, B11, B12.
+**Options :**
+1. **Recommandé — on garde « Intervention » comme nom, et on simplifie les
+   tournures d'action** : « Ajouter ce que j'ai fait » plutôt que « Ajouter
+   une intervention passée ».
+2. « Geste » partout dans l'interface (le code garde `Intervention`).
+3. Rien ne change.
+
+**Ce qui attend :** rien ne bloque. Appliquée : la recommandation, dans la
+passe sur les wireframes du 21/10/2026 (audit UX, n° 20).
+**Réponse :**
