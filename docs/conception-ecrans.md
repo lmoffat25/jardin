@@ -250,11 +250,11 @@ donc à un seul endroit, et l'interface suit.
 
 | # | Écran | Contexte | Parcours, fonction | Lot |
 |---|---|---|---|---|
-| T1 | Aujourd'hui : liste du jour, « fait » | Terrain | P2 | 0 |
-| T2 | Je viens de faire : choix du type | Terrain | P1 | 0 |
-| T3 | Choix des plantes, triées par proximité | Terrain | P1 | 0 |
+| T1 | Aujourd'hui : liste du jour, « fait » en un geste, sans confirmation, avec « Annuler » dans le bandeau « Enregistré » (Q-UX-24) ; les jours chargés, un bloc « En retard » en tête et « Tout fait » par groupe (Q-UX-25) ; une mention discrète hors ligne (T1·08) ; la photo de l'intervention est facultative et proposée après coup (T1·07) | Terrain | P2 | 0 |
+| T2 | Je viens de faire : choix du type, les 5 derniers types en tête, puis tous | Terrain | P1 | 0 |
+| T3 | Choix des plantes, triées par proximité ; sans position, les plantes dues pour ce type puis les récentes | Terrain | P1 | 0 |
 | T4 | Saisie enregistrée, ou **non envoyée** (RG-50) | Terrain | P1, P2 | 0 |
-| T5 | Fiche plante, avec photo | Terrain | P6 | 0 |
+| T5 | Fiche plante : photo de couverture pleine largeur, ou son encart vide avec « + » ; « Je viens de faire… » garde la plante choisie (T5·03) | Terrain | P6 | 0 |
 | T6 | Lecture d'un QR | Terrain | Étiquettes scannables | 4 |
 | T7 | Carte terrain et ordre de tournée. On y entre par un **bouton « Carte »** dans l'en-tête de T1, pas par un glissé (19/10/2026) ; la tournée est un panneau fixe sous la carte, sans glissé (vague 6, Q-UX-10) | Terrain | Carte | 4 |
 | B1 | Connexion | Bureau | Socle | 0 |
@@ -350,6 +350,14 @@ calques.
   défaut, la plante proposée est la dernière consultée ou la plus proche.
 - L'utilisateur sait toujours si ce qu'il vient de saisir est enregistré
   (RG-50) : l'état « non envoyé » est dessiné, pas laissé au développement.
+- Un geste réversible ne se confirme pas : il s'applique, et le bandeau
+  « Enregistré » propose « Annuler » quelques secondes (Q-UX-24). Seul
+  l'irréversible demande une confirmation.
+- On tutoie, partout : écrans, messages, consignes d'essai du prototype.
+- Le retour d'un écran à photo pleine largeur est un bouton rond posé sur la
+  photo, sous la barre d'état (rayon `forme/rayon-rond`).
+- Une liste qui défile sous un tiroir fixe garde une marge basse égale à la
+  hauteur du tiroir : aucune ligne n'est coupée.
 
 ### Bureau
 

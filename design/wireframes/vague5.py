@@ -35,8 +35,8 @@ def connexion(nom, erreur=None):
     champ(c, 40, y, 360, "Adresse électronique", "leon@exemple.fr")
     champ(c, 40, y + 100, 360, "Mot de passe", "••••••••••" if not erreur else "•••••••")
     ok = d.bouton(c, 40, y + 204, 360, 56, "Se connecter", principal=True)
-    d.texte(c, 40, y + 276, 360, "Rester connecté sur cet appareil : oui, 30 jours", 13,
-            couleur=SECOND)
+    case(c, 40, y + 276, True)   # une commande, pas un constat (audit n° 43)
+    d.texte(c, 72, y + 276, 328, "Rester connecté 30 jours sur cet appareil", 14)
     return f, ok
 
 
@@ -84,6 +84,7 @@ CODES = [("FRU-002", "Pommier 1"), ("FRU-003", "Pommier 2"), ("FRU-004", "Pommie
          ("FRU-008", "Pommier 7"), ("FRU-009", "Pommier 8"), ("FRU-010", "Pommier 9"),
          ("FRU-011", "Pommier 10"), ("FRU-012", "Pommier 11"), ("FRU-013", "Pommier 12"),
          ("FRU-015", "Pommier 'Calville blanc'"), ("FRU-030", "Poirier 'Conférence'")]
+NOM_MAX = 26   # deux lignes de 68 px en corps 10
 for k in range(21):
     x, y = 14 + (k % 3) * 150, 14 + (k // 3) * 92
     e = d.cadre("Étiquette", planche, x, y, 142, 84, fond=FOND, rayon=4, trait=TRAIT)
@@ -92,21 +93,24 @@ for k in range(21):
         qr = d.cadre("QR", e, 8, 10, 56, 56, fond=FOND, trait=FORT)
         for i in range(3):
             d.cadre("Module", qr, 6 + i * 16, 6 + (i % 2) * 22, 12, 12, fond=FORT)
-        d.texte(e, 70, 12, 70, code, 15, gras=True)
-        d.texte(e, 70, 34, 70, nom, 10, couleur=SECOND)
-        d.texte(e, 70, 64, 70, "Le Clos", 9, couleur=SECOND)
+        # Hauteurs fixes : le nom tient en 2 lignes au plus, coupé d'une ellipse au-delà,
+        # et le jardin a sa propre ligne (audit n° 8). FigCraft ne tronque pas : on coupe ici.
+        d.texte(e, 70, 8, 68, code, 15, gras=True)
+        d.texte(e, 70, 30, 68, nom if len(nom) <= NOM_MAX else nom[:NOM_MAX - 1] + "…", 10,
+                couleur=SECOND)
+        d.texte(e, 70, 66, 68, "Le Clos", 9, couleur=SECOND)
 d.texte(b10, XA + 490, 172, AW - 490, "Le code en grand, lisible à un mètre : c'est lui qui "
         "fait foi si le QR s'abîme.\n\nLe nom en petit, pour le repérage ; il peut vieillir "
         "sans gêne.", 13, couleur=SECOND)
 
 # --- B11 · Catalogue des types d'intervention -------------------------------------
-FAMILLES = [  # CDC §3.7 ; « ajouté par vous » marque l'extension (RG-03)
+FAMILLES = [  # CDC §3.7 ; « ajouté par toi » marque l'extension (RG-03)
     ("Taille", [("Taille de formation", "fourni", 0), ("Taille d'entretien / fructification",
                                                         "fourni", 31),
                 ("Taille de haie", "fourni", 6), ("Rabattage", "fourni", 0)]),
     ("Traitement", [("Traitement cuivre", "fourni", 22), ("Huile blanche", "fourni", 0)]),
     ("Entretien courant", [("Tonte", "fourni", 48), ("Ramassage des feuilles", "fourni", 3),
-                           ("Ramassage des fruits tombés", "ajouté par vous", 4)]),
+                           ("Ramassage des fruits tombés", "ajouté par toi", 4)]),
     ("Récolte", [("Récolte", "fourni", 12)]),
 ]
 
@@ -115,7 +119,7 @@ def catalogue(nom, ajout=False):
     f = ecran(nom, BH + (240 if ajout else 80))   # la page défile
     coquille(f, "Types d'intervention")
     d.texte(f, CX0, 40, 700, "Types d'intervention", 32, gras=True)
-    d.texte(f, CX0, 86, 760, "Le catalogue fourni, plus les types que vous ajoutez. La famille "
+    d.texte(f, CX0, 86, 760, "Le catalogue fourni, plus les types que tu ajoutes. La famille "
             "décide des champs demandés à la saisie.", 16, couleur=SECOND)
     nouveau = d.bouton(f, CX0 + CW - 220, 40, 220, 48, "Nouveau type", principal=True)
     y = 140
@@ -127,7 +131,7 @@ def catalogue(nom, ajout=False):
         d.bouton(a, CW - 20 - 140 - 12 - 120, 46, 120, 48, "Annuler")
         with d.etat("attention"):
             d.texte(f, CX0, y + 128, CW, "⚠ Un type proche existe déjà : « Badigeon » (Traitement, "
-                    "fourni). Ajoutez quand même si c'est un geste différent.", 14, gras=True)
+                    "fourni). Ajoute-le quand même si c'est un geste différent.", 14, gras=True)
         y += 168
     for fam, types in FAMILLES:
         d.texte(f, CX0, y, 400, fam.upper(), 13, gras=True, couleur=SECOND)
@@ -138,8 +142,8 @@ def catalogue(nom, ajout=False):
             pastille(r, 460, 9, origine, False)
             d.texte(r, 700, 12, 240, f"utilisé {n} fois" if n else "jamais utilisé", 14,
                     couleur=SECOND)
-            d.texte(r, CW - 216, 12, 200, "Renommer · Masquer", 14, couleur=SECOND,
-                    align="right")
+            # Les deux gestes rares derrière un « … » par ligne (audit n° 44)
+            d.bouton_icone(r, CW - 52, 0, 44, 44, "ellipsis", f"Renommer ou masquer {nom_t}")
             y += 44
         y += 14
     d.texte(f, CX0, y, CW, "Un type déjà utilisé se masque, il ne se supprime pas : "
@@ -158,7 +162,7 @@ def export(nom, pret=False):
     coquille(f, "Export")
     d.texte(f, CX0, 40, 700, "Export des données", 32, gras=True)
     d.texte(f, CX0, 86, 800, "Tout le jardin, dans des formats qui se relisent sans l'outil. "
-            "À tout moment, autant de fois que vous voulez.", 16, couleur=SECOND)
+            "À tout moment, autant de fois que tu veux.", 16, couleur=SECOND)
     W2 = 640
     d.texte(f, CX0, 150, W2, "Ce que contient l'archive", 15, gras=True)
     for k, (lib, n) in enumerate([("Zones", "6"), ("Plantes, y compris archivées", "151"),
@@ -167,29 +171,33 @@ def export(nom, pret=False):
                                   ("Types d'intervention", "29")]):
         d.texte(f, CX0, 182 + k * 32, 400, lib, 15)
         d.texte(f, CX0 + 420, 182 + k * 32, 120, n, 15, couleur=SECOND, align="right")
-    case(f, CX0, 384, True)
-    d.texte(f, CX0 + 32, 384, W2, "Les 412 photos, en taille d'affichage (1 200 px) · 380 Mo", 15)
-    case(f, CX0, 416, False)
-    d.texte(f, CX0 + 32, 416, W2, "Avec les originaux, pour l'archive complète · 1,2 Go", 15)
-    d.texte(f, CX0, 456, W2, "Format", 15, gras=True)
+    # Un seul choix pour les photos (audit n° 45)
+    for k, (lib, sel) in enumerate([("Sans photos · 3 Mo", False),
+                                    ("Les 412 photos, en taille d'affichage (1 200 px) · 380 Mo",
+                                     True),
+                                    ("Avec les originaux, pour l'archive complète · 1,2 Go",
+                                     False)]):
+        vague3.radio(f, CX0, 384 + k * 32, sel)
+        d.texte(f, CX0 + 32, 384 + k * 32, W2, lib, 15, gras=sel)
+    d.texte(f, CX0, 488, W2, "Format", 15, gras=True)
     for k, (lib, sel) in enumerate([("JSON et CSV, dans une archive .zip", True),
                                     ("CSV seulement (un fichier par table)", False)]):
-        r = d.cadre(f"Format · {lib}", f, CX0, 484 + k * 52, W2, 44, fond=FOND, rayon=8,
+        r = d.cadre(f"Format · {lib}", f, CX0, 516 + k * 52, W2, 44, fond=FOND, rayon=8,
                     trait=FORT if sel else TRAIT)
         d.cadre("Radio", r, 14, 12, 20, 20, fond=FORT if sel else FOND, rayon=10, trait=FORT)
         d.texte(r, 46, 12, W2 - 60, lib, 15, gras=sel)
     if not pret:
-        go = d.bouton(f, CX0, 612, 300, 56, "Préparer l'export", principal=True)
-        d.texte(f, CX0, 682, W2, "La préparation prend quelques minutes avec les photos. Vous "
-                "pouvez quitter la page : le lien sera ici.", 13, couleur=SECOND)
+        go = d.bouton(f, CX0, 644, 300, 56, "Préparer l'export", principal=True)
+        d.texte(f, CX0, 714, W2, "La préparation prend quelques minutes avec les photos. Tu "
+                "peux quitter la page : le lien sera ici.", 13, couleur=SECOND)
     else:
         go = None
         if vague3.vague1.INTERFACE:
-            d.bandeau(f, CX0, 612, W2, 132, "succes", "Export prêt · le-clos-2026-10-21.zip · "
+            d.bandeau(f, CX0, 644, W2, 132, "succes", "Export prêt · le-clos-2026-10-21.zip · "
                       "380 Mo", "Contient un fichier LISEZMOI qui décrit chaque colonne. Lien "
                       "valable 7 jours.", "Télécharger", principal=True, largeur_action=200)
         else:
-            z = d.cadre("Export prêt", f, CX0, 612, W2, 132, fond=SURFACE, rayon=10, trait=FORT)
+            z = d.cadre("Export prêt", f, CX0, 644, W2, 132, fond=SURFACE, rayon=10, trait=FORT)
             d.texte(z, 20, 16, W2 - 40, "✓ Export prêt · le-clos-2026-10-21.zip · 380 Mo", 16,
                     gras=True)
             d.texte(z, 20, 42, W2 - 40, "Contient un fichier LISEZMOI qui décrit chaque colonne. "

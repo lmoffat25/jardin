@@ -90,8 +90,8 @@ def rond(parent, x, y, sel):
 def b2_tete(nom, valeur_nom=None, commune=None):
     f = ecran(nom)
     entete(f, 0)
-    d.texte(f, CX, 112, COL, "Votre jardin", 32, gras=True)
-    d.texte(f, CX, 160, COL, "Deux questions, puis on passe à ce qui pousse.", 17, couleur=SECOND)
+    d.texte(f, CX, 112, COL, "Ton jardin", 32, gras=True)
+    d.texte(f, CX, 160, COL, "Quelques questions, puis on passe à ce qui pousse.", 17, couleur=SECOND)
     champ(f, CX, 216, COL, "Son nom", valeur_nom, "Par exemple : La maison, Chez mes parents")
     champ(f, CX, 316, COL, "Sa commune", commune, "Nom ou code postal")
     return f
@@ -128,29 +128,32 @@ def b2_propose(f, y, profil, raison):
 
 
 def b2_vide():
-    f = b2_tete("B2 · 01 · Votre jardin")
+    f = b2_tete("B2 · 01 · Ton jardin")
     d.texte(f, CX, 420, COL, "Son climat", 15, gras=True)
     d.texte(f, CX, 446, COL, "Il cale les dates d'entretien : une même taille se fait environ trois "
-            "semaines plus tôt dans le Midi qu'en montagne. Votre commune suffit pour le "
+            "semaines plus tôt dans le Midi qu'en montagne. Ta commune suffit pour le "
             "proposer.", 15, couleur=SECOND)
     liste = b2_autre(f, 510, "Pas de commune ? Choisir dans une liste")
     return f, liste, b2_suite(f)
 
 
 def b2_avec_commune():
-    f = b2_tete("B2 · 02 · Votre jardin — climat proposé", "Le Clos", "Lyon (69003)")
-    y = b2_propose(f, 420, 1, "Station de Lyon-Bron : 1,0 °C de plus qu'à Trappes, "
-                   "de février à avril, soit des dates avancées d'environ 6 jours. "
-                   "Indicatif : vous pourrez le changer à tout moment.")
+    f = b2_tete("B2 · 02 · Ton jardin — climat proposé", "Le Clos", "Épinal (88000)")
+    # Une seule valeur, celle du profil, partout (audit n° 18) ; pas de nom de station de
+    # référence, jargon de météorologue (audit n° 32).
+    # Le Clos est « Frais » partout : B6, B7 et T5 disent « décalée de 7 jours ».
+    y = b2_propose(f, 420, 3, "Météo-France, station d'Épinal : de février à avril, 1,0 °C "
+                   "de moins qu'en région parisienne. D'où « Frais » : dates retardées de 7 jours. "
+                   "Indicatif : tu pourras le changer à tout moment.")
     autre = b2_autre(f, y + 16)
     return f, autre, b2_suite(f)
 
 
 def b2_altitude():
-    f = b2_tete("B2 · 03 · Votre jardin — altitude à préciser", "Le Clos", "Gap (05000)")
+    f = b2_tete("B2 · 03 · Ton jardin — altitude à préciser", "Le Clos", "Gap (05000)")
     y = b2_propose(f, 420, 4, "Le centre de Gap est à 735 m. Une commune s'étend souvent sur "
-                   "plusieurs centaines de mètres de dénivelé : votre terrain peut être plus bas.")
-    d.texte(f, CX, y + 20, COL, "Votre jardin est-il à plus de 600 m ?", 15, gras=True)
+                   "plusieurs centaines de mètres de dénivelé : ton terrain peut être plus bas.")
+    d.texte(f, CX, y + 20, COL, "Ton jardin est-il à plus de 600 m ?", 15, gras=True)
     for k, rep in enumerate(["Oui", "Non, plus bas", "Je ne sais pas"]):
         c = d.cadre(f"Altitude · {rep}", f, CX + k * 200, y + 50, 184, 48, fond=FOND, rayon=8,
                     trait=TRAIT)
@@ -175,10 +178,10 @@ def b2_liste(nom, valeur_nom=None, erreur=False):
     y = 452 + 5 * 58 + 6
     if erreur:
         with d.etat("erreur"):
-            d.texte(f, CX, y, COL, "⚠ Indiquez votre commune ou choisissez un climat : sans lui, "
+            d.texte(f, CX, y, COL, "⚠ Indique ta commune ou choisis un climat : sans lui, "
                     "les dates proposées seraient fausses dès le premier jour.", 15, gras=True)
     else:
-        d.texte(f, CX, y, COL, "Vous pourrez le changer. Altitude et surface se renseignent plus "
+        d.texte(f, CX, y, COL, "Tu pourras le changer. Altitude et surface se renseignent plus "
                 "tard, si besoin.", 14, couleur=SECOND)
     return f, cartes, b2_suite(f)
 
@@ -186,17 +189,19 @@ def b2_liste(nom, valeur_nom=None, erreur=False):
 b2a, b2a_liste, b2a_suite = b2_vide()
 b2b, b2b_autre, b2b_suite = b2_avec_commune()
 b2h, b2h_autre, b2h_suite = b2_altitude()
-b2l, b2l_cartes, b2l_suite = b2_liste("B2 · 04 · Votre jardin — choisir dans la liste", "Le Clos")
-b2c, b2c_cartes, _ = b2_liste("B2 · 05 · Votre jardin — climat manquant", "Le Clos", erreur=True)
+b2l, b2l_cartes, b2l_suite = b2_liste("B2 · 04 · Ton jardin — choisir dans la liste", "Le Clos")
+b2c, b2c_cartes, _ = b2_liste("B2 · 05 · Ton jardin — climat manquant", "Le Clos", erreur=True)
 
 # --- B3 · Les zones -----------------------------------------------------------
-ZONES = ["Haies", "Massif d'entrée", "Pelouse", "Verger bas", "Verger haut"]  # alphabétique
+# Dans l'ordre où on les saisit : les arbres d'abord, leurs dates sont les plus strictes
+# (audit n° 34).
+ZONES = ["Verger haut", "Verger bas", "Pelouse", "Haies", "Massif d'entrée"]
 
 b3z = ecran("B3 · 01 · Les zones")
 entete(b3z, 1, "Le Clos")
-d.texte(b3z, CX, 112, COL, "Les zones de votre terrain", 32, gras=True)
+d.texte(b3z, CX, 112, COL, "Les zones de ton terrain", 32, gras=True)
 d.texte(b3z, CX, 160, COL, "Une zone groupe le travail : « ce matin, je fais le verger ». Cinq à dix "
-        "suffisent, et vous pourrez en ajouter à tout moment.", 17, couleur=SECOND)
+        "suffisent, et tu pourras en ajouter à tout moment.", 17, couleur=SECOND)
 for i, z in enumerate(ZONES):
     r = d.cadre(f"Zone · {z}", b3z, CX, 236 + i * 58, COL, 50, fond=FOND, rayon=8, trait=TRAIT)
     d.texte(r, 20, 13, 520, z, 17)
@@ -211,6 +216,7 @@ for s, x, w in [("Potager", 0, 130), ("Bord de la maison", 140, 220), ("Bas du t
     d.bouton(b3z, CX + 70 + x, 236 + 6 * 58, w, 40, f"+ {s}")
 b3z_suite = d.bouton(b3z, CX + COL - 260, BH - 112, 260, 56, "Continuer : les plantes",
                      principal=True)
+b3z_precedent = d.bouton(b3z, CX, BH - 112, 200, 56, "‹ Précédent")   # audit n° 33
 
 # --- B3 · Les plantes ---------------------------------------------------------
 TX, TW = 80, BW - 160
@@ -222,7 +228,7 @@ LIGNES = [  # nb, nom, espèce, repère, résultat, gras ? (zone « Verger bas �
     ("12", "Pommier", "Pommier", "",
      "Pommier 1 à 12 · FRU-002 à FRU-013", True),
     ("1", "Néflier", "Néflier — absent de la bibliothèque", "près du mur",
-     "FRU-014 · aucune règle : rien ne sera proposé tant qu'il n'en a pas", True),
+     "FRU-016 · aucune règle : rien ne sera proposé tant qu'il n'en a pas", True),
     ("1", "Pommier 'Calville blanc'", "Pommier", "au bout du rang",
      "FRU-015 · taille, à faire avant le 31 mars", False),
 ]
@@ -292,8 +298,8 @@ def barre_plantes(f, zone, compte):
 
 
 def pied_plantes(f, suivante):
-    d.texte(f, TX, BH - 96, 620, "Chaque ligne est enregistrée dès qu'elle est complète. Vous "
-            "pouvez partir et revenir : rien n'oblige à tout saisir aujourd'hui.", 14, couleur=SECOND)
+    d.texte(f, TX, BH - 96, 620, "Chaque ligne est enregistrée dès qu'elle est complète. Tu "
+            "peux partir et revenir : rien n'oblige à tout saisir aujourd'hui.", 14, couleur=SECOND)
     fini = d.bouton(f, BW - 80 - 620, BH - 112, 280, 56, "J'ai fini pour aujourd'hui")
     suite = d.bouton(f, BW - 80 - 320, BH - 112, 320, 56, f"Zone suivante : {suivante}",
                      principal=True)
@@ -303,11 +309,11 @@ def pied_plantes(f, suivante):
 # Premier passage : le tableau est vide.
 b3v = ecran("B3 · 02 · Les plantes — vide")
 entete(b3v, 2, "Le Clos")
-b3v_coller, _ = barre_plantes(b3v, "Haies", None)
+b3v_coller, _ = barre_plantes(b3v, "Verger haut", None)
 tableau(b3v, 244, [], saisie=["1", "", "", "", ""])
-d.texte(b3v, TX, 408, TW, "Une zone vide ? Passez à la suivante, vous y reviendrez. Les arbres "
+d.texte(b3v, TX, 408, TW, "Une zone vide ? Passe à la suivante, tu y reviendras. Les arbres "
         "d'abord : ce sont eux qui ont les dates les plus strictes.", 15, couleur=SECOND)
-_, b3v_suite = pied_plantes(b3v, "Massif d'entrée")
+_, b3v_suite = pied_plantes(b3v, "Verger bas")
 
 # En cours : la bibliothèque propose une espèce sur la ligne en saisie.
 b3p = ecran("B3 · 03 · Les plantes — en cours")
@@ -322,12 +328,12 @@ for i, (s, n) in enumerate([("Cerisier", "Prunus avium"), ("Cerisier acide (grio
     o = d.cadre(f"Suggestion · {s}", liste, 1, 1 + i * 50, 298, 50, fond=SURFACE if i == 0 else FOND)
     d.texte(o, 12, 6, 270, s, 15, gras=True)
     d.texte(o, 12, 27, 270, n, 13, couleur=SECOND)
-b3p_fini, _ = pied_plantes(b3p, "Verger haut")
+b3p_fini, _ = pied_plantes(b3p, "Pelouse")
 
 # Coller une liste depuis un tableur (superposition).
 col = ecran("B3 · 04 · Coller depuis un tableur", 760)
 d.texte(col, 48, 40, 900, "Coller depuis un tableur", 28, gras=True)
-d.texte(col, 48, 84, 1200, "Copiez les colonnes dans votre tableur, collez-les ici. Une ligne = une "
+d.texte(col, 48, 84, 1200, "Copie les colonnes de ton tableur, colle-les ici. Une ligne = une "
         "plante. Sans colonne de zone, tout va dans « Verger bas ».", 16, couleur=SECOND)
 zone_texte = d.cadre("Champ · collage", col, 48, 124, 520, 380, fond=SURFACE, rayon=8, trait=TRAIT)
 d.texte(zone_texte, 16, 14, 490, "Prunier n°1\tPrunier\tVerger haut\nPrunier n°2\tPrunier\tVerger "
@@ -343,8 +349,10 @@ for j, (c, v) in enumerate([("Colonne 1", "Nom"), ("Colonne 2", "Espèce"), ("Co
         continue
     s = d.cadre(f"Choix · {c}", col, 608 + j * 200, 180, 184, 40, fond=FOND, rayon=6, trait=TRAIT)
     d.texte(s, 12, 10, 160, f"{v}  ↓", 15, gras=True)
+# Le bouton compte ce qui part (audit n° 19) : 9 prêtes + le néflier, importé sans règle.
+# La ligne 4 se corrige sur place : une zone existante ou une nouvelle, au choix.
 VERDICTS = [("✓ 9 lignes prêtes", None, False),
-            ("⚠ Ligne 4 : la zone « Fond du jardin » n'existe pas", "Créer la zone", True),
+            ("⚠ Ligne 4 : la zone « Fond du jardin » n'existe pas", "Choisir la zone ›", True),
             ("⚠ Ligne 6 : « Néflier » n'est pas dans la bibliothèque — importé sans règle", None, True)]
 for i, (v, action, fort) in enumerate(VERDICTS):
     if INTERFACE:
@@ -358,8 +366,10 @@ for i, (v, action, fort) in enumerate(VERDICTS):
     if action:
         d.bouton(r, 784 - 170, 6, 160, 44, action)
 col_annuler = d.bouton(col, BW - 48 - 440, 760 - 96, 200, 56, "Annuler")
-col_importer = d.bouton(col, BW - 48 - 220, 760 - 96, 220, 56, "Importer 11 plantes",
+col_importer = d.bouton(col, BW - 48 - 220, 760 - 96, 220, 56, "Importer 10 plantes",
                         principal=True)
+d.texte(col, 608, 760 - 80, BW - 48 - 440 - 608 - 16, "La ligne 4 attend sa zone : sans elle, "
+        "elle n'est pas importée.", 14, couleur=SECOND)
 
 # Pause : on s'arrête, l'outil sert déjà (RG-27).
 pause = ecran("B3 · 05 · On s'arrête là pour aujourd'hui")
@@ -367,7 +377,7 @@ entete(pause, 2, "Le Clos")
 d.texte(pause, CX, 200, COL, "27 plantes saisies, 24 échéances déjà calculées.", 32, gras=True,
         align="center")
 d.texte(pause, CX, 300, COL, "L'outil sert dès maintenant, même si l'inventaire n'est pas complet. "
-        "Vous reprendrez la saisie ici quand vous voudrez : Plantes → Ajouter des plantes.",
+        "Tu reprendras la saisie ici quand tu voudras : Plantes → Ajouter en lot.",
         17, couleur=SECOND, align="center")
 voir = d.bouton(pause, CX + (COL - 320) // 2, 400, 320, 56, "Voir ce qu'il y a à faire",
                 principal=True)
@@ -387,6 +397,7 @@ for c in b2l_cartes + b2c_cartes:
 for s in (b2b_suite, b2h_suite, b2l_suite):
     d.lien(s, b3z)
 d.lien(b3z_suite, b3v)
+d.retour(b3z_precedent)
 d.lien(b3v_suite, b3p)
 for bouton in (b3v_coller, b3p_coller):
     d.cmd("proto.interaction.add", id=bouton, trigger={"type": "onClick"}, action={
@@ -404,7 +415,7 @@ d.cmd("proto.settings", device="Custom size", width=BW, height=BH)
 
 d.noeud("text", x=-680, y=120, text=(
     "VAGUE 2 — MISE EN ROUTE (P0)   [à valider]\n\n"
-    "B2 · Deux questions : le nom et la commune. Le climat se propose depuis la commune, avec sa "
+    "B2 · Le nom et la commune. Le climat se propose depuis la commune, avec sa "
     "raison (station, écart, décalage), et reste modifiable (RG-52, RG-26). Entre 400 et 800 m, "
     "l'outil demande si le jardin est au-dessus de 600 m. Sans commune, la liste des cinq, sans "
     "présélection : un choix par défaut passerait sans être lu (RG-23). Chaque climat dit ce "
@@ -420,6 +431,6 @@ d.noeud("text", x=-680, y=120, text=(
     "aujourd'hui » n'est qu'une sortie.\n\n"
     "La carte est facultative à la mise en route : on y arrive depuis la fin de la saisie "
     "(B13, vague 6).\n\n"
-    "Prototype : cliquez « Continuer » sans climat pour voir l'erreur. Données fictives."),
+    "Prototype : clique « Continuer » sans climat pour voir l'erreur. Données fictives."),
     name="Notes · vague 2", props={"width": 560, "textAutoResize": "height", "fontFamily": "Inter",
                                    "fontSize": 16, "fills": [TEXTE]})

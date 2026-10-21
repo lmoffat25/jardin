@@ -35,6 +35,10 @@ que la réponse arrive avant le sprint.
 - [Q-UX-21 — La période optimale d'une fenêtre ajustée à la création](#q-ux-21--la-période-optimale-dune-fenêtre-ajustée-à-la-création)
 - [Q-UX-22 — Sauter une tonte](#q-ux-22--sauter-une-tonte)
 - [Q-UX-23 — Saisir des coordonnées sur une plante posée sur le plan](#q-ux-23--saisir-des-coordonnées-sur-une-plante-posée-sur-le-plan)
+- [Q-UX-24 — Solder une échéance : confirmer ou annuler](#q-ux-24--solder-une-échéance--confirmer-ou-annuler)
+- [Q-UX-25 — Une journée chargée](#q-ux-25--une-journée-chargée)
+- [Q-UX-26 — Le mot « Intervention »](#q-ux-26--le-mot--intervention-)
+- [Q-UX-27 — Aller à la carte depuis le terrain](#q-ux-27--aller-à-la-carte-depuis-le-terrain)
 
 ---
 
@@ -494,4 +498,22 @@ vocabulaire de tout le CDC et du modèle de données.
 
 **Ce qui attend :** rien ne bloque. Appliquée : la recommandation, dans la
 passe sur les wireframes du 21/10/2026 (audit UX, n° 20).
+**Réponse :**
+
+## Q-UX-27 — Aller à la carte depuis le terrain
+
+**Question :** au terrain, on passe d'« Aujourd'hui » à la carte par un bouton
+« Carte » en haut à droite. L'audit (n° 29) propose une barre d'onglets en bas
+(Aujourd'hui, Carte) : plus près du pouce, et la destination reste visible.
+**Concerne :** T1, T7.
+**Options :**
+1. **Recommandé — on garde le bouton « Carte » dans l'en-tête** : il n'y a que
+   deux destinations, une barre d'onglets prendrait 64 px à chaque écran et
+   ferait concurrence au tiroir « Je viens de faire… », qui occupe déjà le bas
+   (zone du pouce) ; l'accès à T7 par un bouton a été décidé le 19/10/2026.
+2. Une barre d'onglets en bas (Aujourd'hui, Carte), le tiroir au-dessus.
+3. La carte en premier écran, la liste en panneau.
+
+**Ce qui attend :** rien ne bloque. Appliquée : la recommandation, dans la
+passe sur les wireframes du 21/10/2026 (rien ne change à l'écran).
 **Réponse :**
