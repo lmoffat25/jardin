@@ -211,6 +211,23 @@ les sans-serif arrondies, déjà prises par le secteur.
 une police de repli vérifiée qui l'ait, ou l'espace insécable ordinaire
 (U+00A0).
 
+**Explorations (21/10/2026).** Trois rangées de maquettes, une par
+territoire (Aujourd'hui, fiche plante, planche d'éléments), avec des formes
+différentes pour chaque élément (M15) :
+
+- **A · Étiquette** : papier d'herbier, ardoise et laiton ; chaque échéance
+  porte une étiquette perforée avec son code ; le retard est un tampon
+  incliné ; « Fait » est une touche carrée en relief.
+- **B · Carnet** : page réglée, sépia et bleu de Prusse ; chaque échéance
+  est une ligne de journal datée en marge ; le retard barre la date d'origine
+  et ajoute « +7 j » ; « Fait » est une case cochée à l'encre.
+- **C · Planche** : fond sombre, craie et ocre ; Aujourd'hui s'ouvre sur un
+  schéma du terrain dont la liste est la légende numérotée ; le retard est
+  un renvoi corail ; la fiche est une planche gravée de la taille.
+
+Le texte tient 7:1 au terrain dans les trois, ratios calculés. Choix à
+faire par Léon, puis test dehors (M17).
+
 ## 7. Outils
 
 | Outil | Sert à | Remarque |
